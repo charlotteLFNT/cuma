@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>CUMA Suivis</title>
 
-  <!-- Déclaration du Manifest pour l'icône automatique du tracteur -->
+  <!-- Déclaration du Manifest pour l'icône du tracteur -->
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="https://img.icons8.com/color/192/tractor.png">
   <link rel="apple-touch-icon" sizes="192x192" href="https://img.icons8.com/color/192/tractor.png">
@@ -29,10 +29,29 @@
       min-height: 100vh;
     }
     .container { width: 100%; max-width: 440px; }
-    header { text-align: center; margin-bottom: 24px; margin-top: 10px; }
+    header { text-align: center; margin-bottom: 20px; margin-top: 10px; }
     h1 { margin: 0; font-size: 24px; color: #15803d; }
     p.sub { margin: 6px 0 0; color: #64748b; font-size: 14px; }
 
+    /* Bouton d'installation (affiché uniquement si non installé) */
+    #install-banner {
+      display: none;
+      width: 100%;
+      background: #047857;
+      color: white;
+      border: 2px solid #059669;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
+      cursor: pointer;
+    }
+    #install-banner:active { transform: scale(0.98); background: #065f46; }
+
+    /* Bouton principal Caméra / Scan */
     .btn-scanner {
       width: 100%;
       background: #15803d;
@@ -123,6 +142,12 @@
       <p class="sub">Scannez le QR code ou accédez au formulaire</p>
     </header>
 
+    <!-- Bouton d'installation déclenché automatiquement pour les nouveaux -->
+    <button id="install-banner" onclick="installerApp()">
+      📲 Installer l'application sur le téléphone
+    </button>
+
+    <!-- Scanner -->
     <button class="btn-scanner" id="start-scan-btn" onclick="ouvrirCamera()">
       <span>📷</span> Scanner un QR Code
     </button>
@@ -145,6 +170,35 @@
   </div>
 
   <script>
+    let deferredPrompt;
+    const installBanner = document.getElementById('install-banner');
+
+    // Détection de la possibilité d'installation par Android/Chrome
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      // On rend le bouton visible pour l'utilisateur
+      installBanner.style.display = 'block';
+    });
+
+    function installerApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            installBanner.style.display = 'none';
+          }
+          deferredPrompt = null;
+        });
+      }
+    }
+
+    // Masque le bouton dès que l'application a été installée
+    window.addEventListener('appinstalled', () => {
+      installBanner.style.display = 'none';
+    });
+
+    // Gestion de la caméra
     let html5QrCode;
 
     function ouvrirCamera() {
