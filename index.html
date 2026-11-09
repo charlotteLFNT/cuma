@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>CUMA Suivis</title>
 
-  <!-- Déclaration du Manifest pour l'icône du tracteur -->
+  <!-- Configuration de l'icône de l'application (Tracteur) -->
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="https://img.icons8.com/color/192/tractor.png">
   <link rel="apple-touch-icon" sizes="192x192" href="https://img.icons8.com/color/192/tractor.png">
@@ -20,7 +20,7 @@
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body {
       margin: 0;
-      padding: 18px;
+      padding: 16px;
       background-color: #f1f5f9;
       color: #0f172a;
       display: flex;
@@ -29,11 +29,52 @@
       min-height: 100vh;
     }
     .container { width: 100%; max-width: 440px; }
-    header { text-align: center; margin-bottom: 20px; margin-top: 10px; }
+    header { text-align: center; margin-bottom: 14px; margin-top: 8px; }
     h1 { margin: 0; font-size: 24px; color: #15803d; }
-    p.sub { margin: 6px 0 0; color: #64748b; font-size: 14px; }
+    p.sub { margin: 4px 0 0; color: #64748b; font-size: 13px; }
 
-    /* Bouton d'installation (affiché uniquement si non installé) */
+    /* BANDEAU D'INFORMATION DÉFILANT */
+    .ticker-wrapper {
+      width: 100%;
+      background-color: #fef3c7;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .ticker-icon {
+      font-size: 18px;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    .ticker-content {
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      flex-grow: 1;
+    }
+    .ticker-text {
+      display: inline-block;
+      white-space: nowrap;
+      padding-left: 100%;
+      color: #92400e;
+      font-weight: 600;
+      font-size: 14px;
+      animation: defilement 20s linear infinite;
+    }
+    .ticker-text:hover {
+      animation-play-state: paused;
+    }
+    @keyframes defilement {
+      0%   { transform: translate(0, 0); }
+      100% { transform: translate(-100%, 0); }
+    }
+
+    /* Bouton d'installation sur le smartphone */
     #install-banner {
       display: none;
       width: 100%;
@@ -45,13 +86,13 @@
       font-size: 16px;
       font-weight: 700;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
       cursor: pointer;
     }
     #install-banner:active { transform: scale(0.98); background: #065f46; }
 
-    /* Bouton principal Caméra / Scan */
+    /* Bouton Scanner QR Code */
     .btn-scanner {
       width: 100%;
       background: #15803d;
@@ -142,12 +183,20 @@
       <p class="sub">Scannez le QR code ou accédez au formulaire</p>
     </header>
 
-    <!-- Bouton d'installation déclenché automatiquement pour les nouveaux -->
+    <!-- BANDEAU INFO DÉFILANT -->
+    <div class="ticker-wrapper" id="ticker-wrapper" style="display: none;">
+      <span class="ticker-icon">📢</span>
+      <div class="ticker-content">
+        <span class="ticker-text" id="ticker-text"></span>
+      </div>
+    </div>
+
+    <!-- Bouton d'installation sur smartphone -->
     <button id="install-banner" onclick="installerApp()">
       📲 Installer l'application sur le téléphone
     </button>
 
-    <!-- Scanner -->
+    <!-- Bouton Scanner QR Code -->
     <button class="btn-scanner" id="start-scan-btn" onclick="ouvrirCamera()">
       <span>📷</span> Scanner un QR Code
     </button>
@@ -170,14 +219,46 @@
   </div>
 
   <script>
+    // Lien CSV de votre Google Sheets
+    const URL_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDtdxYbPsicXyb_nmtULSSztJyP92ByPNiSopCIcxmepD60NZMn63ruQfVyUQpCgiFPNDRajWqrMvI/pub?output=csv";
+
+    async function chargerInfoBandeau() {
+      try {
+        const reponse = await fetch(URL_SHEETS_CSV + "&t=" + new Date().getTime());
+        const texte = await reponse.text();
+
+        // Découpe chaque ligne (A1, A2, A3...), nettoie les guillemets et retire les lignes vides
+        const lignes = texte.split(/\r?\n/)
+          .map(l => l.replace(/^["']|["']$/g, '').trim())
+          .filter(l => l.length > 0);
+
+        if (lignes.length > 0) {
+          // Relie les phrases avec un séparateur
+          const messageComplet = lignes.join(" • ");
+          const textElement = document.getElementById("ticker-text");
+          textElement.innerText = messageComplet;
+          document.getElementById("ticker-wrapper").style.display = "flex";
+
+          // Ajuste la vitesse selon la longueur totale du texte
+          const duree = Math.max(14, Math.round(messageComplet.length * 0.22));
+          textElement.style.animationDuration = duree + "s";
+        } else {
+          document.getElementById("ticker-wrapper").style.display = "none";
+        }
+      } catch (e) {
+        console.log("Erreur lecture Google Sheets :", e);
+      }
+    }
+
+    chargerInfoBandeau();
+
+    // PWA & Installation
     let deferredPrompt;
     const installBanner = document.getElementById('install-banner');
 
-    // Détection de la possibilité d'installation par Android/Chrome
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      // On rend le bouton visible pour l'utilisateur
       installBanner.style.display = 'block';
     });
 
@@ -193,12 +274,11 @@
       }
     }
 
-    // Masque le bouton dès que l'application a été installée
     window.addEventListener('appinstalled', () => {
       installBanner.style.display = 'none';
     });
 
-    // Gestion de la caméra
+    // Gestion Caméra / Scan
     let html5QrCode;
 
     function ouvrirCamera() {
