@@ -40,7 +40,7 @@
       border: 1px solid #fde68a;
       border-radius: 10px;
       padding: 10px 12px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       display: flex;
       align-items: center;
       overflow: hidden;
@@ -74,7 +74,7 @@
       100% { transform: translate(-100%, 0); }
     }
 
-    /* Bouton d'installation sur le smartphone */
+    /* Bouton d'installation sur le téléphone */
     #install-banner {
       display: none;
       width: 100%;
@@ -86,7 +86,7 @@
       font-size: 16px;
       font-weight: 700;
       text-align: center;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
       cursor: pointer;
     }
@@ -108,7 +108,7 @@
       gap: 12px;
       box-shadow: 0 4px 14px rgba(21, 128, 61, 0.25);
       cursor: pointer;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
     .btn-scanner:active { transform: scale(0.98); background: #166534; }
 
@@ -118,7 +118,7 @@
       background: white;
       border-radius: 14px;
       padding: 14px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
       text-align: center;
     }
@@ -137,7 +137,7 @@
     .divider {
       text-align: center;
       position: relative;
-      margin: 22px 0;
+      margin: 20px 0;
     }
     .divider::before {
       content: "";
@@ -157,22 +157,89 @@
     }
 
     .menu-group { display: flex; flex-direction: column; gap: 12px; }
-    .btn-direct {
+
+    .btn-action {
       background: white;
       border: 1px solid #e2e8f0;
       border-radius: 14px;
-      padding: 18px;
+      padding: 16px 18px;
       display: flex;
       align-items: center;
       gap: 14px;
       text-decoration: none;
       color: #1e293b;
       font-weight: 600;
-      font-size: 17px;
+      font-size: 16px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
     }
-    .btn-direct:active { background: #f8fafc; }
-    .btn-icon { font-size: 26px; line-height: 1; }
+    .btn-action:active { background: #f8fafc; }
+    .btn-icon { font-size: 24px; line-height: 1; }
+
+    /* PANNEAU D'ÉTAT DU PARC (MODAL / OVERLAY) */
+    .parc-card {
+      display: none;
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      border: 1px solid #e2e8f0;
+    }
+    .parc-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .parc-card-header h2 {
+      margin: 0;
+      font-size: 17px;
+      color: #0f172a;
+    }
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: #64748b;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    .parc-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .parc-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border-left: 4px solid #94a3b8;
+    }
+    .parc-item.disponible { border-left-color: #22c55e; }
+    .parc-item.en-cours { border-left-color: #ef4444; }
+
+    .parc-info { display: flex; flex-direction: column; gap: 2px; }
+    .parc-nom { font-weight: 700; font-size: 15px; color: #1e293b; }
+    .parc-user { font-size: 12px; color: #b91c1c; font-weight: 600; }
+
+    .badge-statut {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .badge-disponible { background: #dcfce7; color: #15803d; }
+    .badge-en-cours { background: #fee2e2; color: #b91c1c; }
   </style>
 </head>
 <body>
@@ -180,7 +247,7 @@
   <div class="container">
     <header>
       <h1>CUMA — Portail Suivis</h1>
-      <p class="sub">Scannez le QR code ou accédez au formulaire</p>
+      <p class="sub">Scannez le QR code ou accédez aux suivis</p>
     </header>
 
     <!-- BANDEAU INFO DÉFILANT -->
@@ -207,11 +274,31 @@
     </div>
 
     <div class="divider">
-      <span>Ou accès direct</span>
+      <span>Menu direct</span>
     </div>
 
     <div class="menu-group">
-      <a href="https://forms.gle/8cKNmB9vAiKtbuXV7" target="_blank" class="btn-direct">
+      <!-- Bouton d'accès au statut du parc -->
+      <button class="btn-action" onclick="basculerAffichageParc()">
+        <span class="btn-icon">🚜</span>
+        <span>Disponibilité du matériel</span>
+      </button>
+
+      <!-- Panneau déroulant de disponibilité des matériels -->
+      <div class="parc-card" id="parc-card">
+        <div class="parc-card-header">
+          <h2>🚜 État du parc en direct</h2>
+          <button class="btn-close" onclick="basculerAffichageParc()">✕</button>
+        </div>
+        <div class="parc-list" id="parc-list">
+          <div style="font-size: 13px; color: #64748b; text-align: center; padding: 10px;">
+            Chargement de l'état du matériel...
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulaire Suivi Carburant -->
+      <a href="https://forms.gle/8cKNmB9vAiKtbuXV7" target="_blank" class="btn-action">
         <span class="btn-icon">⛽</span>
         <span>Formulaire Suivi Carburant</span>
       </a>
@@ -219,37 +306,97 @@
   </div>
 
   <script>
-    // Lien CSV de votre Google Sheets
-    const URL_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDtdxYbPsicXyb_nmtULSSztJyP92ByPNiSopCIcxmepD60NZMn63ruQfVyUQpCgiFPNDRajWqrMvI/pub?output=csv";
+    // 1. LIEN DU BANDEAU D'INFORMATION (SHEETS)
+    const URL_BANDEAU_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDtdxYbPsicXyb_nmtULSSztJyP92ByPNiSopCIcxmepD60NZMn63ruQfVyUQpCgiFPNDRajWqrMvI/pub?output=csv";
 
+    // 2. LIEN DU STATUT MATÉRIEL (SHEETS)
+    const URL_STATUT_PARC_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpzFznU5JVeUmjl-7KE2dFempJaADAqVIvDOupZtPZZIWidZEW1Zz7DvVuCDD6OSiSsS3eX0PRpk2k/pub?output=csv";
+
+    // Gestion du bandeau info
     async function chargerInfoBandeau() {
       try {
-        const reponse = await fetch(URL_SHEETS_CSV + "&t=" + new Date().getTime());
+        const reponse = await fetch(URL_BANDEAU_CSV + "&t=" + new Date().getTime());
         const texte = await reponse.text();
 
-        // Découpe chaque ligne (A1, A2, A3...), nettoie les guillemets et retire les lignes vides
         const lignes = texte.split(/\r?\n/)
           .map(l => l.replace(/^["']|["']$/g, '').trim())
           .filter(l => l.length > 0);
 
         if (lignes.length > 0) {
-          // Relie les phrases avec un séparateur
           const messageComplet = lignes.join(" • ");
           const textElement = document.getElementById("ticker-text");
           textElement.innerText = messageComplet;
           document.getElementById("ticker-wrapper").style.display = "flex";
 
-          // Ajuste la vitesse selon la longueur totale du texte
           const duree = Math.max(14, Math.round(messageComplet.length * 0.22));
           textElement.style.animationDuration = duree + "s";
         } else {
           document.getElementById("ticker-wrapper").style.display = "none";
         }
       } catch (e) {
-        console.log("Erreur lecture Google Sheets :", e);
+        console.log("Erreur bandeau info :", e);
       }
     }
 
+    // Gestion du statut du parc matériel
+    async function chargerStatutParc() {
+      const container = document.getElementById("parc-list");
+      try {
+        const reponse = await fetch(URL_STATUT_PARC_CSV + "&t=" + new Date().getTime());
+        const texte = await reponse.text();
+
+        const lignes = texte.split(/\r?\n/)
+          .map(l => l.trim())
+          .filter(l => l.length > 0);
+
+        if (lignes.length <= 1) {
+          container.innerHTML = "<div style='font-size:13px;color:#64748b;'>Aucune donnée disponible.</div>";
+          return;
+        }
+
+        // On ignore la ligne d'en-tête (A1, B1, C1) et on affiche le reste
+        let html = "";
+        for (let i = 1; i < lignes.length; i++) {
+          // Découpe les colonnes CSV en nettoyant les guillemets
+          const cols = lignes[i].split(",").map(c => c.replace(/^["']|["']$/g, '').trim());
+          const nom = cols[0] || ("Matériel " + i);
+          const statut = (cols[1] || "Disponible").trim();
+          const utilisateur = (cols[2] || "").trim();
+
+          const estEnCours = statut.toLowerCase().includes("cours");
+          const classeItem = estEnCours ? "en-cours" : "disponible";
+          const badgeClass = estEnCours ? "badge-en-cours" : "badge-disponible";
+          const statutLabel = estEnCours ? "En cours" : "Disponible";
+
+          html += `
+            <div class="parc-item ${classeItem}">
+              <div class="parc-info">
+                <span class="parc-nom">${nom}</span>
+                ${estEnCours && utilisateur ? `<span class="parc-user">Emprunté par ${utilisateur}</span>` : ""}
+              </div>
+              <span class="badge-statut ${badgeClass}">${statutLabel}</span>
+            </div>
+          `;
+        }
+
+        container.innerHTML = html;
+      } catch (e) {
+        console.log("Erreur statut parc :", e);
+        container.innerHTML = "<div style='font-size:13px;color:#ef4444;'>Impossible de charger la disponibilité.</div>";
+      }
+    }
+
+    function basculerAffichageParc() {
+      const card = document.getElementById("parc-card");
+      if (card.style.display === "block") {
+        card.style.display = "none";
+      } else {
+        card.style.display = "block";
+        chargerStatutParc(); // Rafraîchit les données dès l'ouverture
+      }
+    }
+
+    // Chargement initial
     chargerInfoBandeau();
 
     // PWA & Installation
@@ -278,7 +425,7 @@
       installBanner.style.display = 'none';
     });
 
-    // Gestion Caméra / Scan
+    // Scanner Caméra
     let html5QrCode;
 
     function ouvrirCamera() {
