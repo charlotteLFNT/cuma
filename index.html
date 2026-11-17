@@ -178,13 +178,13 @@
     .btn-action:active { background: #f8fafc; }
     .btn-icon { font-size: 24px; line-height: 1; }
 
-    /* PANNEAU D'ÉTAT DU PARC (MODAL / OVERLAY) */
+    /* PANNEAU D'ÉTAT DU PARC */
     .parc-card {
       display: none;
       background: white;
       border-radius: 16px;
       padding: 16px;
-      margin-top: 14px;
+      margin-top: 2px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.08);
       border: 1px solid #e2e8f0;
     }
@@ -297,10 +297,16 @@
         </div>
       </div>
 
-      <!-- Formulaire Suivi Carburant -->
+      <!-- Formulaire Suivi Carburant (Retrait) -->
       <a href="https://forms.gle/8cKNmB9vAiKtbuXV7" target="_blank" class="btn-action">
         <span class="btn-icon">⛽</span>
         <span>Formulaire Suivi Carburant</span>
+      </a>
+
+      <!-- Formulaire Ajout Carburant (Livraison) -->
+      <a href="https://forms.gle/usUjh2DueqvhbFqQ9" target="_blank" class="btn-action">
+        <span class="btn-icon">🚛</span>
+        <span>Ajouter du carburant (Livraison)</span>
       </a>
     </div>
   </div>
@@ -354,10 +360,8 @@
           return;
         }
 
-        // On ignore la ligne d'en-tête (A1, B1, C1) et on affiche le reste
         let html = "";
         for (let i = 1; i < lignes.length; i++) {
-          // Découpe les colonnes CSV en nettoyant les guillemets
           const cols = lignes[i].split(",").map(c => c.replace(/^["']|["']$/g, '').trim());
           const nom = cols[0] || ("Matériel " + i);
           const statut = (cols[1] || "Disponible").trim();
@@ -392,11 +396,10 @@
         card.style.display = "none";
       } else {
         card.style.display = "block";
-        chargerStatutParc(); // Rafraîchit les données dès l'ouverture
+        chargerStatutParc();
       }
     }
 
-    // Chargement initial
     chargerInfoBandeau();
 
     // PWA & Installation
