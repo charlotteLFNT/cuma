@@ -471,15 +471,6 @@
       </div>
 
       <div class="menu-group">
-        <!-- Bouton Pilote Mini-Pelle (Nouveau mini-formulaire intégré) -->
-        <button class="btn-action" onclick="ouvrirFormulaireEngin('Mini-Pelle')" style="border-left: 5px solid #15803d;">
-          <span class="btn-icon">🚜</span>
-          <div>
-            <div>Suivi Mini-Pelle</div>
-            <div style="font-size: 12px; color: #15803d; font-weight: 500;">Saisie directe avec calcul du coût</div>
-          </div>
-        </button>
-
         <!-- Bouton d'accès au statut du parc -->
         <button class="btn-action" onclick="basculerAffichageParc()">
           <span class="btn-icon">📋</span>
@@ -510,6 +501,12 @@
           <span class="btn-icon">🚛</span>
           <span>Ajouter du carburant (Livraison)</span>
         </a>
+
+        <!-- Bouton Pilote Mini-Pelle (en dernier) -->
+        <button class="btn-action" onclick="ouvrirFormulaireEngin('Mini-Pelle')">
+          <span class="btn-icon">🚜</span>
+          <span>Suivi Mini-Pelle</span>
+        </button>
       </div>
     </div>
 
@@ -957,7 +954,6 @@
     function retourAccueil() {
       document.getElementById("form-view").style.display = "none";
       document.getElementById("home-view").style.display = "block";
-      // Nettoyage de l'URL si ouverte via QR code
       if (window.history.replaceState) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
