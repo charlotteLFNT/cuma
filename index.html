@@ -240,6 +240,197 @@
     }
     .badge-disponible { background: #dcfce7; color: #15803d; }
     .badge-en-cours { background: #fee2e2; color: #b91c1c; }
+
+    /* MINI-FORMULAIRE INTÉGRÉ */
+    .form-card {
+      display: none;
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 24px;
+    }
+    .form-banner {
+      background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+      color: white;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .form-banner-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .form-banner-title img {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 10px;
+      padding: 4px;
+    }
+    .form-banner h2 {
+      margin: 0;
+      font-size: 19px;
+      font-weight: 700;
+    }
+    .form-banner p {
+      margin: 2px 0 0;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    .btn-back {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .form-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .status-pill {
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .status-pill.dispo {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+    .status-pill.encours {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .field-group label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #334155;
+    }
+    .field-group input, .field-group select, .field-group textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 16px;
+      color: #0f172a;
+      background: #f8fafc;
+      transition: border-color 0.2s;
+    }
+    .field-group input:focus, .field-group select:focus, .field-group textarea:focus {
+      outline: none;
+      border-color: #15803d;
+      background: white;
+    }
+    .code-input {
+      font-size: 22px !important;
+      font-weight: 700;
+      letter-spacing: 6px;
+      text-align: center;
+    }
+    .greeting-box {
+      display: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .greeting-ok {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
+    }
+    .greeting-err {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+    }
+    .cost-box {
+      display: none;
+      background: #eff6ff;
+      border: 1.5px solid #93c5fd;
+      border-radius: 12px;
+      padding: 14px;
+      color: #1e3a8a;
+    }
+    .cost-box-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+    .cost-box-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #bfdbfe;
+      font-size: 18px;
+      font-weight: 800;
+      color: #1d4ed8;
+    }
+    .btn-submit {
+      width: 100%;
+      background: #15803d;
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25);
+    }
+    .btn-submit:disabled {
+      background: #94a3b8;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    .success-screen {
+      display: none;
+      padding: 28px 20px;
+      text-align: center;
+    }
+    .success-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .success-screen h3 {
+      margin: 0 0 8px;
+      color: #15803d;
+      font-size: 20px;
+    }
+    .success-recap {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px;
+      margin: 16px 0;
+      font-size: 14px;
+      color: #334155;
+      line-height: 1.6;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
@@ -258,57 +449,170 @@
       </div>
     </div>
 
-    <!-- Bouton d'installation sur smartphone -->
-    <button id="install-banner" onclick="installerApp()">
-      📲 Installer l'application sur le téléphone
-    </button>
-
-    <!-- Bouton Scanner QR Code -->
-    <button class="btn-scanner" id="start-scan-btn" onclick="ouvrirCamera()">
-      <span>📷</span> Scanner un QR Code
-    </button>
-
-    <div id="reader-wrapper">
-      <div id="reader"></div>
-      <button class="btn-stop" onclick="fermerCamera()">Annuler</button>
-    </div>
-
-    <div class="divider">
-      <span>Menu direct</span>
-    </div>
-
-    <div class="menu-group">
-      <!-- Bouton d'accès au statut du parc -->
-      <button class="btn-action" onclick="basculerAffichageParc()">
-        <span class="btn-icon">🚜</span>
-        <span>Disponibilité du matériel</span>
+    <!-- VUE ACCUEIL -->
+    <div id="home-view">
+      <!-- Bouton d'installation sur smartphone -->
+      <button id="install-banner" onclick="installerApp()">
+        📲 Installer l'application sur le téléphone
       </button>
 
-      <!-- Panneau déroulant de disponibilité des matériels -->
-      <div class="parc-card" id="parc-card">
-        <div class="parc-card-header">
-          <h2>🚜 État du parc en direct</h2>
-          <button class="btn-close" onclick="basculerAffichageParc()">✕</button>
-        </div>
-        <div class="parc-list" id="parc-list">
-          <div style="font-size: 13px; color: #64748b; text-align: center; padding: 10px;">
-            Chargement de l'état du matériel...
+      <!-- Bouton Scanner QR Code -->
+      <button class="btn-scanner" id="start-scan-btn" onclick="ouvrirCamera()">
+        <span>📷</span> Scanner un QR Code
+      </button>
+
+      <div id="reader-wrapper">
+        <div id="reader"></div>
+        <button class="btn-stop" onclick="fermerCamera()">Annuler</button>
+      </div>
+
+      <div class="divider">
+        <span>Menu direct</span>
+      </div>
+
+      <div class="menu-group">
+        <!-- Bouton Pilote Mini-Pelle (Nouveau mini-formulaire intégré) -->
+        <button class="btn-action" onclick="ouvrirFormulaireEngin('Mini-Pelle')" style="border-left: 5px solid #15803d;">
+          <span class="btn-icon">🚜</span>
+          <div>
+            <div>Suivi Mini-Pelle</div>
+            <div style="font-size: 12px; color: #15803d; font-weight: 500;">Saisie directe avec calcul du coût</div>
           </div>
+        </button>
+
+        <!-- Bouton d'accès au statut du parc -->
+        <button class="btn-action" onclick="basculerAffichageParc()">
+          <span class="btn-icon">📋</span>
+          <span>Disponibilité du matériel</span>
+        </button>
+
+        <!-- Panneau déroulant de disponibilité des matériels -->
+        <div class="parc-card" id="parc-card">
+          <div class="parc-card-header">
+            <h2>🚜 État du parc en direct</h2>
+            <button class="btn-close" onclick="basculerAffichageParc()">✕</button>
+          </div>
+          <div class="parc-list" id="parc-list">
+            <div style="font-size: 13px; color: #64748b; text-align: center; padding: 10px;">
+              Chargement de l'état du matériel...
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulaire Suivi Carburant (Retrait) -->
+        <a href="https://forms.gle/8cKNmB9vAiKtbuXV7" target="_blank" class="btn-action">
+          <span class="btn-icon">⛽</span>
+          <span>Formulaire Suivi Carburant</span>
+        </a>
+
+        <!-- Formulaire Ajout Carburant (Livraison) -->
+        <a href="https://forms.gle/usUjh2DueqvhbFqQ9" target="_blank" class="btn-action">
+          <span class="btn-icon">🚛</span>
+          <span>Ajouter du carburant (Livraison)</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- VUE MINI-FORMULAIRE INTÉGRÉ -->
+    <div class="form-card" id="form-view">
+      <div class="form-banner">
+        <div class="form-banner-title">
+          <img src="https://img.icons8.com/color/192/tractor.png" alt="Logo CUMA">
+          <div>
+            <h2 id="form-engin-title">Suivi Mini-Pelle</h2>
+            <p>CUMA — Enregistrement d'utilisation</p>
+          </div>
+        </div>
+        <button class="btn-back" onclick="retourAccueil()">← Retour</button>
+      </div>
+
+      <div id="form-loading" style="padding: 30px 20px; text-align: center; color: #64748b; font-size: 14px;">
+        Chargement de la configuration et du statut en cours...
+      </div>
+
+      <div class="form-body" id="form-content" style="display: none;">
+        <!-- État actuel de l'engin -->
+        <div class="status-pill dispo" id="engin-status-pill"></div>
+
+        <!-- 1. Code adhérent -->
+        <div class="field-group">
+          <label for="input-code">Votre code d'accès adhérent (4 chiffres)</label>
+          <input type="tel" id="input-code" class="code-input" maxlength="4" placeholder="••••" oninput="verifierCodeAdherent()">
+          <div class="greeting-box" id="greeting-box"></div>
+        </div>
+
+        <!-- Suite du formulaire débloquée dès que le code est valide -->
+        <div id="form-fields-unlocked" style="display: none; flex-direction: column; gap: 16px;">
+          
+          <!-- 2. Type d'action -->
+          <div class="field-group">
+            <label for="select-action">Que souhaitez-vous faire ?</label>
+            <select id="select-action" onchange="adapterChampsAction()">
+              <option value="Début d'utilisation">Début d'utilisation</option>
+              <option value="Fin d'utilisation">Fin d'utilisation</option>
+            </select>
+          </div>
+
+          <!-- 3. Adhérent à facturer -->
+          <div class="field-group">
+            <label for="select-adherent">Adhérent à facturer</label>
+            <select id="select-adherent"></select>
+          </div>
+
+          <!-- 4. Matériel associé / Option -->
+          <div class="field-group" id="group-option">
+            <label for="select-option">Matériel associé / Option attelée</label>
+            <select id="select-option" onchange="calculerCoutEnDirect()"></select>
+          </div>
+
+          <!-- 5. Compteur horaire -->
+          <div class="field-group">
+            <label for="input-compteur" id="label-compteur">Compteur au début (heures)</label>
+            <input type="number" step="0.1" inputmode="decimal" id="input-compteur" placeholder="Ex : 142.5" oninput="calculerCoutEnDirect()">
+          </div>
+
+          <!-- Encadré calcul en direct (uniquement en Fin d'utilisation) -->
+          <div class="cost-box" id="cost-box">
+            <div class="cost-box-row">
+              <span>Compteur départ :</span>
+              <strong id="recap-debut">0 h</strong>
+            </div>
+            <div class="cost-box-row">
+              <span>Durée d'utilisation :</span>
+              <strong id="recap-duree">0,0 h</strong>
+            </div>
+            <div class="cost-box-row">
+              <span>Tarif horaire appliqué :</span>
+              <strong id="recap-tarif">0,00 €/h</strong>
+            </div>
+            <div class="cost-box-total">
+              <span>Coût estimé H.T. :</span>
+              <span id="recap-total">0,00 €</span>
+            </div>
+          </div>
+
+          <!-- 6. Observations -->
+          <div class="field-group">
+            <label for="input-obs">Observations et remarques (facultatif)</label>
+            <textarea id="input-obs" rows="2" placeholder="RAS, niveau, anomalie..."></textarea>
+          </div>
+
+          <button class="btn-submit" id="btn-submit-form" onclick="envoyerFormulaire()">
+            Valider l'enregistrement
+          </button>
         </div>
       </div>
 
-      <!-- Formulaire Suivi Carburant (Retrait) -->
-      <a href="https://forms.gle/8cKNmB9vAiKtbuXV7" target="_blank" class="btn-action">
-        <span class="btn-icon">⛽</span>
-        <span>Formulaire Suivi Carburant</span>
-      </a>
-
-      <!-- Formulaire Ajout Carburant (Livraison) -->
-      <a href="https://forms.gle/usUjh2DueqvhbFqQ9" target="_blank" class="btn-action">
-        <span class="btn-icon">🚛</span>
-        <span>Ajouter du carburant (Livraison)</span>
-      </a>
+      <!-- Écran de confirmation -->
+      <div class="success-screen" id="form-success">
+        <div class="success-icon">✅</div>
+        <h3>Enregistrement effectué !</h3>
+        <p style="font-size: 14px; color: #64748b; margin: 0;">Les données ont bien été inscrites dans le tableau de suivi.</p>
+        <div class="success-recap" id="success-recap-text"></div>
+        <button class="btn-submit" onclick="retourAccueil()">Retour à l'accueil</button>
+      </div>
     </div>
+
   </div>
 
   <script>
@@ -317,6 +621,14 @@
 
     // 2. LIEN DU STATUT MATÉRIEL (SHEETS)
     const URL_STATUT_PARC_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpzFznU5JVeUmjl-7KE2dFempJaADAqVIvDOupZtPZZIWidZEW1Zz7DvVuCDD6OSiSsS3eX0PRpk2k/pub?output=csv";
+
+    // 3. LIEN DE L'API CONFIGURATION APPLI CUMA (APPS SCRIPT)
+    const URL_API_CUMA = "https://script.google.com/macros/s/AKfycbww4duGXidOOYCY2_7UcC4EvwOPY5sPKzysyOq5kDpbo_ksSIWkTuziRL9YGUN57oNh/exec";
+
+    // Variables globales de configuration
+    let configData = null;
+    let currentEngin = null;
+    let currentAdherentConnecte = "";
 
     // Gestion du bandeau info
     async function chargerInfoBandeau() {
@@ -400,7 +712,266 @@
       }
     }
 
-    chargerInfoBandeau();
+    // --- LOGIQUE DU MINI-FORMULAIRE INTÉGRÉ ---
+    async function ouvrirFormulaireEngin(nomEngin) {
+      document.getElementById("home-view").style.display = "none";
+      document.getElementById("form-view").style.display = "block";
+      document.getElementById("form-engin-title").innerText = "Suivi " + nomEngin;
+      document.getElementById("form-loading").style.display = "block";
+      document.getElementById("form-content").style.display = "none";
+      document.getElementById("form-success").style.display = "none";
+
+      // Réinitialisation des champs
+      document.getElementById("input-code").value = "";
+      document.getElementById("greeting-box").style.display = "none";
+      document.getElementById("form-fields-unlocked").style.display = "none";
+      document.getElementById("input-compteur").value = "";
+      document.getElementById("input-obs").value = "";
+      document.getElementById("cost-box").style.display = "none";
+
+      try {
+        const res = await fetch(URL_API_CUMA + "?t=" + new Date().getTime());
+        configData = await res.json();
+
+        currentEngin = configData.materiels.find(m => m.nom.toLowerCase() === nomEngin.toLowerCase());
+        if (!currentEngin) {
+          alert("Matériel introuvable dans la configuration.");
+          retourAccueil();
+          return;
+        }
+
+        // Affichage de la pastille d'état
+        const pill = document.getElementById("engin-status-pill");
+        const selectAction = document.getElementById("select-action");
+
+        if (currentEngin.statut === "En cours") {
+          pill.className = "status-pill encours";
+          pill.innerHTML = `🔴 <strong>En cours d'utilisation</strong><br>Facturé à : <strong>${currentEngin.utilisateur}</strong> — Départ : <strong>${currentEngin.compteurDebut} h</strong>` +
+            (currentEngin.materielAssocie ? `<br>Option : <strong>${currentEngin.materielAssocie}</strong>` : "");
+          selectAction.value = "Fin d'utilisation";
+        } else {
+          pill.className = "status-pill dispo";
+          pill.innerHTML = `🟢 <strong>Disponible</strong> — Tarif : <strong>${currentEngin.tarif.toFixed(2).replace('.', ',')} € H.T./h</strong>`;
+          selectAction.value = "Début d'utilisation";
+        }
+
+        // Remplissage liste déroulante Adhérents
+        const selectAdh = document.getElementById("select-adherent");
+        selectAdh.innerHTML = "";
+        configData.listeAdherents.forEach(nom => {
+          const opt = document.createElement("option");
+          opt.value = nom;
+          opt.innerText = nom;
+          selectAdh.appendChild(opt);
+        });
+
+        // Remplissage liste déroulante Options
+        const selectOpt = document.getElementById("select-option");
+        selectOpt.innerHTML = `<option value="">Aucun matériel associé (0,00 €/h)</option>`;
+        configData.options.forEach(o => {
+          const opt = document.createElement("option");
+          opt.value = o.nom;
+          opt.innerText = `${o.nom} (+ ${o.tarif.toFixed(2).replace('.', ',')} €/h)`;
+          selectOpt.appendChild(opt);
+        });
+
+        // Si en cours, pré-sélectionner l'adhérent et l'option enregistrés au départ
+        if (currentEngin.statut === "En cours") {
+          if (currentEngin.utilisateur) selectAdh.value = currentEngin.utilisateur;
+          if (currentEngin.materielAssocie) selectOpt.value = currentEngin.materielAssocie;
+        }
+
+        adapterChampsAction();
+
+        document.getElementById("form-loading").style.display = "none";
+        document.getElementById("form-content").style.display = "flex";
+      } catch (err) {
+        alert("Erreur de connexion avec la configuration Google Sheets.");
+        retourAccueil();
+      }
+    }
+
+    function verifierCodeAdherent() {
+      const code = document.getElementById("input-code").value.trim();
+      const box = document.getElementById("greeting-box");
+      const unlocked = document.getElementById("form-fields-unlocked");
+
+      if (code.length < 4) {
+        box.style.display = "none";
+        unlocked.style.display = "none";
+        currentAdherentConnecte = "";
+        return;
+      }
+
+      if (configData && configData.adherents[code]) {
+        currentAdherentConnecte = configData.adherents[code];
+        box.className = "greeting-box greeting-ok";
+        box.innerText = "✅ Bonjour " + currentAdherentConnecte;
+        box.style.display = "block";
+        unlocked.style.display = "flex";
+
+        // Si on est sur un Début d'utilisation, on pré-sélectionne l'adhérent connecté par défaut
+        if (document.getElementById("select-action").value === "Début d'utilisation") {
+          document.getElementById("select-adherent").value = currentAdherentConnecte;
+        }
+      } else {
+        currentAdherentConnecte = "";
+        box.className = "greeting-box greeting-err";
+        box.innerText = "❌ Code adhérent inconnu";
+        box.style.display = "block";
+        unlocked.style.display = "none";
+      }
+    }
+
+    function adapterChampsAction() {
+      const action = document.getElementById("select-action").value;
+      const labelCompteur = document.getElementById("label-compteur");
+      const costBox = document.getElementById("cost-box");
+      const btnSubmit = document.getElementById("btn-submit-form");
+
+      if (action === "Début d'utilisation") {
+        labelCompteur.innerText = "Compteur au début (heures)";
+        costBox.style.display = "none";
+        btnSubmit.innerText = "Valider le début d'utilisation";
+        if (currentAdherentConnecte) {
+          document.getElementById("select-adherent").value = currentAdherentConnecte;
+        }
+      } else {
+        labelCompteur.innerText = "Compteur de fin (heures)";
+        btnSubmit.innerText = "Valider la fin d'utilisation";
+        if (currentEngin && currentEngin.statut === "En cours" && currentEngin.utilisateur) {
+          document.getElementById("select-adherent").value = currentEngin.utilisateur;
+        }
+        calculerCoutEnDirect();
+      }
+    }
+
+    function calculerCoutEnDirect() {
+      const action = document.getElementById("select-action").value;
+      const costBox = document.getElementById("cost-box");
+
+      if (action !== "Fin d'utilisation" || !currentEngin) {
+        costBox.style.display = "none";
+        return;
+      }
+
+      const valFin = parseFloat(document.getElementById("input-compteur").value);
+      const debut = currentEngin.compteurDebut || 0;
+
+      if (isNaN(valFin) || valFin <= debut) {
+        costBox.style.display = "none";
+        return;
+      }
+
+      const duree = valFin - debut;
+      const optNom = document.getElementById("select-option").value;
+      const optObj = configData.options.find(o => o.nom === optNom);
+      const tarifOption = optObj ? optObj.tarif : 0;
+      const tarifTotal = currentEngin.tarif + tarifOption;
+      const coutTotal = duree * tarifTotal;
+
+      document.getElementById("recap-debut").innerText = debut.toFixed(1).replace('.', ',') + " h";
+      document.getElementById("recap-duree").innerText = duree.toFixed(1).replace('.', ',') + " h";
+      document.getElementById("recap-tarif").innerText = tarifTotal.toFixed(2).replace('.', ',') + " €/h";
+      document.getElementById("recap-total").innerText = coutTotal.toFixed(2).replace('.', ',') + " €";
+
+      costBox.style.display = "block";
+    }
+
+    async function envoyerFormulaire() {
+      const code = document.getElementById("input-code").value.trim();
+      const action = document.getElementById("select-action").value;
+      const adherentFacture = document.getElementById("select-adherent").value;
+      const optionChoisie = document.getElementById("select-option").value;
+      const compteur = parseFloat(document.getElementById("input-compteur").value);
+      const observations = document.getElementById("input-obs").value.trim();
+
+      if (!currentAdherentConnecte) {
+        alert("Veuillez saisir un code adhérent valide.");
+        return;
+      }
+      if (isNaN(compteur) || compteur <= 0) {
+        alert("Veuillez saisir une valeur de compteur valide.");
+        return;
+      }
+      if (action === "Fin d'utilisation" && currentEngin.compteurDebut > 0 && compteur < currentEngin.compteurDebut) {
+        alert("Le compteur de fin (" + compteur + " h) ne peut pas être inférieur au compteur de début (" + currentEngin.compteurDebut + " h).");
+        return;
+      }
+
+      const btn = document.getElementById("btn-submit-form");
+      btn.disabled = true;
+      btn.innerText = "Enregistrement en cours...";
+
+      const payload = {
+        materiel: currentEngin.nom,
+        code: code,
+        action: action,
+        adherent: adherentFacture,
+        materielAssocie: optionChoisie,
+        compteur: compteur,
+        observations: observations
+      };
+
+      try {
+        const res = await fetch(URL_API_CUMA, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+
+        if (result.status === "ok") {
+          let recapHtml = `
+            <strong>Matériel :</strong> ${currentEngin.nom}<br>
+            <strong>Action :</strong> ${action}<br>
+            <strong>Adhérent à facturer :</strong> ${adherentFacture}<br>
+            ${optionChoisie ? `<strong>Option :</strong> ${optionChoisie}<br>` : ""}
+            <strong>Compteur saisi :</strong> ${compteur.toFixed(1).replace('.', ',')} h
+          `;
+
+          if (action === "Fin d'utilisation" && currentEngin.compteurDebut > 0) {
+            const duree = compteur - currentEngin.compteurDebut;
+            const optObj = configData.options.find(o => o.nom === optionChoisie);
+            const tarifTotal = currentEngin.tarif + (optObj ? optObj.tarif : 0);
+            const coutTotal = duree * tarifTotal;
+
+            recapHtml += `<br><hr style="border:none;border-top:1px solid #cbd5e1;margin:8px 0;">
+              <strong>Durée utilisée :</strong> ${duree.toFixed(1).replace('.', ',')} h<br>
+              <strong style="color:#15803d;font-size:16px;">Coût estimé : ${coutTotal.toFixed(2).replace('.', ',')} € H.T.</strong>`;
+          }
+
+          document.getElementById("success-recap-text").innerHTML = recapHtml;
+          document.getElementById("form-content").style.display = "none";
+          document.getElementById("form-success").style.display = "block";
+        } else {
+          alert("Erreur lors de l'enregistrement : " + (result.message || "Erreur inconnue"));
+        }
+      } catch (err) {
+        alert("Impossible de contacter le serveur Google Sheets.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Valider l'enregistrement";
+      }
+    }
+
+    function retourAccueil() {
+      document.getElementById("form-view").style.display = "none";
+      document.getElementById("home-view").style.display = "block";
+      // Nettoyage de l'URL si ouverte via QR code
+      if (window.history.replaceState) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+
+    // Ouverture automatique si paramètre ?engin=Mini-Pelle dans l'URL (QR Code cabine)
+    window.addEventListener("DOMContentLoaded", () => {
+      chargerInfoBandeau();
+      const params = new URLSearchParams(window.location.search);
+      const enginParam = params.get("engin");
+      if (enginParam) {
+        ouvrirFormulaireEngin(enginParam);
+      }
+    });
 
     // PWA & Installation
     let deferredPrompt;
