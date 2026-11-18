@@ -302,7 +302,7 @@
       border-radius: 12px;
       font-size: 14px;
       font-weight: 600;
-      line-height: 1.4;
+      line-height: 1.5;
     }
     .status-pill.dispo {
       background: #dcfce7;
@@ -616,7 +616,7 @@
     // 1. LIEN DU BANDEAU D'INFORMATION (SHEETS)
     const URL_BANDEAU_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDtdxYbPsicXyb_nmtULSSztJyP92ByPNiSopCIcxmepD60NZMn63ruQfVyUQpCgiFPNDRajWqrMvI/pub?output=csv";
 
-    // 2. LIEN DU STATUT MATÉRIEL (SHEETS)
+    // 2. LIEN DU STATUT MATÉRIEL (ANCIEN CSV POUR LES ENGINS NON ENCORE MIGRÉS)
     const URL_STATUT_PARC_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpzFznU5JVeUmjl-7KE2dFempJaADAqVIvDOupZtPZZIWidZEW1Zz7DvVuCDD6OSiSsS3eX0PRpk2k/pub?output=csv";
 
     // 3. LIEN DE L'API CONFIGURATION APPLI CUMA (APPS SCRIPT)
@@ -653,44 +653,78 @@
       }
     }
 
-    // Gestion du statut du parc matériel
+    // Gestion du statut du parc matériel (hybride : temps réel via API + ancien CSV en attendant la migration des tracteurs)
     async function chargerStatutParc() {
       const container = document.getElementById("parc-list");
+      container.innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;padding:10px;'>Actualisation en direct...</div>";
+
       try {
-        const reponse = await fetch(URL_STATUT_PARC_CSV + "&t=" + new Date().getTime());
-        const texte = await reponse.text();
+        const [repApi, repCsv] = await Promise.all([
+          fetch(URL_API_CUMA + "?t=" + new Date().getTime()).then(r => r.json()),
+          fetch(URL_STATUT_PARC_CSV + "&t=" + new Date().getTime()).then(r => r.text()).catch(() => "")
+        ]);
 
-        const lignes = texte.split(/\r?\n/)
-          .map(l => l.trim())
-          .filter(l => l.length > 0);
+        configData = repApi;
+        const materielsMap = new Map();
 
-        if (lignes.length <= 1) {
+        // 1. Charger d'abord l'ancien CSV (Tracteurs 1 à 4)
+        if (repCsv) {
+          const lignes = repCsv.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+          for (let i = 1; i < lignes.length; i++) {
+            const cols = lignes[i].split(",").map(c => c.replace(/^["']|["']$/g, '').trim());
+            const nom = cols[0] || "";
+            if (!nom) continue;
+            materielsMap.set(nom.toLowerCase(), {
+              nom: nom,
+              statut: (cols[1] || "Disponible").trim(),
+              utilisateur: (cols[2] || "").trim(),
+              dateDebut: ""
+            });
+          }
+        }
+
+        // 2. Écraser/compléter avec les données en temps réel de l'API (Mini-Pelle, etc.)
+        if (repApi && repApi.materiels) {
+          repApi.materiels.forEach(m => {
+            materielsMap.set(m.nom.toLowerCase(), {
+              nom: m.nom,
+              statut: m.statut,
+              utilisateur: m.utilisateur,
+              dateDebut: m.dateDebut || ""
+            });
+          });
+        }
+
+        if (materielsMap.size === 0) {
           container.innerHTML = "<div style='font-size:13px;color:#64748b;'>Aucune donnée disponible.</div>";
           return;
         }
 
         let html = "";
-        for (let i = 1; i < lignes.length; i++) {
-          const cols = lignes[i].split(",").map(c => c.replace(/^["']|["']$/g, '').trim());
-          const nom = cols[0] || ("Matériel " + i);
-          const statut = (cols[1] || "Disponible").trim();
-          const utilisateur = (cols[2] || "").trim();
-
-          const estEnCours = statut.toLowerCase().includes("cours");
+        materielsMap.forEach((item) => {
+          const estEnCours = item.statut.toLowerCase().includes("cours");
           const classeItem = estEnCours ? "en-cours" : "disponible";
           const badgeClass = estEnCours ? "badge-en-cours" : "badge-disponible";
           const statutLabel = estEnCours ? "En cours" : "Disponible";
 
+          let detailTexte = "";
+          if (estEnCours && item.utilisateur) {
+            detailTexte = `Utilisé par : ${item.utilisateur}`;
+            if (item.dateDebut) {
+              detailTexte += ` — Départ : ${item.dateDebut}`;
+            }
+          }
+
           html += `
             <div class="parc-item ${classeItem}">
               <div class="parc-info">
-                <span class="parc-nom">${nom}</span>
-                ${estEnCours && utilisateur ? `<span class="parc-user">Emprunté par ${utilisateur}</span>` : ""}
+                <span class="parc-nom">${item.nom}</span>
+                ${detailTexte ? `<span class="parc-user">${detailTexte}</span>` : ""}
               </div>
               <span class="badge-statut ${badgeClass}">${statutLabel}</span>
             </div>
           `;
-        }
+        });
 
         container.innerHTML = html;
       } catch (e) {
@@ -743,7 +777,8 @@
 
         if (currentEngin.statut === "En cours") {
           pill.className = "status-pill encours";
-          pill.innerHTML = `🔴 <strong>En cours d'utilisation</strong><br>Facturé à : <strong>${currentEngin.utilisateur}</strong> — Départ : <strong>${currentEngin.compteurDebut} h</strong>` +
+          pill.innerHTML = `🔴 <strong>En cours d'utilisation</strong><br>Utilisé par : <strong>${currentEngin.utilisateur}</strong>` +
+            (currentEngin.dateDebut ? `<br>Départ : <strong>${currentEngin.dateDebut}</strong>` : "") +
             (currentEngin.materielAssocie ? `<br>Option : <strong>${currentEngin.materielAssocie}</strong>` : "");
           selectAction.value = "Fin d'utilisation";
         } else {
@@ -966,6 +1001,10 @@
       document.getElementById("home-view").style.display = "block";
       if (window.history.replaceState) {
         window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      // Si le panneau "Disponibilité du matériel" était ouvert, on le rafraîchit automatiquement
+      if (document.getElementById("parc-card").style.display === "block") {
+        chargerStatutParc();
       }
     }
 
