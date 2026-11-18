@@ -556,7 +556,7 @@
             <select id="select-adherent"></select>
           </div>
 
-          <!-- 4. Matériel associé / Option -->
+          <!-- 4. Matériel associé / Option (masqué automatiquement pour la Mini-Pelle) -->
           <div class="field-group" id="group-option">
             <label for="select-option">Matériel associé / Option attelée</label>
             <select id="select-option" onchange="calculerCoutEnDirect()"></select>
@@ -772,10 +772,21 @@
           selectOpt.appendChild(opt);
         });
 
-        // Si en cours, pré-sélectionner l'adhérent et l'option enregistrés au départ
-        if (currentEngin.statut === "En cours") {
-          if (currentEngin.utilisateur) selectAdh.value = currentEngin.utilisateur;
-          if (currentEngin.materielAssocie) selectOpt.value = currentEngin.materielAssocie;
+        // Masquer les options pour la Mini-Pelle
+        const groupOption = document.getElementById("group-option");
+        if (nomEngin.toLowerCase().includes("mini-pelle")) {
+          groupOption.style.display = "none";
+          selectOpt.value = "";
+        } else {
+          groupOption.style.display = "flex";
+          if (currentEngin.statut === "En cours" && currentEngin.materielAssocie) {
+            selectOpt.value = currentEngin.materielAssocie;
+          }
+        }
+
+        // Si en cours, pré-sélectionner l'adhérent enregistré au départ
+        if (currentEngin.statut === "En cours" && currentEngin.utilisateur) {
+          selectAdh.value = currentEngin.utilisateur;
         }
 
         adapterChampsAction();
@@ -807,7 +818,6 @@
         box.style.display = "block";
         unlocked.style.display = "flex";
 
-        // Si on est sur un Début d'utilisation, on pré-sélectionne l'adhérent connecté par défaut
         if (document.getElementById("select-action").value === "Début d'utilisation") {
           document.getElementById("select-adherent").value = currentAdherentConnecte;
         }
