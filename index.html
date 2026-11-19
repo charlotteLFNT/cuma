@@ -314,6 +314,11 @@
       color: #991b1b;
       border: 1px solid #fecaca;
     }
+    .status-pill.info {
+      background: #eff6ff;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
     .field-group {
       display: flex;
       flex-direction: column;
@@ -490,17 +495,11 @@
           </div>
         </div>
 
-        <!-- Formulaire Suivi Carburant (Retrait) -->
-        <a href="https://forms.gle/8cKNmB9vAiKtbuXV7" target="_blank" class="btn-action">
+        <!-- Formulaire Suivi Carburant (intégré dans l'application) -->
+        <button class="btn-action" onclick="ouvrirFormulaireCarburant()">
           <span class="btn-icon">⛽</span>
           <span>Formulaire Suivi Carburant</span>
-        </a>
-
-        <!-- Formulaire Ajout Carburant (Livraison) -->
-        <a href="https://forms.gle/usUjh2DueqvhbFqQ9" target="_blank" class="btn-action">
-          <span class="btn-icon">🚛</span>
-          <span>Ajouter du carburant (Livraison)</span>
-        </a>
+        </button>
 
         <!-- Bouton Pilote Mini-Pelle -->
         <button class="btn-action" onclick="ouvrirFormulaireEngin('Mini-Pelle')">
@@ -510,25 +509,25 @@
       </div>
     </div>
 
-    <!-- VUE MINI-FORMULAIRE INTÉGRÉ -->
+    <!-- VUE MINI-FORMULAIRE INTÉGRÉ (ENGINS + CARBURANT) -->
     <div class="form-card" id="form-view">
       <div class="form-banner">
         <div class="form-banner-title">
           <img src="https://img.icons8.com/color/192/tractor.png" alt="Logo CUMA">
           <div>
-            <h2 id="form-engin-title">Suivi Mini-Pelle</h2>
-            <p>CUMA — Enregistrement d'utilisation</p>
+            <h2 id="form-engin-title">Suivi</h2>
+            <p id="form-engin-subtitle">CUMA — Enregistrement</p>
           </div>
         </div>
         <button class="btn-back" onclick="retourAccueil()">← Retour</button>
       </div>
 
       <div id="form-loading" style="padding: 30px 20px; text-align: center; color: #64748b; font-size: 14px;">
-        Chargement de la configuration et du statut en cours...
+        Chargement de la configuration en cours...
       </div>
 
       <div class="form-body" id="form-content" style="display: none;">
-        <!-- État actuel de l'engin -->
+        <!-- État actuel (engin ou cuve carburant) -->
         <div class="status-pill dispo" id="engin-status-pill"></div>
 
         <!-- 1. Code adhérent -->
@@ -541,80 +540,127 @@
         <!-- Suite du formulaire débloquée dès que le code est valide -->
         <div id="form-fields-unlocked" style="display: none; flex-direction: column; gap: 16px;">
           
-          <!-- 2. Type d'action -->
-          <div class="field-group">
-            <label for="select-action">Que souhaitez-vous faire ?</label>
-            <select id="select-action" onchange="adapterChampsAction()">
-              <option value="Début d'utilisation">Début d'utilisation</option>
-              <option value="Fin d'utilisation">Fin d'utilisation</option>
-              <option value="Entretien" id="opt-entretien" style="display: none;">🔧 Saisir un entretien / une révision</option>
-            </select>
-          </div>
-
-          <!-- CHAMPS SPÉCIFIQUES ENTRETIEN (uniquement visibles si action = Entretien) -->
-          <div id="group-entretien" style="display: none; flex-direction: column; gap: 16px;">
+          <!-- ================= BLOC ENGINS (Mini-Pelle, Tracteurs) ================= -->
+          <div id="mode-engin" style="display: none; flex-direction: column; gap: 16px;">
             <div class="field-group">
-              <label for="select-type-entretien">Nature de l'entretien réalisé</label>
-              <select id="select-type-entretien">
-                <option value="Vidange moteur + filtre">Vidange moteur + filtre</option>
-                <option value="Révision complète (tous filtres)">Révision complète (tous filtres)</option>
-                <option value="Graissage / Niveaux">Graissage / Niveaux</option>
-                <option value="Vidange hydraulique / pont">Vidange hydraulique / pont</option>
-                <option value="Réparation / Changement pièce">Réparation / Changement pièce</option>
-                <option value="Autre entretien">Autre entretien</option>
+              <label for="select-action">Que souhaitez-vous faire ?</label>
+              <select id="select-action" onchange="adapterChampsAction()">
+                <option value="Début d'utilisation">Début d'utilisation</option>
+                <option value="Fin d'utilisation">Fin d'utilisation</option>
+                <option value="Entretien" id="opt-entretien" style="display: none;">🔧 Saisir un entretien / une révision</option>
               </select>
             </div>
+
+            <!-- CHAMPS SPÉCIFIQUES ENTRETIEN (uniquement visibles si action = Entretien) -->
+            <div id="group-entretien" style="display: none; flex-direction: column; gap: 16px;">
+              <div class="field-group">
+                <label for="select-type-entretien">Nature de l'entretien réalisé</label>
+                <select id="select-type-entretien">
+                  <option value="Vidange moteur + filtre">Vidange moteur + filtre</option>
+                  <option value="Révision complète (tous filtres)">Révision complète (tous filtres)</option>
+                  <option value="Graissage / Niveaux">Graissage / Niveaux</option>
+                  <option value="Vidange hydraulique / pont">Vidange hydraulique / pont</option>
+                  <option value="Réparation / Changement pièce">Réparation / Changement pièce</option>
+                  <option value="Autre entretien">Autre entretien</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label for="input-cout-entretien">Coût H.T. ou Fournisseur (facultatif)</label>
+                <input type="text" id="input-cout-entretien" placeholder="Ex : 145,00 € — Garage MATEO">
+              </div>
+            </div>
+
+            <!-- CHAMPS UTILISATION ADHÉRENT -->
+            <div id="group-utilisation" style="display: flex; flex-direction: column; gap: 16px;">
+              <div class="field-group">
+                <label for="select-adherent">Adhérent à facturer</label>
+                <select id="select-adherent"></select>
+              </div>
+
+              <div class="field-group" id="group-option">
+                <label for="select-option">Matériel associé / Option attelée</label>
+                <select id="select-option" onchange="calculerCoutEnDirect()"></select>
+              </div>
+            </div>
+
             <div class="field-group">
-              <label for="input-cout-entretien">Coût H.T. ou Fournisseur (facultatif)</label>
-              <input type="text" id="input-cout-entretien" placeholder="Ex : 145,00 € — Garage MATEO">
+              <label for="input-compteur" id="label-compteur">Compteur au début (heures)</label>
+              <input type="number" step="0.1" inputmode="decimal" id="input-compteur" placeholder="Ex : 142.5" oninput="calculerCoutEnDirect()">
             </div>
-          </div>
 
-          <!-- CHAMPS UTILISATION ADHÉRENT (masqués si action = Entretien) -->
-          <div id="group-utilisation" style="display: flex; flex-direction: column; gap: 16px;">
-            <!-- 3. Adhérent à facturer -->
+            <div class="cost-box" id="cost-box">
+              <div class="cost-box-row">
+                <span>Compteur départ :</span>
+                <strong id="recap-debut">0 h</strong>
+              </div>
+              <div class="cost-box-row">
+                <span>Durée d'utilisation :</span>
+                <strong id="recap-duree">0,0 h</strong>
+              </div>
+              <div class="cost-box-row">
+                <span>Tarif horaire appliqué :</span>
+                <strong id="recap-tarif">0,00 €/h</strong>
+              </div>
+              <div class="cost-box-total">
+                <span>Coût estimé H.T. :</span>
+                <span id="recap-total">0,00 €</span>
+              </div>
+            </div>
+
             <div class="field-group">
-              <label for="select-adherent">Adhérent à facturer</label>
-              <select id="select-adherent"></select>
-            </div>
-
-            <!-- 4. Matériel associé / Option (masqué automatiquement pour la Mini-Pelle) -->
-            <div class="field-group" id="group-option">
-              <label for="select-option">Matériel associé / Option attelée</label>
-              <select id="select-option" onchange="calculerCoutEnDirect()"></select>
+              <label for="input-obs" id="label-obs">Observations et remarques (facultatif)</label>
+              <textarea id="input-obs" rows="2" placeholder="RAS, niveau, anomalie..."></textarea>
             </div>
           </div>
 
-          <!-- 5. Compteur horaire -->
-          <div class="field-group">
-            <label for="input-compteur" id="label-compteur">Compteur au début (heures)</label>
-            <input type="number" step="0.1" inputmode="decimal" id="input-compteur" placeholder="Ex : 142.5" oninput="calculerCoutEnDirect()">
-          </div>
+          <!-- ================= BLOC CARBURANT (Retrait + Livraison réservée) ================= -->
+          <div id="mode-carburant" style="display: none; flex-direction: column; gap: 16px;">
+            
+            <!-- Sélecteur Retrait / Livraison (uniquement visible pour codes 2412 et 0102) -->
+            <div class="field-group" id="group-type-carburant" style="display: none;">
+              <label for="select-type-carburant">Type d'opération carburant</label>
+              <select id="select-type-carburant" onchange="adapterChampsCarburant()">
+                <option value="Retrait">⛽ Retrait de carburant (Plein)</option>
+                <option value="Livraison">🚛 Ajouter du carburant (Livraison cuve)</option>
+              </select>
+            </div>
 
-          <!-- Encadré calcul en direct (uniquement en Fin d'utilisation) -->
-          <div class="cost-box" id="cost-box">
-            <div class="cost-box-row">
-              <span>Compteur départ :</span>
-              <strong id="recap-debut">0 h</strong>
+            <!-- Champs RETRAIT DE CARBURANT -->
+            <div id="carb-retrait-fields" style="display: flex; flex-direction: column; gap: 16px;">
+              <div class="field-group">
+                <label for="select-carb-adherent">Adhérent à facturer</label>
+                <select id="select-carb-adherent"></select>
+              </div>
+              <div class="field-group">
+                <label for="input-carb-quantite">Quantité de carburant (en litres)</label>
+                <input type="number" step="0.1" inputmode="decimal" id="input-carb-quantite" placeholder="Ex : 45">
+              </div>
+              <div class="field-group">
+                <label for="input-carb-index">Numéro d'index (compteur pompe)</label>
+                <input type="number" step="1" inputmode="numeric" id="input-carb-index" placeholder="Ex : 40240">
+              </div>
+              <div class="field-group">
+                <label for="input-carb-note">Note (optionnel)</label>
+                <textarea id="input-carb-note" rows="2" placeholder="Tracteur concerné, remarque..."></textarea>
+              </div>
             </div>
-            <div class="cost-box-row">
-              <span>Durée d'utilisation :</span>
-              <strong id="recap-duree">0,0 h</strong>
-            </div>
-            <div class="cost-box-row">
-              <span>Tarif horaire appliqué :</span>
-              <strong id="recap-tarif">0,00 €/h</strong>
-            </div>
-            <div class="cost-box-total">
-              <span>Coût estimé H.T. :</span>
-              <span id="recap-total">0,00 €</span>
-            </div>
-          </div>
 
-          <!-- 6. Observations -->
-          <div class="field-group">
-            <label for="input-obs" id="label-obs">Observations et remarques (facultatif)</label>
-            <textarea id="input-obs" rows="2" placeholder="RAS, niveau, anomalie..."></textarea>
+            <!-- Champs LIVRAISON DE CARBURANT (réservés à 2412 et 0102) -->
+            <div id="carb-livraison-fields" style="display: none; flex-direction: column; gap: 16px;">
+              <div class="field-group">
+                <label for="input-liv-date">Date de la livraison</label>
+                <input type="date" id="input-liv-date">
+              </div>
+              <div class="field-group">
+                <label for="input-liv-quantite">Quantité livrée (en litres)</label>
+                <input type="number" step="1" inputmode="numeric" id="input-liv-quantite" placeholder="Ex : 1000">
+              </div>
+              <div class="field-group">
+                <label for="input-liv-prix">Prix au litre H.T. (€)</label>
+                <input type="number" step="0.001" inputmode="decimal" id="input-liv-prix" placeholder="Ex : 1.21">
+              </div>
+            </div>
+
           </div>
 
           <button class="btn-submit" id="btn-submit-form" onclick="envoyerFormulaire()">
@@ -645,9 +691,10 @@
     // 3. LIEN DE L'API CONFIGURATION APPLI CUMA (APPS SCRIPT)
     const URL_API_CUMA = "https://script.google.com/macros/s/AKfycbww4duGXidOOYCY2_7UcC4EvwOPY5sPKzysyOq5kDpbo_ksSIWkTuziRL9YGUN57oNh/exec";
 
-    // Variables globales de configuration
+    // Variables globales
     let configData = null;
     let currentEngin = null;
+    let isModeCarburant = false;
     let currentAdherentConnecte = "";
 
     // Gestion du bandeau info
@@ -676,7 +723,7 @@
       }
     }
 
-    // Gestion du statut du parc matériel (hybride : temps réel via API + ancien CSV en attendant la migration complète)
+    // Gestion du statut du parc matériel
     async function chargerStatutParc() {
       const container = document.getElementById("parc-list");
       container.innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;padding:10px;'>Actualisation en direct...</div>";
@@ -764,11 +811,15 @@
       }
     }
 
-    // --- LOGIQUE DU MINI-FORMULAIRE INTÉGRÉ ---
-    async function ouvrirFormulaireEngin(nomEngin) {
+    // --- OUVERTURE FORMULAIRE CARBURANT ---
+    async function ouvrirFormulaireCarburant() {
+      isModeCarburant = true;
+      currentEngin = null;
+
       document.getElementById("home-view").style.display = "none";
       document.getElementById("form-view").style.display = "block";
-      document.getElementById("form-engin-title").innerText = "Suivi " + nomEngin;
+      document.getElementById("form-engin-title").innerText = "Suivi Carburant";
+      document.getElementById("form-engin-subtitle").innerText = "CUMA — Gestion de la cuve GNR";
       document.getElementById("form-loading").style.display = "block";
       document.getElementById("form-content").style.display = "none";
       document.getElementById("form-success").style.display = "none";
@@ -777,6 +828,75 @@
       document.getElementById("input-code").value = "";
       document.getElementById("greeting-box").style.display = "none";
       document.getElementById("form-fields-unlocked").style.display = "none";
+      document.getElementById("mode-engin").style.display = "none";
+      document.getElementById("mode-carburant").style.display = "flex";
+      document.getElementById("group-type-carburant").style.display = "none";
+      document.getElementById("select-type-carburant").value = "Retrait";
+      document.getElementById("input-carb-quantite").value = "";
+      document.getElementById("input-carb-index").value = "";
+      document.getElementById("input-carb-note").value = "";
+      document.getElementById("input-liv-quantite").value = "";
+      document.getElementById("input-liv-prix").value = "";
+
+      const aujourdhui = new Date().toISOString().split("T")[0];
+      document.getElementById("input-liv-date").value = aujourdhui;
+
+      try {
+        const res = await fetch(URL_API_CUMA + "?t=" + new Date().getTime());
+        configData = await res.json();
+
+        const pill = document.getElementById("engin-status-pill");
+        pill.className = "status-pill info";
+        let infoCuve = "⛽ <strong>Cuve Carburant CUMA</strong>";
+        if (configData.dernierIndexCuve > 0) {
+          infoCuve += `<br>Dernier index enregistré : <strong>${configData.dernierIndexCuve}</strong>`;
+        }
+        if (configData.stockCuve !== null && configData.stockCuve !== "") {
+          infoCuve += ` — Stock estimé : <strong>${configData.stockCuve} L</strong>`;
+        }
+        pill.innerHTML = infoCuve;
+
+        const selectCarbAdh = document.getElementById("select-carb-adherent");
+        selectCarbAdh.innerHTML = "";
+        configData.listeAdherents.forEach(nom => {
+          const opt = document.createElement("option");
+          opt.value = nom;
+          opt.innerText = nom;
+          selectCarbAdh.appendChild(opt);
+        });
+
+        adapterChampsCarburant();
+
+        document.getElementById("form-loading").style.display = "none";
+        document.getElementById("form-content").style.display = "flex";
+      } catch (err) {
+        alert("Erreur de connexion avec la configuration Google Sheets.");
+        retourAccueil();
+      }
+    }
+
+    // --- OUVERTURE FORMULAIRE ENGINS (Mini-Pelle, Tracteurs) ---
+    async function ouvrirFormulaireEngin(nomEngin) {
+      if (nomEngin.toLowerCase() === "carburant") {
+        ouvrirFormulaireCarburant();
+        return;
+      }
+
+      isModeCarburant = false;
+      document.getElementById("home-view").style.display = "none";
+      document.getElementById("form-view").style.display = "block";
+      document.getElementById("form-engin-title").innerText = "Suivi " + nomEngin;
+      document.getElementById("form-engin-subtitle").innerText = "CUMA — Enregistrement d'utilisation";
+      document.getElementById("form-loading").style.display = "block";
+      document.getElementById("form-content").style.display = "none";
+      document.getElementById("form-success").style.display = "none";
+
+      // Réinitialisation des champs
+      document.getElementById("input-code").value = "";
+      document.getElementById("greeting-box").style.display = "none";
+      document.getElementById("form-fields-unlocked").style.display = "none";
+      document.getElementById("mode-carburant").style.display = "none";
+      document.getElementById("mode-engin").style.display = "flex";
       document.getElementById("input-compteur").value = "";
       document.getElementById("input-obs").value = "";
       document.getElementById("input-cout-entretien").value = "";
@@ -794,7 +914,6 @@
           return;
         }
 
-        // Affichage de la pastille d'état
         const pill = document.getElementById("engin-status-pill");
         const selectAction = document.getElementById("select-action");
 
@@ -810,7 +929,6 @@
           selectAction.value = "Début d'utilisation";
         }
 
-        // Remplissage liste déroulante Adhérents
         const selectAdh = document.getElementById("select-adherent");
         selectAdh.innerHTML = "";
         configData.listeAdherents.forEach(nom => {
@@ -820,7 +938,6 @@
           selectAdh.appendChild(opt);
         });
 
-        // Remplissage liste déroulante Options
         const selectOpt = document.getElementById("select-option");
         selectOpt.innerHTML = `<option value="">Aucun matériel associé (0,00 €/h)</option>`;
         configData.options.forEach(o => {
@@ -830,7 +947,6 @@
           selectOpt.appendChild(opt);
         });
 
-        // Masquer les options pour la Mini-Pelle
         const groupOption = document.getElementById("group-option");
         if (nomEngin.toLowerCase().includes("mini-pelle")) {
           groupOption.style.display = "none";
@@ -861,36 +977,52 @@
       const box = document.getElementById("greeting-box");
       const unlocked = document.getElementById("form-fields-unlocked");
       const optEntretien = document.getElementById("opt-entretien");
+      const groupTypeCarb = document.getElementById("group-type-carburant");
 
       if (code.length < 4) {
         box.style.display = "none";
         unlocked.style.display = "none";
         optEntretien.style.display = "none";
+        groupTypeCarb.style.display = "none";
         currentAdherentConnecte = "";
         return;
       }
 
       if (configData && configData.adherents[code]) {
         currentAdherentConnecte = configData.adherents[code];
+        const nomAffiche = (code === "0102") ? "Jean-Paul" : currentAdherentConnecte;
         box.className = "greeting-box greeting-ok";
-        box.innerText = "✅ Bonjour " + currentAdherentConnecte;
+        box.innerText = "✅ Bonjour " + nomAffiche;
         box.style.display = "block";
         unlocked.style.display = "flex";
 
-        // Débloquer l'option Entretien uniquement pour le code admin (2412)
-        const adminCode = configData.codeAdmin || "2412";
-        if (code === adminCode) {
-          optEntretien.style.display = "block";
-        } else {
-          optEntretien.style.display = "none";
-          if (document.getElementById("select-action").value === "Entretien") {
-            document.getElementById("select-action").value = currentEngin.statut === "En cours" ? "Fin d'utilisation" : "Début d'utilisation";
-            adapterChampsAction();
+        if (isModeCarburant) {
+          const codesAutorises = configData.codesLivraisonCarburant || ["2412", "0102"];
+          if (codesAutorises.includes(code)) {
+            groupTypeCarb.style.display = "flex";
+          } else {
+            groupTypeCarb.style.display = "none";
+            document.getElementById("select-type-carburant").value = "Retrait";
+            adapterChampsCarburant();
           }
-        }
+          if (configData.listeAdherents.includes(currentAdherentConnecte)) {
+            document.getElementById("select-carb-adherent").value = currentAdherentConnecte;
+          }
+        } else {
+          const adminCode = configData.codeAdmin || "2412";
+          if (code === adminCode) {
+            optEntretien.style.display = "block";
+          } else {
+            optEntretien.style.display = "none";
+            if (document.getElementById("select-action").value === "Entretien") {
+              document.getElementById("select-action").value = currentEngin.statut === "En cours" ? "Fin d'utilisation" : "Début d'utilisation";
+              adapterChampsAction();
+            }
+          }
 
-        if (document.getElementById("select-action").value === "Début d'utilisation") {
-          document.getElementById("select-adherent").value = currentAdherentConnecte;
+          if (document.getElementById("select-action").value === "Début d'utilisation" && configData.listeAdherents.includes(currentAdherentConnecte)) {
+            document.getElementById("select-adherent").value = currentAdherentConnecte;
+          }
         }
       } else {
         currentAdherentConnecte = "";
@@ -899,6 +1031,24 @@
         box.style.display = "block";
         unlocked.style.display = "none";
         optEntretien.style.display = "none";
+        groupTypeCarb.style.display = "none";
+      }
+    }
+
+    function adapterChampsCarburant() {
+      const typeOp = document.getElementById("select-type-carburant").value;
+      const retraitFields = document.getElementById("carb-retrait-fields");
+      const livraisonFields = document.getElementById("carb-livraison-fields");
+      const btnSubmit = document.getElementById("btn-submit-form");
+
+      if (typeOp === "Livraison") {
+        retraitFields.style.display = "none";
+        livraisonFields.style.display = "flex";
+        btnSubmit.innerText = "Enregistrer la livraison";
+      } else {
+        retraitFields.style.display = "flex";
+        livraisonFields.style.display = "none";
+        btnSubmit.innerText = "Valider le retrait de carburant";
       }
     }
 
@@ -925,7 +1075,7 @@
         labelObs.innerText = "Observations et remarques (facultatif)";
         costBox.style.display = "none";
         btnSubmit.innerText = "Valider le début d'utilisation";
-        if (currentAdherentConnecte) {
+        if (currentAdherentConnecte && configData.listeAdherents.includes(currentAdherentConnecte)) {
           document.getElementById("select-adherent").value = currentAdherentConnecte;
         }
       } else {
@@ -945,7 +1095,7 @@
       const action = document.getElementById("select-action").value;
       const costBox = document.getElementById("cost-box");
 
-      if (action !== "Fin d'utilisation" || !currentEngin) {
+      if (isModeCarburant || action !== "Fin d'utilisation" || !currentEngin) {
         costBox.style.display = "none";
         return;
       }
@@ -975,42 +1125,139 @@
 
     async function envoyerFormulaire() {
       const code = document.getElementById("input-code").value.trim();
-      const action = document.getElementById("select-action").value;
-      const adherentFacture = document.getElementById("select-adherent").value;
-      const optionChoisie = document.getElementById("select-option").value;
-      const compteur = parseFloat(document.getElementById("input-compteur").value);
-      const observations = document.getElementById("input-obs").value.trim();
-      const typeEntretien = document.getElementById("select-type-entretien").value;
-      const coutEntretien = document.getElementById("input-cout-entretien").value.trim();
-
       if (!currentAdherentConnecte) {
         alert("Veuillez saisir un code adhérent valide.");
         return;
       }
-      if (isNaN(compteur) || compteur <= 0) {
-        alert("Veuillez saisir une valeur de compteur valide.");
-        return;
-      }
-      if (action === "Fin d'utilisation" && currentEngin.compteurDebut > 0 && compteur < currentEngin.compteurDebut) {
-        alert("Le compteur de fin (" + compteur + " h) ne peut pas être inférieur au compteur de début (" + currentEngin.compteurDebut + " h).");
-        return;
-      }
 
       const btn = document.getElementById("btn-submit-form");
+      let payload = {};
+      let recapHtml = "";
+
+      if (isModeCarburant) {
+        const typeOp = document.getElementById("select-type-carburant").value;
+
+        if (typeOp === "Livraison") {
+          const dateLiv = document.getElementById("input-liv-date").value;
+          const qteLiv = parseFloat(document.getElementById("input-liv-quantite").value);
+          const prixLiv = parseFloat(document.getElementById("input-liv-prix").value);
+
+          if (!dateLiv) { alert("Veuillez sélectionner la date de livraison."); return; }
+          if (isNaN(qteLiv) || qteLiv <= 0) { alert("Veuillez saisir une quantité livrée valide."); return; }
+          if (isNaN(prixLiv) || prixLiv <= 0) { alert("Veuillez saisir un prix au litre H.T. valide."); return; }
+
+          const parts = dateLiv.split("-");
+          const dateFr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+
+          payload = {
+            materiel: "Carburant",
+            code: code,
+            action: "Livraison",
+            dateLivraison: dateLiv,
+            quantite: qteLiv,
+            prixLitre: prixLiv
+          };
+
+          recapHtml = `
+            <strong>Opération :</strong> Livraison de carburant<br>
+            <strong>Date de livraison :</strong> ${dateFr}<br>
+            <strong>Quantité livrée :</strong> ${qteLiv} L<br>
+            <strong>Prix au litre H.T. :</strong> ${prixLiv.toFixed(3).replace('.', ',')} €
+          `;
+        } else {
+          const adherentCarb = document.getElementById("select-carb-adherent").value;
+          const qteCarb = parseFloat(document.getElementById("input-carb-quantite").value);
+          const indexCarb = parseFloat(document.getElementById("input-carb-index").value);
+          const noteCarb = document.getElementById("input-carb-note").value.trim();
+
+          if (isNaN(qteCarb) || qteCarb <= 0) { alert("Veuillez saisir une quantité de carburant valide."); return; }
+          if (isNaN(indexCarb) || indexCarb <= 0) { alert("Veuillez saisir un numéro d'index valide."); return; }
+          if (configData.dernierIndexCuve > 0 && indexCarb < configData.dernierIndexCuve) {
+            if (!confirm("Attention : l'index saisi (" + indexCarb + ") est inférieur au dernier index enregistré (" + configData.dernierIndexCuve + "). Voulez-vous continuer quand même ?")) {
+              return;
+            }
+          }
+
+          payload = {
+            materiel: "Carburant",
+            code: code,
+            action: "Retrait",
+            adherent: adherentCarb,
+            quantite: qteCarb,
+            indexCuve: indexCarb,
+            observations: noteCarb
+          };
+
+          recapHtml = `
+            <strong>Opération :</strong> Retrait de carburant<br>
+            <strong>Adhérent à facturer :</strong> ${adherentCarb}<br>
+            <strong>Quantité prise :</strong> ${qteCarb} L<br>
+            <strong>Index relevé :</strong> ${indexCarb}<br>
+            ${noteCarb ? `<strong>Note :</strong> ${noteCarb}` : ""}
+          `;
+        }
+      } else {
+        const action = document.getElementById("select-action").value;
+        const adherentFacture = document.getElementById("select-adherent").value;
+        const optionChoisie = document.getElementById("select-option").value;
+        const compteur = parseFloat(document.getElementById("input-compteur").value);
+        const observations = document.getElementById("input-obs").value.trim();
+        const typeEntretien = document.getElementById("select-type-entretien").value;
+        const coutEntretien = document.getElementById("input-cout-entretien").value.trim();
+
+        if (isNaN(compteur) || compteur <= 0) {
+          alert("Veuillez saisir une valeur de compteur valide.");
+          return;
+        }
+        if (action === "Fin d'utilisation" && currentEngin.compteurDebut > 0 && compteur < currentEngin.compteurDebut) {
+          alert("Le compteur de fin (" + compteur + " h) ne peut pas être inférieur au compteur de début (" + currentEngin.compteurDebut + " h).");
+          return;
+        }
+
+        payload = {
+          materiel: currentEngin.nom,
+          code: code,
+          action: action,
+          adherent: adherentFacture,
+          materielAssocie: optionChoisie,
+          compteur: compteur,
+          observations: observations,
+          typeEntretien: typeEntretien,
+          coutEntretien: coutEntretien
+        };
+
+        if (action === "Entretien") {
+          recapHtml = `
+            <strong>Matériel :</strong> ${currentEngin.nom}<br>
+            <strong>Intervention :</strong> ${typeEntretien}<br>
+            <strong>Compteur relevé :</strong> ${compteur.toFixed(1).replace('.', ',')} h<br>
+            ${coutEntretien ? `<strong>Coût / Fournisseur :</strong> ${coutEntretien}<br>` : ""}
+            ${observations ? `<strong>Détails :</strong> ${observations}` : ""}
+          `;
+        } else {
+          recapHtml = `
+            <strong>Matériel :</strong> ${currentEngin.nom}<br>
+            <strong>Action :</strong> ${action}<br>
+            <strong>Adhérent à facturer :</strong> ${adherentFacture}<br>
+            ${optionChoisie ? `<strong>Option :</strong> ${optionChoisie}<br>` : ""}
+            <strong>Compteur saisi :</strong> ${compteur.toFixed(1).replace('.', ',')} h
+          `;
+
+          if (action === "Fin d'utilisation" && currentEngin.compteurDebut > 0) {
+            const duree = compteur - currentEngin.compteurDebut;
+            const optObj = configData.options.find(o => o.nom === optionChoisie);
+            const tarifTotal = currentEngin.tarif + (optObj ? optObj.tarif : 0);
+            const coutTotal = duree * tarifTotal;
+
+            recapHtml += `<br><hr style="border:none;border-top:1px solid #cbd5e1;margin:8px 0;">
+              <strong>Durée utilisée :</strong> ${duree.toFixed(1).replace('.', ',')} h<br>
+              <strong style="color:#15803d;font-size:16px;">Coût estimé : ${coutTotal.toFixed(2).replace('.', ',')} € H.T.</strong>`;
+          }
+        }
+      }
+
       btn.disabled = true;
       btn.innerText = "Enregistrement en cours...";
-
-      const payload = {
-        materiel: currentEngin.nom,
-        code: code,
-        action: action,
-        adherent: adherentFacture,
-        materielAssocie: optionChoisie,
-        compteur: compteur,
-        observations: observations,
-        typeEntretien: typeEntretien,
-        coutEntretien: coutEntretien
-      };
 
       try {
         const res = await fetch(URL_API_CUMA, {
@@ -1020,37 +1267,6 @@
         const result = await res.json();
 
         if (result.status === "ok") {
-          let recapHtml = "";
-
-          if (action === "Entretien") {
-            recapHtml = `
-              <strong>Matériel :</strong> ${currentEngin.nom}<br>
-              <strong>Intervention :</strong> ${typeEntretien}<br>
-              <strong>Compteur relevé :</strong> ${compteur.toFixed(1).replace('.', ',')} h<br>
-              ${coutEntretien ? `<strong>Coût / Fournisseur :</strong> ${coutEntretien}<br>` : ""}
-              ${observations ? `<strong>Détails :</strong> ${observations}` : ""}
-            `;
-          } else {
-            recapHtml = `
-              <strong>Matériel :</strong> ${currentEngin.nom}<br>
-              <strong>Action :</strong> ${action}<br>
-              <strong>Adhérent à facturer :</strong> ${adherentFacture}<br>
-              ${optionChoisie ? `<strong>Option :</strong> ${optionChoisie}<br>` : ""}
-              <strong>Compteur saisi :</strong> ${compteur.toFixed(1).replace('.', ',')} h
-            `;
-
-            if (action === "Fin d'utilisation" && currentEngin.compteurDebut > 0) {
-              const duree = compteur - currentEngin.compteurDebut;
-              const optObj = configData.options.find(o => o.nom === optionChoisie);
-              const tarifTotal = currentEngin.tarif + (optObj ? optObj.tarif : 0);
-              const coutTotal = duree * tarifTotal;
-
-              recapHtml += `<br><hr style="border:none;border-top:1px solid #cbd5e1;margin:8px 0;">
-                <strong>Durée utilisée :</strong> ${duree.toFixed(1).replace('.', ',')} h<br>
-                <strong style="color:#15803d;font-size:16px;">Coût estimé : ${coutTotal.toFixed(2).replace('.', ',')} € H.T.</strong>`;
-            }
-          }
-
           document.getElementById("success-recap-text").innerHTML = recapHtml;
           document.getElementById("form-content").style.display = "none";
           document.getElementById("form-success").style.display = "block";
@@ -1076,7 +1292,7 @@
       }
     }
 
-    // Ouverture automatique si paramètre ?engin=... dans l'URL (QR Code cabine)
+    // Ouverture automatique si paramètre ?engin=... dans l'URL
     window.addEventListener("DOMContentLoaded", () => {
       chargerInfoBandeau();
       const params = new URLSearchParams(window.location.search);
