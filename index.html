@@ -502,7 +502,7 @@
           <span>Ajouter du carburant (Livraison)</span>
         </a>
 
-        <!-- Bouton Pilote Mini-Pelle (en dernier) -->
+        <!-- Bouton Pilote Mini-Pelle -->
         <button class="btn-action" onclick="ouvrirFormulaireEngin('Mini-Pelle')">
           <span class="btn-icon">🚜</span>
           <span>Suivi Mini-Pelle</span>
@@ -547,19 +547,42 @@
             <select id="select-action" onchange="adapterChampsAction()">
               <option value="Début d'utilisation">Début d'utilisation</option>
               <option value="Fin d'utilisation">Fin d'utilisation</option>
+              <option value="Entretien" id="opt-entretien" style="display: none;">🔧 Saisir un entretien / une révision</option>
             </select>
           </div>
 
-          <!-- 3. Adhérent à facturer -->
-          <div class="field-group">
-            <label for="select-adherent">Adhérent à facturer</label>
-            <select id="select-adherent"></select>
+          <!-- CHAMPS SPÉCIFIQUES ENTRETIEN (uniquement visibles si action = Entretien) -->
+          <div id="group-entretien" style="display: none; flex-direction: column; gap: 16px;">
+            <div class="field-group">
+              <label for="select-type-entretien">Nature de l'entretien réalisé</label>
+              <select id="select-type-entretien">
+                <option value="Vidange moteur + filtre">Vidange moteur + filtre</option>
+                <option value="Révision complète (tous filtres)">Révision complète (tous filtres)</option>
+                <option value="Graissage / Niveaux">Graissage / Niveaux</option>
+                <option value="Vidange hydraulique / pont">Vidange hydraulique / pont</option>
+                <option value="Réparation / Changement pièce">Réparation / Changement pièce</option>
+                <option value="Autre entretien">Autre entretien</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="input-cout-entretien">Coût H.T. ou Fournisseur (facultatif)</label>
+              <input type="text" id="input-cout-entretien" placeholder="Ex : 145,00 € — Garage MATEO">
+            </div>
           </div>
 
-          <!-- 4. Matériel associé / Option (masqué automatiquement pour la Mini-Pelle) -->
-          <div class="field-group" id="group-option">
-            <label for="select-option">Matériel associé / Option attelée</label>
-            <select id="select-option" onchange="calculerCoutEnDirect()"></select>
+          <!-- CHAMPS UTILISATION ADHÉRENT (masqués si action = Entretien) -->
+          <div id="group-utilisation" style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- 3. Adhérent à facturer -->
+            <div class="field-group">
+              <label for="select-adherent">Adhérent à facturer</label>
+              <select id="select-adherent"></select>
+            </div>
+
+            <!-- 4. Matériel associé / Option (masqué automatiquement pour la Mini-Pelle) -->
+            <div class="field-group" id="group-option">
+              <label for="select-option">Matériel associé / Option attelée</label>
+              <select id="select-option" onchange="calculerCoutEnDirect()"></select>
+            </div>
           </div>
 
           <!-- 5. Compteur horaire -->
@@ -590,7 +613,7 @@
 
           <!-- 6. Observations -->
           <div class="field-group">
-            <label for="input-obs">Observations et remarques (facultatif)</label>
+            <label for="input-obs" id="label-obs">Observations et remarques (facultatif)</label>
             <textarea id="input-obs" rows="2" placeholder="RAS, niveau, anomalie..."></textarea>
           </div>
 
@@ -653,7 +676,7 @@
       }
     }
 
-    // Gestion du statut du parc matériel (hybride : temps réel via API + ancien CSV en attendant la migration des tracteurs)
+    // Gestion du statut du parc matériel (hybride : temps réel via API + ancien CSV en attendant la migration complète)
     async function chargerStatutParc() {
       const container = document.getElementById("parc-list");
       container.innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;padding:10px;'>Actualisation en direct...</div>";
@@ -667,7 +690,6 @@
         configData = repApi;
         const materielsMap = new Map();
 
-        // 1. Charger d'abord l'ancien CSV (Tracteurs 1 à 4)
         if (repCsv) {
           const lignes = repCsv.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
           for (let i = 1; i < lignes.length; i++) {
@@ -683,7 +705,6 @@
           }
         }
 
-        // 2. Écraser/compléter avec les données en temps réel de l'API (Mini-Pelle, etc.)
         if (repApi && repApi.materiels) {
           repApi.materiels.forEach(m => {
             materielsMap.set(m.nom.toLowerCase(), {
@@ -758,7 +779,9 @@
       document.getElementById("form-fields-unlocked").style.display = "none";
       document.getElementById("input-compteur").value = "";
       document.getElementById("input-obs").value = "";
+      document.getElementById("input-cout-entretien").value = "";
       document.getElementById("cost-box").style.display = "none";
+      document.getElementById("opt-entretien").style.display = "none";
 
       try {
         const res = await fetch(URL_API_CUMA + "?t=" + new Date().getTime());
@@ -819,7 +842,6 @@
           }
         }
 
-        // Si en cours, pré-sélectionner l'adhérent enregistré au départ
         if (currentEngin.statut === "En cours" && currentEngin.utilisateur) {
           selectAdh.value = currentEngin.utilisateur;
         }
@@ -838,10 +860,12 @@
       const code = document.getElementById("input-code").value.trim();
       const box = document.getElementById("greeting-box");
       const unlocked = document.getElementById("form-fields-unlocked");
+      const optEntretien = document.getElementById("opt-entretien");
 
       if (code.length < 4) {
         box.style.display = "none";
         unlocked.style.display = "none";
+        optEntretien.style.display = "none";
         currentAdherentConnecte = "";
         return;
       }
@@ -853,6 +877,18 @@
         box.style.display = "block";
         unlocked.style.display = "flex";
 
+        // Débloquer l'option Entretien uniquement pour le code admin (2412)
+        const adminCode = configData.codeAdmin || "2412";
+        if (code === adminCode) {
+          optEntretien.style.display = "block";
+        } else {
+          optEntretien.style.display = "none";
+          if (document.getElementById("select-action").value === "Entretien") {
+            document.getElementById("select-action").value = currentEngin.statut === "En cours" ? "Fin d'utilisation" : "Début d'utilisation";
+            adapterChampsAction();
+          }
+        }
+
         if (document.getElementById("select-action").value === "Début d'utilisation") {
           document.getElementById("select-adherent").value = currentAdherentConnecte;
         }
@@ -862,24 +898,41 @@
         box.innerText = "❌ Code adhérent inconnu";
         box.style.display = "block";
         unlocked.style.display = "none";
+        optEntretien.style.display = "none";
       }
     }
 
     function adapterChampsAction() {
       const action = document.getElementById("select-action").value;
       const labelCompteur = document.getElementById("label-compteur");
+      const labelObs = document.getElementById("label-obs");
       const costBox = document.getElementById("cost-box");
       const btnSubmit = document.getElementById("btn-submit-form");
+      const groupEntretien = document.getElementById("group-entretien");
+      const groupUtilisation = document.getElementById("group-utilisation");
 
-      if (action === "Début d'utilisation") {
+      if (action === "Entretien") {
+        groupEntretien.style.display = "flex";
+        groupUtilisation.style.display = "none";
+        costBox.style.display = "none";
+        labelCompteur.innerText = "Compteur au moment de l'entretien (heures)";
+        labelObs.innerText = "Détails de l'intervention / Pièces remplacées";
+        btnSubmit.innerText = "Enregistrer l'entretien";
+      } else if (action === "Début d'utilisation") {
+        groupEntretien.style.display = "none";
+        groupUtilisation.style.display = "flex";
         labelCompteur.innerText = "Compteur au début (heures)";
+        labelObs.innerText = "Observations et remarques (facultatif)";
         costBox.style.display = "none";
         btnSubmit.innerText = "Valider le début d'utilisation";
         if (currentAdherentConnecte) {
           document.getElementById("select-adherent").value = currentAdherentConnecte;
         }
       } else {
+        groupEntretien.style.display = "none";
+        groupUtilisation.style.display = "flex";
         labelCompteur.innerText = "Compteur de fin (heures)";
+        labelObs.innerText = "Observations et remarques (facultatif)";
         btnSubmit.innerText = "Valider la fin d'utilisation";
         if (currentEngin && currentEngin.statut === "En cours" && currentEngin.utilisateur) {
           document.getElementById("select-adherent").value = currentEngin.utilisateur;
@@ -927,6 +980,8 @@
       const optionChoisie = document.getElementById("select-option").value;
       const compteur = parseFloat(document.getElementById("input-compteur").value);
       const observations = document.getElementById("input-obs").value.trim();
+      const typeEntretien = document.getElementById("select-type-entretien").value;
+      const coutEntretien = document.getElementById("input-cout-entretien").value.trim();
 
       if (!currentAdherentConnecte) {
         alert("Veuillez saisir un code adhérent valide.");
@@ -952,7 +1007,9 @@
         adherent: adherentFacture,
         materielAssocie: optionChoisie,
         compteur: compteur,
-        observations: observations
+        observations: observations,
+        typeEntretien: typeEntretien,
+        coutEntretien: coutEntretien
       };
 
       try {
@@ -963,23 +1020,35 @@
         const result = await res.json();
 
         if (result.status === "ok") {
-          let recapHtml = `
-            <strong>Matériel :</strong> ${currentEngin.nom}<br>
-            <strong>Action :</strong> ${action}<br>
-            <strong>Adhérent à facturer :</strong> ${adherentFacture}<br>
-            ${optionChoisie ? `<strong>Option :</strong> ${optionChoisie}<br>` : ""}
-            <strong>Compteur saisi :</strong> ${compteur.toFixed(1).replace('.', ',')} h
-          `;
+          let recapHtml = "";
 
-          if (action === "Fin d'utilisation" && currentEngin.compteurDebut > 0) {
-            const duree = compteur - currentEngin.compteurDebut;
-            const optObj = configData.options.find(o => o.nom === optionChoisie);
-            const tarifTotal = currentEngin.tarif + (optObj ? optObj.tarif : 0);
-            const coutTotal = duree * tarifTotal;
+          if (action === "Entretien") {
+            recapHtml = `
+              <strong>Matériel :</strong> ${currentEngin.nom}<br>
+              <strong>Intervention :</strong> ${typeEntretien}<br>
+              <strong>Compteur relevé :</strong> ${compteur.toFixed(1).replace('.', ',')} h<br>
+              ${coutEntretien ? `<strong>Coût / Fournisseur :</strong> ${coutEntretien}<br>` : ""}
+              ${observations ? `<strong>Détails :</strong> ${observations}` : ""}
+            `;
+          } else {
+            recapHtml = `
+              <strong>Matériel :</strong> ${currentEngin.nom}<br>
+              <strong>Action :</strong> ${action}<br>
+              <strong>Adhérent à facturer :</strong> ${adherentFacture}<br>
+              ${optionChoisie ? `<strong>Option :</strong> ${optionChoisie}<br>` : ""}
+              <strong>Compteur saisi :</strong> ${compteur.toFixed(1).replace('.', ',')} h
+            `;
 
-            recapHtml += `<br><hr style="border:none;border-top:1px solid #cbd5e1;margin:8px 0;">
-              <strong>Durée utilisée :</strong> ${duree.toFixed(1).replace('.', ',')} h<br>
-              <strong style="color:#15803d;font-size:16px;">Coût estimé : ${coutTotal.toFixed(2).replace('.', ',')} € H.T.</strong>`;
+            if (action === "Fin d'utilisation" && currentEngin.compteurDebut > 0) {
+              const duree = compteur - currentEngin.compteurDebut;
+              const optObj = configData.options.find(o => o.nom === optionChoisie);
+              const tarifTotal = currentEngin.tarif + (optObj ? optObj.tarif : 0);
+              const coutTotal = duree * tarifTotal;
+
+              recapHtml += `<br><hr style="border:none;border-top:1px solid #cbd5e1;margin:8px 0;">
+                <strong>Durée utilisée :</strong> ${duree.toFixed(1).replace('.', ',')} h<br>
+                <strong style="color:#15803d;font-size:16px;">Coût estimé : ${coutTotal.toFixed(2).replace('.', ',')} € H.T.</strong>`;
+            }
           }
 
           document.getElementById("success-recap-text").innerHTML = recapHtml;
@@ -1002,13 +1071,12 @@
       if (window.history.replaceState) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
-      // Si le panneau "Disponibilité du matériel" était ouvert, on le rafraîchit automatiquement
       if (document.getElementById("parc-card").style.display === "block") {
         chargerStatutParc();
       }
     }
 
-    // Ouverture automatique si paramètre ?engin=Mini-Pelle dans l'URL (QR Code cabine)
+    // Ouverture automatique si paramètre ?engin=... dans l'URL (QR Code cabine)
     window.addEventListener("DOMContentLoaded", () => {
       chargerInfoBandeau();
       const params = new URLSearchParams(window.location.search);
