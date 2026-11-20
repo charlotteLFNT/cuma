@@ -757,7 +757,7 @@
 
             <div class="field-group">
               <label for="input-obs" id="label-obs">Observations et remarques (facultatif)</label>
-              <textarea id="input-obs" rows="3" placeholder="RAS, niveau, anomalie..."></textarea>
+              <textarea id="input-obs" rows="3" placeholder="Signaler une anomalie ou une panne..."></textarea>
             </div>
 
             <!-- CHAMPS COMPLÉMENTAIRES ENTRETIEN -->
@@ -1664,7 +1664,7 @@
         groupUtilisation.style.display = "flex";
         labelCompteur.innerText = "Compteur au début (heures)";
         labelObs.innerText = "Observations et remarques (facultatif)";
-        inputObs.placeholder = "RAS, niveau, anomalie...";
+        inputObs.placeholder = "Signaler une anomalie ou une panne...";
         costBox.style.display = "none";
         btnSubmit.innerText = "Valider le début d'utilisation";
         if (currentAdherentConnecte && configData.listeAdherents.includes(currentAdherentConnecte)) {
@@ -1676,7 +1676,7 @@
         groupUtilisation.style.display = "flex";
         labelCompteur.innerText = "Compteur de fin (heures)";
         labelObs.innerText = "Observations et remarques (facultatif)";
-        inputObs.placeholder = "RAS, niveau, anomalie...";
+        inputObs.placeholder = "Signaler une anomalie ou une panne...";
         btnSubmit.innerText = "Valider la fin d'utilisation";
         if (currentEngin && currentEngin.statut === "En cours" && currentEngin.utilisateur) {
           document.getElementById("select-adherent").value = currentEngin.utilisateur;
