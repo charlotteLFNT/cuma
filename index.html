@@ -46,17 +46,8 @@
       overflow: hidden;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
-    .ticker-icon {
-      font-size: 18px;
-      margin-right: 8px;
-      flex-shrink: 0;
-    }
-    .ticker-content {
-      overflow: hidden;
-      white-space: nowrap;
-      position: relative;
-      flex-grow: 1;
-    }
+    .ticker-icon { font-size: 18px; margin-right: 8px; flex-shrink: 0; }
+    .ticker-content { overflow: hidden; white-space: nowrap; position: relative; flex-grow: 1; }
     .ticker-text {
       display: inline-block;
       white-space: nowrap;
@@ -66,9 +57,7 @@
       font-size: 14px;
       animation: defilement 20s linear infinite;
     }
-    .ticker-text:hover {
-      animation-play-state: paused;
-    }
+    .ticker-text:hover { animation-play-state: paused; }
     @keyframes defilement {
       0%   { transform: translate(0, 0); }
       100% { transform: translate(-100%, 0); }
@@ -134,11 +123,7 @@
       cursor: pointer;
     }
 
-    .divider {
-      text-align: center;
-      position: relative;
-      margin: 20px 0;
-    }
+    .divider { text-align: center; position: relative; margin: 20px 0; }
     .divider::before {
       content: "";
       position: absolute;
@@ -196,24 +181,9 @@
       padding-bottom: 8px;
       border-bottom: 1px solid #f1f5f9;
     }
-    .parc-card-header h2 {
-      margin: 0;
-      font-size: 17px;
-      color: #0f172a;
-    }
-    .btn-close {
-      background: none;
-      border: none;
-      font-size: 18px;
-      color: #64748b;
-      cursor: pointer;
-      padding: 4px 8px;
-    }
-    .parc-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    .parc-card-header h2 { margin: 0; font-size: 17px; color: #0f172a; }
+    .btn-close { background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; padding: 4px 8px; }
+    .parc-list { display: flex; flex-direction: column; gap: 10px; }
     .parc-item {
       display: flex;
       justify-content: space-between;
@@ -225,11 +195,9 @@
     }
     .parc-item.disponible { border-left-color: #22c55e; }
     .parc-item.en-cours { border-left-color: #ef4444; }
-
     .parc-info { display: flex; flex-direction: column; gap: 2px; }
     .parc-nom { font-weight: 700; font-size: 15px; color: #1e293b; }
     .parc-user { font-size: 12px; color: #b91c1c; font-weight: 600; }
-
     .badge-statut {
       font-size: 12px;
       font-weight: 700;
@@ -259,28 +227,10 @@
       align-items: center;
       justify-content: space-between;
     }
-    .form-banner-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .form-banner-title img {
-      width: 40px;
-      height: 40px;
-      background: white;
-      border-radius: 10px;
-      padding: 4px;
-    }
-    .form-banner h2 {
-      margin: 0;
-      font-size: 19px;
-      font-weight: 700;
-    }
-    .form-banner p {
-      margin: 2px 0 0;
-      font-size: 12px;
-      opacity: 0.9;
-    }
+    .form-banner-title { display: flex; align-items: center; gap: 12px; }
+    .form-banner-title img { width: 40px; height: 40px; background: white; border-radius: 10px; padding: 4px; }
+    .form-banner h2 { margin: 0; font-size: 19px; font-weight: 700; }
+    .form-banner p { margin: 2px 0 0; font-size: 12px; opacity: 0.9; }
     .btn-back {
       background: rgba(255,255,255,0.2);
       border: none;
@@ -291,44 +241,13 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .form-body {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .status-pill {
-      padding: 12px 14px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1.5;
-    }
-    .status-pill.dispo {
-      background: #dcfce7;
-      color: #166534;
-      border: 1px solid #bbf7d0;
-    }
-    .status-pill.encours {
-      background: #fee2e2;
-      color: #991b1b;
-      border: 1px solid #fecaca;
-    }
-    .status-pill.info {
-      background: #eff6ff;
-      color: #1e40af;
-      border: 1px solid #bfdbfe;
-    }
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .field-group label {
-      font-size: 14px;
-      font-weight: 700;
-      color: #334155;
-    }
+    .form-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .status-pill { padding: 12px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; line-height: 1.5; }
+    .status-pill.dispo { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .status-pill.encours { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    .status-pill.info { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-group label { font-size: 14px; font-weight: 700; color: #334155; }
     .field-group input, .field-group select, .field-group textarea {
       width: 100%;
       padding: 13px 14px;
@@ -344,30 +263,10 @@
       border-color: #15803d;
       background: white;
     }
-    .code-input {
-      font-size: 22px !important;
-      font-weight: 700;
-      letter-spacing: 6px;
-      text-align: center;
-    }
-    .greeting-box {
-      display: none;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 700;
-      text-align: center;
-    }
-    .greeting-ok {
-      background: #dcfce7;
-      color: #15803d;
-      border: 1px solid #86efac;
-    }
-    .greeting-err {
-      background: #fee2e2;
-      color: #b91c1c;
-      border: 1px solid #fca5a5;
-    }
+    .code-input { font-size: 22px !important; font-weight: 700; letter-spacing: 6px; text-align: center; }
+    .greeting-box { display: none; padding: 10px 14px; border-radius: 10px; font-size: 15px; font-weight: 700; text-align: center; }
+    .greeting-ok { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+    .greeting-err { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
     .cost-box {
       display: none;
       background: #eff6ff;
@@ -376,13 +275,7 @@
       padding: 14px;
       color: #1e3a8a;
     }
-    .cost-box-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-      font-size: 14px;
-    }
+    .cost-box-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 14px; }
     .cost-box-total {
       display: flex;
       justify-content: space-between;
@@ -406,25 +299,96 @@
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25);
     }
-    .btn-submit:disabled {
-      background: #94a3b8;
-      box-shadow: none;
-      cursor: not-allowed;
-    }
-    .success-screen {
-      display: none;
-      padding: 28px 20px;
-      text-align: center;
-    }
-    .success-icon {
-      font-size: 48px;
-      margin-bottom: 10px;
-    }
-    .success-screen h3 {
-      margin: 0 0 8px;
+    .btn-submit:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
+
+    /* CARNET D'ENTRETIEN INTÉGRÉ (ACCÈS RESTREINT 2412 / 0102 / 2608) */
+    .btn-carnet {
+      width: 100%;
+      background: #f0fdf4;
       color: #15803d;
-      font-size: 20px;
+      border: 1.5px solid #86efac;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
+    .btn-carnet:active { background: #dcfce7; }
+    .carnet-panel {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .carnet-card {
+      background: white;
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid #e2e8f0;
+      border-left: 5px solid #22c55e;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .carnet-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 6px;
+    }
+    .carnet-date { font-weight: 800; font-size: 14px; color: #15803d; }
+    .carnet-heures {
+      background: #dcfce7;
+      color: #166534;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .carnet-type { font-weight: 700; font-size: 14px; color: #0f172a; }
+    .carnet-details { font-size: 13px; color: #334155; line-height: 1.45; white-space: pre-line; }
+    .carnet-tag {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      line-height: 1.4;
+    }
+    .carnet-tag.prochain { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .carnet-tag.prevoir { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .carnet-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2px;
+      padding-top: 6px;
+      border-top: 1px dashed #e2e8f0;
+      font-size: 12px;
+      color: #64748b;
+    }
+    .btn-facture {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #15803d;
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 8px;
+    }
+
+    .success-screen { display: none; padding: 28px 20px; text-align: center; }
+    .success-icon { font-size: 48px; margin-bottom: 10px; }
+    .success-screen h3 { margin: 0 0 8px; color: #15803d; font-size: 20px; }
     .success-recap {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -456,12 +420,10 @@
 
     <!-- VUE ACCUEIL -->
     <div id="home-view">
-      <!-- Bouton d'installation sur smartphone -->
       <button id="install-banner" onclick="installerApp()">
         📲 Installer l'application sur le téléphone
       </button>
 
-      <!-- Bouton Scanner QR Code -->
       <button class="btn-scanner" id="start-scan-btn" onclick="ouvrirCamera()">
         <span>📷</span> Scanner un QR Code
       </button>
@@ -476,13 +438,11 @@
       </div>
 
       <div class="menu-group">
-        <!-- Bouton d'accès au statut du parc -->
         <button class="btn-action" onclick="basculerAffichageParc()">
           <span class="btn-icon">📋</span>
           <span>Disponibilité du matériel</span>
         </button>
 
-        <!-- Panneau déroulant de disponibilité des matériels -->
         <div class="parc-card" id="parc-card">
           <div class="parc-card-header">
             <h2>🚜 État du parc en direct</h2>
@@ -495,13 +455,11 @@
           </div>
         </div>
 
-        <!-- Formulaire Suivi Carburant (intégré dans l'application) -->
         <button class="btn-action" onclick="ouvrirFormulaireCarburant()">
           <span class="btn-icon">⛽</span>
           <span>Formulaire Suivi Carburant</span>
         </button>
 
-        <!-- Bouton Pilote Mini-Pelle -->
         <button class="btn-action" onclick="ouvrirFormulaireEngin('Mini-Pelle')">
           <span class="btn-icon">🚜</span>
           <span>Suivi Mini-Pelle</span>
@@ -527,7 +485,6 @@
       </div>
 
       <div class="form-body" id="form-content" style="display: none;">
-        <!-- État actuel (engin ou cuve carburant) -->
         <div class="status-pill dispo" id="engin-status-pill"></div>
 
         <!-- 1. Code adhérent -->
@@ -542,6 +499,16 @@
           
           <!-- ================= BLOC ENGINS (Mini-Pelle, Tracteurs) ================= -->
           <div id="mode-engin" style="display: none; flex-direction: column; gap: 16px;">
+            
+            <!-- BOUTON + PANNEAU CARNET D'ENTRETIEN (visible uniquement pour 2412, 0102 et 2608) -->
+            <div id="carnet-access-box" style="display: none; flex-direction: column; gap: 10px;">
+              <button type="button" class="btn-carnet" onclick="basculerCarnetEntretien()">
+                <span>📖 Consulter le carnet d'entretien (<span id="carnet-count">0</span>)</span>
+                <span id="carnet-arrow">▼</span>
+              </button>
+              <div class="carnet-panel" id="carnet-panel"></div>
+            </div>
+
             <div class="field-group">
               <label for="select-action">Que souhaitez-vous faire ?</label>
               <select id="select-action" onchange="adapterChampsAction()">
@@ -551,8 +518,12 @@
               </select>
             </div>
 
-            <!-- CHAMPS SPÉCIFIQUES ENTRETIEN (uniquement visibles si action = Entretien) -->
+            <!-- CHAMPS SPÉCIFIQUES ENTRETIEN (uniquement visibles si action = Entretien avec code 2412) -->
             <div id="group-entretien" style="display: none; flex-direction: column; gap: 16px;">
+              <div class="field-group">
+                <label for="input-date-intervention">Date de l'intervention</label>
+                <input type="date" id="input-date-intervention">
+              </div>
               <div class="field-group">
                 <label for="select-type-entretien">Nature de l'entretien réalisé</label>
                 <select id="select-type-entretien">
@@ -560,13 +531,9 @@
                   <option value="Révision complète (tous filtres)">Révision complète (tous filtres)</option>
                   <option value="Graissage / Niveaux">Graissage / Niveaux</option>
                   <option value="Vidange hydraulique / pont">Vidange hydraulique / pont</option>
-                  <option value="Réparation / Changement pièce">Réparation / Changement pièce</option>
+                  <option value="Réparation / mécanique">Réparation / mécanique</option>
                   <option value="Autre entretien">Autre entretien</option>
                 </select>
-              </div>
-              <div class="field-group">
-                <label for="input-cout-entretien">Coût H.T. ou Fournisseur (facultatif)</label>
-                <input type="text" id="input-cout-entretien" placeholder="Ex : 145,00 € — Garage MATEO">
               </div>
             </div>
 
@@ -609,14 +576,36 @@
 
             <div class="field-group">
               <label for="input-obs" id="label-obs">Observations et remarques (facultatif)</label>
-              <textarea id="input-obs" rows="2" placeholder="RAS, niveau, anomalie..."></textarea>
+              <textarea id="input-obs" rows="3" placeholder="RAS, niveau, anomalie..."></textarea>
+            </div>
+
+            <!-- CHAMPS COMPLÉMENTAIRES ENTRETIEN (uniquement visibles si action = Entretien) -->
+            <div id="group-entretien-suite" style="display: none; flex-direction: column; gap: 16px;">
+              <div class="field-group">
+                <label for="input-prochain-entretien">Prochain entretien prévu (facultatif)</label>
+                <input type="text" id="input-prochain-entretien" placeholder="Ex : Vidange à 5400 h">
+              </div>
+              <div class="field-group">
+                <label for="input-travaux-prevoir">Travaux à prévoir (facultatif)</label>
+                <textarea id="input-travaux-prevoir" rows="2" placeholder="Pièces à surveiller ou commander..."></textarea>
+              </div>
+              <div class="field-group">
+                <label for="input-cout-entretien">Fournisseur (facultatif)</label>
+<input type="text" id="input-cout-entretien" placeholder="Ex : Garage MATEO">
+              </div>
+              <div class="field-group">
+                <label for="input-num-facture">N° de facture (facultatif)</label>
+                <input type="text" id="input-num-facture" placeholder="Ex : FA0064">
+              </div>
+              <div class="field-group">
+                <label for="input-lien-facture">Lien Google Drive de la facture (facultatif)</label>
+                <input type="url" id="input-lien-facture" placeholder="https://drive.google.com/...">
+              </div>
             </div>
           </div>
 
-          <!-- ================= BLOC CARBURANT (Retrait + Livraison réservée) ================= -->
+          <!-- ================= BLOC CARBURANT ================= -->
           <div id="mode-carburant" style="display: none; flex-direction: column; gap: 16px;">
-            
-            <!-- Sélecteur Retrait / Livraison (uniquement visible pour codes 2412 et 0102) -->
             <div class="field-group" id="group-type-carburant" style="display: none;">
               <label for="select-type-carburant">Type d'opération carburant</label>
               <select id="select-type-carburant" onchange="adapterChampsCarburant()">
@@ -625,7 +614,6 @@
               </select>
             </div>
 
-            <!-- Champs RETRAIT DE CARBURANT -->
             <div id="carb-retrait-fields" style="display: flex; flex-direction: column; gap: 16px;">
               <div class="field-group">
                 <label for="select-carb-adherent">Adhérent à facturer</label>
@@ -645,7 +633,6 @@
               </div>
             </div>
 
-            <!-- Champs LIVRAISON DE CARBURANT (réservés à 2412 et 0102) -->
             <div id="carb-livraison-fields" style="display: none; flex-direction: column; gap: 16px;">
               <div class="field-group">
                 <label for="input-liv-date">Date de la livraison</label>
@@ -660,7 +647,6 @@
                 <input type="number" step="0.001" inputmode="decimal" id="input-liv-prix" placeholder="Ex : 1.21">
               </div>
             </div>
-
           </div>
 
           <button class="btn-submit" id="btn-submit-form" onclick="envoyerFormulaire()">
@@ -682,27 +668,19 @@
   </div>
 
   <script>
-    // 1. LIEN DU BANDEAU D'INFORMATION (SHEETS)
     const URL_BANDEAU_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDtdxYbPsicXyb_nmtULSSztJyP92ByPNiSopCIcxmepD60NZMn63ruQfVyUQpCgiFPNDRajWqrMvI/pub?output=csv";
-
-    // 2. LIEN DU STATUT MATÉRIEL (ANCIEN CSV POUR LES ENGINS NON ENCORE MIGRÉS)
     const URL_STATUT_PARC_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpzFznU5JVeUmjl-7KE2dFempJaADAqVIvDOupZtPZZIWidZEW1Zz7DvVuCDD6OSiSsS3eX0PRpk2k/pub?output=csv";
-
-    // 3. LIEN DE L'API CONFIGURATION APPLI CUMA (APPS SCRIPT)
     const URL_API_CUMA = "https://script.google.com/macros/s/AKfycbww4duGXidOOYCY2_7UcC4EvwOPY5sPKzysyOq5kDpbo_ksSIWkTuziRL9YGUN57oNh/exec";
 
-    // Variables globales
     let configData = null;
     let currentEngin = null;
     let isModeCarburant = false;
     let currentAdherentConnecte = "";
 
-    // Gestion du bandeau info
     async function chargerInfoBandeau() {
       try {
         const reponse = await fetch(URL_BANDEAU_CSV + "&t=" + new Date().getTime());
         const texte = await reponse.text();
-
         const lignes = texte.split(/\r?\n/)
           .map(l => l.replace(/^["']|["']$/g, '').trim())
           .filter(l => l.length > 0);
@@ -712,18 +690,14 @@
           const textElement = document.getElementById("ticker-text");
           textElement.innerText = messageComplet;
           document.getElementById("ticker-wrapper").style.display = "flex";
-
           const duree = Math.max(14, Math.round(messageComplet.length * 0.22));
           textElement.style.animationDuration = duree + "s";
         } else {
           document.getElementById("ticker-wrapper").style.display = "none";
         }
-      } catch (e) {
-        console.log("Erreur bandeau info :", e);
-      }
+      } catch (e) {}
     }
 
-    // Gestion du statut du parc matériel
     async function chargerStatutParc() {
       const container = document.getElementById("parc-list");
       container.innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;padding:10px;'>Actualisation en direct...</div>";
@@ -778,9 +752,7 @@
           let detailTexte = "";
           if (estEnCours && item.utilisateur) {
             detailTexte = `Utilisé par : ${item.utilisateur}`;
-            if (item.dateDebut) {
-              detailTexte += ` — Départ : ${item.dateDebut}`;
-            }
+            if (item.dateDebut) detailTexte += ` — Départ : ${item.dateDebut}`;
           }
 
           html += `
@@ -796,7 +768,6 @@
 
         container.innerHTML = html;
       } catch (e) {
-        console.log("Erreur statut parc :", e);
         container.innerHTML = "<div style='font-size:13px;color:#ef4444;'>Impossible de charger la disponibilité.</div>";
       }
     }
@@ -808,6 +779,58 @@
       } else {
         card.style.display = "block";
         chargerStatutParc();
+      }
+    }
+
+    // --- CARNET D'ENTRETIEN INTÉGRÉ ---
+    function construireCarnetEntretien(entretiens) {
+      const panel = document.getElementById("carnet-panel");
+      document.getElementById("carnet-count").innerText = entretiens ? entretiens.length : 0;
+
+      if (!entretiens || entretiens.length === 0) {
+        panel.innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;padding:8px;'>Aucun entretien enregistré pour ce matériel.</div>";
+        return;
+      }
+
+      let html = "";
+      entretiens.forEach(item => {
+        const numFac = item.numFacture || (item.lienFacture ? "Voir facture" : "");
+        const boutonFacture = item.lienFacture
+          ? `<a href="${item.lienFacture}" target="_blank" class="btn-facture">📄 ${numFac}</a>`
+          : (numFac ? `<span>Facture : <strong>${numFac}</strong></span>` : "");
+
+        html += `
+          <div class="carnet-card">
+            <div class="carnet-card-top">
+              <span class="carnet-date">📅 ${item.date || "Date inconnue"}</span>
+              ${item.heures !== "" ? `<span class="carnet-heures">${item.heures} h</span>` : ""}
+            </div>
+            ${item.type ? `<div class="carnet-type">${item.type}</div>` : ""}
+            ${item.details ? `<div class="carnet-details">${item.details}</div>` : ""}
+            ${item.prochain ? `<div class="carnet-tag prochain">🔜 <strong>Prochain entretien prévu :</strong> ${item.prochain}</div>` : ""}
+            ${item.aPrevoir ? `<div class="carnet-tag prevoir">⚠️ <strong>Travaux à prévoir :</strong> ${item.aPrevoir}</div>` : ""}
+            ${(item.cout || boutonFacture) ? `
+              <div class="carnet-footer">
+               <span>${item.cout ? `Fournisseur : <strong>${item.cout}</strong>` : ""}</span>
+                ${boutonFacture}
+              </div>
+            ` : ""}
+          </div>
+        `;
+      });
+
+      panel.innerHTML = html;
+    }
+
+    function basculerCarnetEntretien() {
+      const panel = document.getElementById("carnet-panel");
+      const arrow = document.getElementById("carnet-arrow");
+      if (panel.style.display === "flex") {
+        panel.style.display = "none";
+        arrow.innerText = "▼";
+      } else {
+        panel.style.display = "flex";
+        arrow.innerText = "▲";
       }
     }
 
@@ -824,7 +847,6 @@
       document.getElementById("form-content").style.display = "none";
       document.getElementById("form-success").style.display = "none";
 
-      // Réinitialisation des champs
       document.getElementById("input-code").value = "";
       document.getElementById("greeting-box").style.display = "none";
       document.getElementById("form-fields-unlocked").style.display = "none";
@@ -875,7 +897,7 @@
       }
     }
 
-    // --- OUVERTURE FORMULAIRE ENGINS (Mini-Pelle, Tracteurs) ---
+    // --- OUVERTURE FORMULAIRE ENGINS ---
     async function ouvrirFormulaireEngin(nomEngin) {
       if (nomEngin.toLowerCase() === "carburant") {
         ouvrirFormulaireCarburant();
@@ -891,15 +913,24 @@
       document.getElementById("form-content").style.display = "none";
       document.getElementById("form-success").style.display = "none";
 
-      // Réinitialisation des champs
+      const aujourdhui = new Date().toISOString().split("T")[0];
+
       document.getElementById("input-code").value = "";
       document.getElementById("greeting-box").style.display = "none";
       document.getElementById("form-fields-unlocked").style.display = "none";
       document.getElementById("mode-carburant").style.display = "none";
       document.getElementById("mode-engin").style.display = "flex";
+      document.getElementById("carnet-access-box").style.display = "none";
+      document.getElementById("carnet-panel").style.display = "none";
+      document.getElementById("carnet-arrow").innerText = "▼";
+      document.getElementById("input-date-intervention").value = aujourdhui;
       document.getElementById("input-compteur").value = "";
       document.getElementById("input-obs").value = "";
+      document.getElementById("input-prochain-entretien").value = "";
+      document.getElementById("input-travaux-prevoir").value = "";
       document.getElementById("input-cout-entretien").value = "";
+      document.getElementById("input-num-facture").value = "";
+      document.getElementById("input-lien-facture").value = "";
       document.getElementById("cost-box").style.display = "none";
       document.getElementById("opt-entretien").style.display = "none";
 
@@ -913,6 +944,8 @@
           retourAccueil();
           return;
         }
+
+        construireCarnetEntretien(currentEngin.entretiens || []);
 
         const pill = document.getElementById("engin-status-pill");
         const selectAction = document.getElementById("select-action");
@@ -978,12 +1011,14 @@
       const unlocked = document.getElementById("form-fields-unlocked");
       const optEntretien = document.getElementById("opt-entretien");
       const groupTypeCarb = document.getElementById("group-type-carburant");
+      const carnetBox = document.getElementById("carnet-access-box");
 
       if (code.length < 4) {
         box.style.display = "none";
         unlocked.style.display = "none";
         optEntretien.style.display = "none";
         groupTypeCarb.style.display = "none";
+        carnetBox.style.display = "none";
         currentAdherentConnecte = "";
         return;
       }
@@ -1009,6 +1044,16 @@
             document.getElementById("select-carb-adherent").value = currentAdherentConnecte;
           }
         } else {
+          // Accès au carnet d'entretien (lecture) pour Charlotte (2412), Jean-Paul (0102) et Laurent (2608)
+          const codesCarnet = configData.codesLectureEntretien || ["2412", "0102", "2608"];
+          if (codesCarnet.includes(code)) {
+            carnetBox.style.display = "flex";
+          } else {
+            carnetBox.style.display = "none";
+            document.getElementById("carnet-panel").style.display = "none";
+          }
+
+          // Saisie d'un nouvel entretien réservée à Charlotte (2412)
           const adminCode = configData.codeAdmin || "2412";
           if (code === adminCode) {
             optEntretien.style.display = "block";
@@ -1032,6 +1077,7 @@
         unlocked.style.display = "none";
         optEntretien.style.display = "none";
         groupTypeCarb.style.display = "none";
+        carnetBox.style.display = "none";
       }
     }
 
@@ -1056,23 +1102,29 @@
       const action = document.getElementById("select-action").value;
       const labelCompteur = document.getElementById("label-compteur");
       const labelObs = document.getElementById("label-obs");
+      const inputObs = document.getElementById("input-obs");
       const costBox = document.getElementById("cost-box");
       const btnSubmit = document.getElementById("btn-submit-form");
       const groupEntretien = document.getElementById("group-entretien");
+      const groupEntretienSuite = document.getElementById("group-entretien-suite");
       const groupUtilisation = document.getElementById("group-utilisation");
 
       if (action === "Entretien") {
         groupEntretien.style.display = "flex";
+        groupEntretienSuite.style.display = "flex";
         groupUtilisation.style.display = "none";
         costBox.style.display = "none";
         labelCompteur.innerText = "Compteur au moment de l'entretien (heures)";
-        labelObs.innerText = "Détails de l'intervention / Pièces remplacées";
+        labelObs.innerText = "Détail des travaux effectués";
+        inputObs.placeholder = "Ex : Vidange moteur, remplacement filtres huile et gasoil...";
         btnSubmit.innerText = "Enregistrer l'entretien";
       } else if (action === "Début d'utilisation") {
         groupEntretien.style.display = "none";
+        groupEntretienSuite.style.display = "none";
         groupUtilisation.style.display = "flex";
         labelCompteur.innerText = "Compteur au début (heures)";
         labelObs.innerText = "Observations et remarques (facultatif)";
+        inputObs.placeholder = "RAS, niveau, anomalie...";
         costBox.style.display = "none";
         btnSubmit.innerText = "Valider le début d'utilisation";
         if (currentAdherentConnecte && configData.listeAdherents.includes(currentAdherentConnecte)) {
@@ -1080,9 +1132,11 @@
         }
       } else {
         groupEntretien.style.display = "none";
+        groupEntretienSuite.style.display = "none";
         groupUtilisation.style.display = "flex";
         labelCompteur.innerText = "Compteur de fin (heures)";
         labelObs.innerText = "Observations et remarques (facultatif)";
+        inputObs.placeholder = "RAS, niveau, anomalie...";
         btnSubmit.innerText = "Valider la fin d'utilisation";
         if (currentEngin && currentEngin.statut === "En cours" && currentEngin.utilisateur) {
           document.getElementById("select-adherent").value = currentEngin.utilisateur;
@@ -1202,11 +1256,20 @@
         const optionChoisie = document.getElementById("select-option").value;
         const compteur = parseFloat(document.getElementById("input-compteur").value);
         const observations = document.getElementById("input-obs").value.trim();
+        const dateIntervention = document.getElementById("input-date-intervention").value;
         const typeEntretien = document.getElementById("select-type-entretien").value;
+        const prochainEntretien = document.getElementById("input-prochain-entretien").value.trim();
+        const travauxAPrevoir = document.getElementById("input-travaux-prevoir").value.trim();
         const coutEntretien = document.getElementById("input-cout-entretien").value.trim();
+        const numFacture = document.getElementById("input-num-facture").value.trim();
+        const lienFacture = document.getElementById("input-lien-facture").value.trim();
 
         if (isNaN(compteur) || compteur <= 0) {
           alert("Veuillez saisir une valeur de compteur valide.");
+          return;
+        }
+        if (action === "Entretien" && !dateIntervention) {
+          alert("Veuillez sélectionner la date de l'intervention.");
           return;
         }
         if (action === "Fin d'utilisation" && currentEngin.compteurDebut > 0 && compteur < currentEngin.compteurDebut) {
@@ -1222,17 +1285,29 @@
           materielAssocie: optionChoisie,
           compteur: compteur,
           observations: observations,
+          dateIntervention: dateIntervention,
           typeEntretien: typeEntretien,
-          coutEntretien: coutEntretien
+          prochainEntretien: prochainEntretien,
+          travauxAPrevoir: travauxAPrevoir,
+          coutEntretien: coutEntretien,
+          numFacture: numFacture,
+          lienFacture: lienFacture
         };
 
         if (action === "Entretien") {
+          const pInt = dateIntervention.split("-");
+          const dateIntFr = pInt.length === 3 ? `${pInt[2]}/${pInt[1]}/${pInt[0]}` : dateIntervention;
+
           recapHtml = `
             <strong>Matériel :</strong> ${currentEngin.nom}<br>
+            <strong>Date d'intervention :</strong> ${dateIntFr}<br>
             <strong>Intervention :</strong> ${typeEntretien}<br>
             <strong>Compteur relevé :</strong> ${compteur.toFixed(1).replace('.', ',')} h<br>
-            ${coutEntretien ? `<strong>Coût / Fournisseur :</strong> ${coutEntretien}<br>` : ""}
-            ${observations ? `<strong>Détails :</strong> ${observations}` : ""}
+            ${observations ? `<strong>Travaux effectués :</strong> ${observations}<br>` : ""}
+            ${prochainEntretien ? `<strong>Prochain entretien :</strong> ${prochainEntretien}<br>` : ""}
+            ${travauxAPrevoir ? `<strong>Travaux à prévoir :</strong> ${travauxAPrevoir}<br>` : ""}
+            ${coutEntretien ? `<strong>Fournisseur :</strong> ${coutEntretien}<br>` : ""}
+            ${numFacture ? `<strong>Facture :</strong> ${numFacture}` : ""}
           `;
         } else {
           recapHtml = `
@@ -1292,7 +1367,6 @@
       }
     }
 
-    // Ouverture automatique si paramètre ?engin=... dans l'URL
     window.addEventListener("DOMContentLoaded", () => {
       chargerInfoBandeau();
       const params = new URLSearchParams(window.location.search);
@@ -1302,7 +1376,6 @@
       }
     });
 
-    // PWA & Installation
     let deferredPrompt;
     const installBanner = document.getElementById('install-banner');
 
@@ -1328,7 +1401,6 @@
       installBanner.style.display = 'none';
     });
 
-    // Scanner Caméra
     let html5QrCode;
 
     function ouvrirCamera() {
