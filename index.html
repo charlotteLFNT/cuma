@@ -591,7 +591,10 @@
             <h2>🔐 Espace Gestion CUMA</h2>
             <button class="btn-close" onclick="basculerAccesGestion()">✕</button>
           </div>
-          <div class="field-group" style="margin-bottom: 10px;">
+          <div id="gestion-loading" style="font-size:13px;color:#64748b;text-align:center;padding:8px;display:none;">
+            Chargement de la configuration...
+          </div>
+          <div class="field-group" id="gestion-code-group" style="margin-bottom: 10px;">
             <label for="input-code-gestion" style="font-size: 13px;">Code gestionnaire (4 chiffres)</label>
             <input type="password" inputmode="numeric" pattern="[0-9]*" id="input-code-gestion" class="code-input" maxlength="4" placeholder="••••" oninput="verifierCodeGestion()">
             <div class="greeting-box" id="greeting-gestion"></div>
@@ -617,7 +620,7 @@
       <div class="form-body">
         <div class="field-group">
           <label for="select-factu-categorie">Type de relevé</label>
-          <select id="select-factu-categorie">
+          <select id="select-factu-categorie" onchange="remplirListeAdherentsFactu()">
             <option value="Engin">🚜 Utilisation du matériel (Tracteurs / Mini-Pelle)</option>
             <option value="Carburant">⛽ Carburant (GNR)</option>
           </select>
@@ -963,7 +966,7 @@
       }
     }
 
-    // --- PANNEAU ACCÈS GESTION ---
+    // --- PANNEAU ACCÈS GESTION (avec attente de chargement pour éviter le faux rejet au 1er essai) ---
     async function basculerAccesGestion() {
       const card = document.getElementById("gestion-card");
       if (card.style.display === "block") {
@@ -972,19 +975,29 @@
       }
 
       card.style.display = "block";
-      document.getElementById("input-code-gestion").value = "";
+      const inputCode = document.getElementById("input-code-gestion");
+      const loadingDiv = document.getElementById("gestion-loading");
+      const codeGroup = document.getElementById("gestion-code-group");
+
+      inputCode.value = "";
       document.getElementById("greeting-gestion").style.display = "none";
       document.getElementById("gestion-engins-list").style.display = "none";
-      document.getElementById("gestion-engins-list").innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;'>Chargement...</div>";
 
       if (!configData) {
+        loadingDiv.style.display = "block";
+        codeGroup.style.display = "none";
         try {
           const res = await fetch(URL_API_CUMA + "?t=" + new Date().getTime());
           configData = await res.json();
         } catch (e) {
-          document.getElementById("gestion-engins-list").innerHTML = "<div style='font-size:13px;color:#ef4444;'>Erreur de connexion.</div>";
+          loadingDiv.innerText = "❌ Erreur de connexion. Fermez et réessayez.";
+          return;
         }
+        loadingDiv.style.display = "none";
+        codeGroup.style.display = "flex";
       }
+
+      inputCode.focus();
     }
 
     function verifierCodeGestion() {
@@ -992,15 +1005,15 @@
       const box = document.getElementById("greeting-gestion");
       const listDiv = document.getElementById("gestion-engins-list");
 
-      if (code.length < 4) {
+      if (code.length < 4 || !configData) {
         box.style.display = "none";
         listDiv.style.display = "none";
         return;
       }
 
-      const codesAutorises = (configData && configData.codesLectureEntretien) ? configData.codesLectureEntretien : ["2412", "0102", "2608"];
+      const codesAutorises = configData.codesLectureEntretien || ["2412", "0102", "2608"];
 
-      if (configData && configData.adherents[code] && codesAutorises.includes(code)) {
+      if (configData.adherents[code] && codesAutorises.includes(code)) {
         const nomAffiche = (code === "0102") ? "Jean-Paul" : configData.adherents[code];
         box.className = "greeting-box greeting-ok";
         box.innerText = "✅ Bonjour " + nomAffiche;
@@ -1042,6 +1055,29 @@
     }
 
     // --- VUE RELEVÉ FACTURATION (MATÉRIEL OU CARBURANT SÉPARÉMENT) ---
+    function remplirListeAdherentsFactu() {
+      const selectAdh = document.getElementById("select-factu-adherent");
+      selectAdh.innerHTML = `<option value="TOUS">👥 Tous les adhérents</option>`;
+
+      const ensembleNoms = new Set();
+      if (configData && configData.listeAdherents) {
+        configData.listeAdherents.forEach(n => ensembleNoms.add(n));
+      }
+      if (configData && configData.historiqueUtilisations) {
+        configData.historiqueUtilisations.forEach(u => { if (u.adherent) ensembleNoms.add(u.adherent); });
+      }
+      if (configData && configData.historiqueCarburant) {
+        configData.historiqueCarburant.forEach(c => { if (c.adherent) ensembleNoms.add(c.adherent); });
+      }
+
+      Array.from(ensembleNoms).sort((a, b) => a.localeCompare(b)).forEach(nom => {
+        const opt = document.createElement("option");
+        opt.value = nom;
+        opt.innerText = nom;
+        selectAdh.appendChild(opt);
+      });
+    }
+
     async function ouvrirVueFacturation() {
       document.getElementById("home-view").style.display = "none";
       document.getElementById("form-view").style.display = "none";
@@ -1053,16 +1089,7 @@
         configData = await res.json();
       } catch (e) {}
 
-      const selectAdh = document.getElementById("select-factu-adherent");
-      selectAdh.innerHTML = `<option value="TOUS">👥 Tous les adhérents</option>`;
-      if (configData && configData.listeAdherents) {
-        configData.listeAdherents.forEach(nom => {
-          const opt = document.createElement("option");
-          opt.value = nom;
-          opt.innerText = nom;
-          selectAdh.appendChild(opt);
-        });
-      }
+      remplirListeAdherentsFactu();
 
       const now = new Date();
       const premierDuMois = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
@@ -1082,7 +1109,7 @@
     }
 
     function genererReleveFacturation() {
-      const categorie = document.getElementById("select-factu-categorie").value; // "Engin" ou "Carburant"
+      const categorie = document.getElementById("select-factu-categorie").value;
       const filtreAdh = document.getElementById("select-factu-adherent").value;
       const dateDeb = document.getElementById("input-factu-debut").value;
       const dateFin = document.getElementById("input-factu-fin").value;
@@ -1179,7 +1206,6 @@
           </div>
         `;
       } else {
-        // Mode Carburant uniquement
         const carbs = (configData && configData.historiqueCarburant) ? configData.historiqueCarburant : [];
         const carbsFiltres = carbs.filter(c =>
           c.dateIso >= dateDeb && c.dateIso <= dateFin &&
@@ -1860,8 +1886,14 @@
       }
     }
 
+    // Préchargement silencieux dès l'ouverture de l'application
     window.addEventListener("DOMContentLoaded", () => {
       chargerInfoBandeau();
+      fetch(URL_API_CUMA + "?t=" + new Date().getTime())
+        .then(r => r.json())
+        .then(data => { configData = data; })
+        .catch(() => {});
+
       const params = new URLSearchParams(window.location.search);
       const enginParam = params.get("engin");
       if (enginParam) {
