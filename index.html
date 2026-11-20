@@ -161,9 +161,15 @@
       text-align: left;
     }
     .btn-action:active { background: #f8fafc; }
+    .btn-gestion {
+      background: #f8fafc;
+      border: 1.5px dashed #94a3b8;
+      color: #334155;
+      margin-top: 6px;
+    }
     .btn-icon { font-size: 24px; line-height: 1; }
 
-    /* PANNEAU D'ÉTAT DU PARC */
+    /* PANNEAUX DÉROULANTS ACCUEIL (PARC & ACCÈS GESTION) */
     .parc-card {
       display: none;
       background: white;
@@ -208,6 +214,24 @@
     }
     .badge-disponible { background: #dcfce7; color: #15803d; }
     .badge-en-cours { background: #fee2e2; color: #b91c1c; }
+
+    /* Boutons engins dans le panneau Gestion */
+    .btn-gestion-engin {
+      width: 100%;
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      border-radius: 12px;
+      padding: 13px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #166534;
+      cursor: pointer;
+      text-align: left;
+    }
+    .btn-gestion-engin:active { background: #dcfce7; }
 
     /* MINI-FORMULAIRE INTÉGRÉ */
     .form-card {
@@ -301,7 +325,7 @@
     }
     .btn-submit:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
 
-    /* CARNET D'ENTRETIEN INTÉGRÉ (ACCÈS RESTREINT 2412 / 0102 / 2608) */
+    /* CARNET D'ENTRETIEN INTÉGRÉ */
     .btn-carnet {
       width: 100%;
       background: #f0fdf4;
@@ -464,6 +488,26 @@
           <span class="btn-icon">🚜</span>
           <span>Suivi Mini-Pelle</span>
         </button>
+
+        <!-- BOUTON ACCÈS GESTION (réservé aux responsables) -->
+        <button class="btn-action btn-gestion" onclick="basculerAccesGestion()">
+          <span class="btn-icon">🔐</span>
+          <span>Accès Gestion</span>
+        </button>
+
+        <!-- PANNEAU ACCÈS GESTION -->
+        <div class="parc-card" id="gestion-card">
+          <div class="parc-card-header">
+            <h2>🔐 Espace Gestion Matériels</h2>
+            <button class="btn-close" onclick="basculerAccesGestion()">✕</button>
+          </div>
+          <div class="field-group" style="margin-bottom: 10px;">
+            <label for="input-code-gestion" style="font-size: 13px;">Code gestionnaire (4 chiffres)</label>
+            <input type="password" inputmode="numeric" pattern="[0-9]*" id="input-code-gestion" class="code-input" maxlength="4" placeholder="••••" oninput="verifierCodeGestion()">
+            <div class="greeting-box" id="greeting-gestion"></div>
+          </div>
+          <div id="gestion-engins-list" style="display: none; flex-direction: column; gap: 10px;"></div>
+        </div>
       </div>
     </div>
 
@@ -487,7 +531,7 @@
       <div class="form-body" id="form-content" style="display: none;">
         <div class="status-pill dispo" id="engin-status-pill"></div>
 
-        <!-- 1. Code adhérent -->
+        <!-- 1. Code adhérent (masqué par des points) -->
         <div class="field-group">
           <label for="input-code">Votre code d'accès adhérent (4 chiffres)</label>
           <input type="password" inputmode="numeric" pattern="[0-9]*" id="input-code" class="code-input" maxlength="4" placeholder="••••" oninput="verifierCodeAdherent()">
@@ -497,10 +541,10 @@
         <!-- Suite du formulaire débloquée dès que le code est valide -->
         <div id="form-fields-unlocked" style="display: none; flex-direction: column; gap: 16px;">
           
-          <!-- ================= BLOC ENGINS (Mini-Pelle, Tracteurs) ================= -->
+          <!-- ================= BLOC ENGINS ================= -->
           <div id="mode-engin" style="display: none; flex-direction: column; gap: 16px;">
             
-            <!-- BOUTON + PANNEAU CARNET D'ENTRETIEN (visible uniquement pour 2412, 0102 et 2608) -->
+            <!-- BOUTON + PANNEAU CARNET D'ENTRETIEN -->
             <div id="carnet-access-box" style="display: none; flex-direction: column; gap: 10px;">
               <button type="button" class="btn-carnet" onclick="basculerCarnetEntretien()">
                 <span>📖 Consulter le carnet d'entretien (<span id="carnet-count">0</span>)</span>
@@ -518,7 +562,7 @@
               </select>
             </div>
 
-            <!-- CHAMPS SPÉCIFIQUES ENTRETIEN (uniquement visibles si action = Entretien avec code 2412) -->
+            <!-- CHAMPS SPÉCIFIQUES ENTRETIEN -->
             <div id="group-entretien" style="display: none; flex-direction: column; gap: 16px;">
               <div class="field-group">
                 <label for="input-date-intervention">Date de l'intervention</label>
@@ -579,7 +623,7 @@
               <textarea id="input-obs" rows="3" placeholder="RAS, niveau, anomalie..."></textarea>
             </div>
 
-            <!-- CHAMPS COMPLÉMENTAIRES ENTRETIEN (uniquement visibles si action = Entretien) -->
+            <!-- CHAMPS COMPLÉMENTAIRES ENTRETIEN -->
             <div id="group-entretien-suite" style="display: none; flex-direction: column; gap: 16px;">
               <div class="field-group">
                 <label for="input-prochain-entretien">Prochain entretien prévu (facultatif)</label>
@@ -591,7 +635,7 @@
               </div>
               <div class="field-group">
                 <label for="input-cout-entretien">Fournisseur (facultatif)</label>
-<input type="text" id="input-cout-entretien" placeholder="Ex : Garage MATEO">
+                <input type="text" id="input-cout-entretien" placeholder="Ex : Garage MATEO">
               </div>
               <div class="field-group">
                 <label for="input-num-facture">N° de facture (facultatif)</label>
@@ -782,6 +826,78 @@
       }
     }
 
+    // --- PANNEAU ACCÈS GESTION (CHARLOTTE 2412 / JEAN-PAUL 0102 / LAURENT 2608) ---
+    async function basculerAccesGestion() {
+      const card = document.getElementById("gestion-card");
+      if (card.style.display === "block") {
+        card.style.display = "none";
+        return;
+      }
+
+      card.style.display = "block";
+      document.getElementById("input-code-gestion").value = "";
+      document.getElementById("greeting-gestion").style.display = "none";
+      document.getElementById("gestion-engins-list").style.display = "none";
+      document.getElementById("gestion-engins-list").innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;'>Chargement des matériels...</div>";
+
+      if (!configData) {
+        try {
+          const res = await fetch(URL_API_CUMA + "?t=" + new Date().getTime());
+          configData = await res.json();
+        } catch (e) {
+          document.getElementById("gestion-engins-list").innerHTML = "<div style='font-size:13px;color:#ef4444;'>Erreur de connexion.</div>";
+        }
+      }
+    }
+
+    function verifierCodeGestion() {
+      const code = document.getElementById("input-code-gestion").value.trim();
+      const box = document.getElementById("greeting-gestion");
+      const listDiv = document.getElementById("gestion-engins-list");
+
+      if (code.length < 4) {
+        box.style.display = "none";
+        listDiv.style.display = "none";
+        return;
+      }
+
+      const codesAutorises = (configData && configData.codesLectureEntretien) ? configData.codesLectureEntretien : ["2412", "0102", "2608"];
+
+      if (configData && configData.adherents[code] && codesAutorises.includes(code)) {
+        const nomAffiche = (code === "0102") ? "Jean-Paul" : configData.adherents[code];
+        box.className = "greeting-box greeting-ok";
+        box.innerText = "✅ Bonjour " + nomAffiche;
+        box.style.display = "block";
+
+        let html = "";
+        configData.materiels.forEach(m => {
+          const iconeStatut = m.statut === "En cours" ? "🔴" : "🟢";
+          html += `
+            <button type="button" class="btn-gestion-engin" onclick="ouvrirEnginDepuisGestion('${m.nom.replace(/'/g, "\\'")}', '${code}')">
+              <span>🚜 ${m.nom}</span>
+              <span style="font-size:12px;font-weight:600;">${iconeStatut} ${m.statut} →</span>
+            </button>
+          `;
+        });
+
+        listDiv.innerHTML = html || "<div style='font-size:13px;color:#64748b;'>Aucun matériel configuré.</div>";
+        listDiv.style.display = "flex";
+      } else {
+        box.className = "greeting-box greeting-err";
+        box.innerText = "❌ Accès réservé aux gestionnaires";
+        box.style.display = "block";
+        listDiv.style.display = "none";
+      }
+    }
+
+    async function ouvrirEnginDepuisGestion(nomEngin, codeSaisi) {
+      await ouvrirFormulaireEngin(nomEngin);
+      if (codeSaisi) {
+        document.getElementById("input-code").value = codeSaisi;
+        verifierCodeAdherent();
+      }
+    }
+
     // --- CARNET D'ENTRETIEN INTÉGRÉ ---
     function construireCarnetEntretien(entretiens) {
       const panel = document.getElementById("carnet-panel");
@@ -811,7 +927,7 @@
             ${item.aPrevoir ? `<div class="carnet-tag prevoir">⚠️ <strong>Travaux à prévoir :</strong> ${item.aPrevoir}</div>` : ""}
             ${(item.cout || boutonFacture) ? `
               <div class="carnet-footer">
-               <span>${item.cout ? `Fournisseur : <strong>${item.cout}</strong>` : ""}</span>
+                <span>${item.cout ? `Fournisseur : <strong>${item.cout}</strong>` : ""}</span>
                 ${boutonFacture}
               </div>
             ` : ""}
@@ -1044,7 +1160,6 @@
             document.getElementById("select-carb-adherent").value = currentAdherentConnecte;
           }
         } else {
-          // Accès au carnet d'entretien (lecture) pour Charlotte (2412), Jean-Paul (0102) et Laurent (2608)
           const codesCarnet = configData.codesLectureEntretien || ["2412", "0102", "2608"];
           if (codesCarnet.includes(code)) {
             carnetBox.style.display = "flex";
@@ -1053,7 +1168,6 @@
             document.getElementById("carnet-panel").style.display = "none";
           }
 
-          // Saisie d'un nouvel entretien réservée à Charlotte (2412)
           const adminCode = configData.codeAdmin || "2412";
           if (code === adminCode) {
             optEntretien.style.display = "block";
@@ -1359,6 +1473,7 @@
     function retourAccueil() {
       document.getElementById("form-view").style.display = "none";
       document.getElementById("home-view").style.display = "block";
+      document.getElementById("gestion-card").style.display = "none";
       if (window.history.replaceState) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
