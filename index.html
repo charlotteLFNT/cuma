@@ -490,7 +490,7 @@
         <!-- 1. Code adhérent -->
         <div class="field-group">
           <label for="input-code">Votre code d'accès adhérent (4 chiffres)</label>
-          <input type="tel" id="input-code" class="code-input" maxlength="4" placeholder="••••" oninput="verifierCodeAdherent()">
+          <input type="password" inputmode="numeric" pattern="[0-9]*" id="input-code" class="code-input" maxlength="4" placeholder="••••" oninput="verifierCodeAdherent()">
           <div class="greeting-box" id="greeting-box"></div>
         </div>
 
