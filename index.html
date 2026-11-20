@@ -310,6 +310,7 @@
     .greeting-box { display: none; padding: 10px 14px; border-radius: 10px; font-size: 15px; font-weight: 700; text-align: center; }
     .greeting-ok { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
     .greeting-err { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+    .greeting-wait { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
     .cost-box {
       display: none;
       background: #eff6ff;
@@ -585,14 +586,11 @@
           <span>Accès Gestion</span>
         </button>
 
-        <!-- PANNEAU ACCÈS GESTION -->
+        <!-- PANNEAU ACCÈS GESTION (ouverture instantanée) -->
         <div class="parc-card" id="gestion-card">
           <div class="parc-card-header">
             <h2>🔐 Espace Gestion CUMA</h2>
             <button class="btn-close" onclick="basculerAccesGestion()">✕</button>
-          </div>
-          <div id="gestion-loading" style="font-size:13px;color:#64748b;text-align:center;padding:8px;display:none;">
-            Chargement de la configuration...
           </div>
           <div class="field-group" id="gestion-code-group" style="margin-bottom: 10px;">
             <label for="input-code-gestion" style="font-size: 13px;">Code gestionnaire (4 chiffres)</label>
@@ -854,12 +852,44 @@
     const URL_BANDEAU_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDtdxYbPsicXyb_nmtULSSztJyP92ByPNiSopCIcxmepD60NZMn63ruQfVyUQpCgiFPNDRajWqrMvI/pub?output=csv";
     const URL_STATUT_PARC_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpzFznU5JVeUmjl-7KE2dFempJaADAqVIvDOupZtPZZIWidZEW1Zz7DvVuCDD6OSiSsS3eX0PRpk2k/pub?output=csv";
     const URL_API_CUMA = "https://script.google.com/macros/s/AKfycbww4duGXidOOYCY2_7UcC4EvwOPY5sPKzysyOq5kDpbo_ksSIWkTuziRL9YGUN57oNh/exec";
+    const LOCAL_CACHE_KEY = "CUMA_CONFIG_CACHE_V1";
 
     let configData = null;
+    let chargementEnCours = null;
     let currentEngin = null;
     let isModeCarburant = false;
     let currentAdherentConnecte = "";
     let texteExportFacturation = "";
+
+    // Restaure immédiatement les dernières données connues pour une ouverture instantanée
+    try {
+      const saved = localStorage.getItem(LOCAL_CACHE_KEY);
+      if (saved) configData = JSON.parse(saved);
+    } catch (e) {}
+
+    function rafraichirConfigEnArrierePlan() {
+      if (chargementEnCours) return chargementEnCours;
+      chargementEnCours = fetch(URL_API_CUMA + "?t=" + new Date().getTime())
+        .then(r => r.json())
+        .then(data => {
+          configData = data;
+          try { localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(data)); } catch (e) {}
+          // Si un code était déjà saisi pendant la synchronisation, on débloque aussitôt
+          const inputGest = document.getElementById("input-code-gestion");
+          if (inputGest && inputGest.value.trim().length === 4) {
+            verifierCodeGestion();
+          }
+          const inputAdh = document.getElementById("input-code");
+          if (inputAdh && inputAdh.value.trim().length === 4) {
+            verifierCodeAdherent();
+          }
+          return data;
+        })
+        .finally(() => {
+          chargementEnCours = null;
+        });
+      return chargementEnCours;
+    }
 
     async function chargerInfoBandeau() {
       try {
@@ -888,11 +918,10 @@
 
       try {
         const [repApi, repCsv] = await Promise.all([
-          fetch(URL_API_CUMA + "?t=" + new Date().getTime()).then(r => r.json()),
+          rafraichirConfigEnArrierePlan(),
           fetch(URL_STATUT_PARC_CSV + "&t=" + new Date().getTime()).then(r => r.text()).catch(() => "")
         ]);
 
-        configData = repApi;
         const materielsMap = new Map();
 
         if (repCsv) {
@@ -966,8 +995,8 @@
       }
     }
 
-    // --- PANNEAU ACCÈS GESTION (avec attente de chargement pour éviter le faux rejet au 1er essai) ---
-    async function basculerAccesGestion() {
+    // --- PANNEAU ACCÈS GESTION (ouverture immédiate en 0 seconde) ---
+    function basculerAccesGestion() {
       const card = document.getElementById("gestion-card");
       if (card.style.display === "block") {
         card.style.display = "none";
@@ -976,28 +1005,13 @@
 
       card.style.display = "block";
       const inputCode = document.getElementById("input-code-gestion");
-      const loadingDiv = document.getElementById("gestion-loading");
-      const codeGroup = document.getElementById("gestion-code-group");
-
       inputCode.value = "";
       document.getElementById("greeting-gestion").style.display = "none";
       document.getElementById("gestion-engins-list").style.display = "none";
-
-      if (!configData) {
-        loadingDiv.style.display = "block";
-        codeGroup.style.display = "none";
-        try {
-          const res = await fetch(URL_API_CUMA + "?t=" + new Date().getTime());
-          configData = await res.json();
-        } catch (e) {
-          loadingDiv.innerText = "❌ Erreur de connexion. Fermez et réessayez.";
-          return;
-        }
-        loadingDiv.style.display = "none";
-        codeGroup.style.display = "flex";
-      }
-
       inputCode.focus();
+
+      // Synchronisation silencieuse en arrière-plan
+      rafraichirConfigEnArrierePlan().catch(() => {});
     }
 
     function verifierCodeGestion() {
@@ -1005,9 +1019,20 @@
       const box = document.getElementById("greeting-gestion");
       const listDiv = document.getElementById("gestion-engins-list");
 
-      if (code.length < 4 || !configData) {
+      if (code.length < 4) {
         box.style.display = "none";
         listDiv.style.display = "none";
+        return;
+      }
+
+      if (!configData) {
+        box.className = "greeting-box greeting-wait";
+        box.innerText = "⏳ Vérification du code en cours...";
+        box.style.display = "block";
+        rafraichirConfigEnArrierePlan().catch(() => {
+          box.className = "greeting-box greeting-err";
+          box.innerText = "❌ Erreur de connexion. Réessayez.";
+        });
         return;
       }
 
@@ -1084,13 +1109,6 @@
       document.getElementById("factu-view").style.display = "block";
       document.getElementById("factu-results").style.display = "none";
 
-      try {
-        const res = await fetch(URL_API_CUMA + "?t=" + new Date().getTime());
-        configData = await res.json();
-      } catch (e) {}
-
-      remplirListeAdherentsFactu();
-
       const now = new Date();
       const premierDuMois = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
       const aujourdhui = now.toISOString().split("T")[0];
@@ -1100,6 +1118,15 @@
       if (!document.getElementById("input-factu-fin").value) {
         document.getElementById("input-factu-fin").value = aujourdhui;
       }
+
+      if (configData) {
+        remplirListeAdherentsFactu();
+      }
+
+      try {
+        await rafraichirConfigEnArrierePlan();
+        remplirListeAdherentsFactu();
+      } catch (e) {}
     }
 
     function formaterDateFr(iso) {
@@ -1382,8 +1409,7 @@
       document.getElementById("input-liv-date").value = aujourdhui;
 
       try {
-        const res = await fetch(URL_API_CUMA + "?t=" + new Date().getTime());
-        configData = await res.json();
+        await rafraichirConfigEnArrierePlan();
 
         const pill = document.getElementById("engin-status-pill");
         pill.className = "status-pill info";
@@ -1454,8 +1480,7 @@
       document.getElementById("opt-entretien").style.display = "none";
 
       try {
-        const res = await fetch(URL_API_CUMA + "?t=" + new Date().getTime());
-        configData = await res.json();
+        await rafraichirConfigEnArrierePlan();
 
         currentEngin = configData.materiels.find(m => m.nom.toLowerCase() === nomEngin.toLowerCase());
         if (!currentEngin) {
@@ -1859,9 +1884,11 @@
         const result = await res.json();
 
         if (result.status === "ok") {
+          try { localStorage.removeItem(LOCAL_CACHE_KEY); } catch (e) {}
           document.getElementById("success-recap-text").innerHTML = recapHtml;
           document.getElementById("form-content").style.display = "none";
           document.getElementById("form-success").style.display = "block";
+          rafraichirConfigEnArrierePlan().catch(() => {});
         } else {
           alert("Erreur lors de l'enregistrement : " + (result.message || "Erreur inconnue"));
         }
@@ -1889,10 +1916,7 @@
     // Préchargement silencieux dès l'ouverture de l'application
     window.addEventListener("DOMContentLoaded", () => {
       chargerInfoBandeau();
-      fetch(URL_API_CUMA + "?t=" + new Date().getTime())
-        .then(r => r.json())
-        .then(data => { configData = data; })
-        .catch(() => {});
+      rafraichirConfigEnArrierePlan().catch(() => {});
 
       const params = new URLSearchParams(window.location.search);
       const enginParam = params.get("engin");
