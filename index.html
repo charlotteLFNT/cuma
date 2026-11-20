@@ -874,7 +874,6 @@
         .then(data => {
           configData = data;
           try { localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(data)); } catch (e) {}
-          // Si un code était déjà saisi pendant la synchronisation, on débloque aussitôt
           const inputGest = document.getElementById("input-code-gestion");
           if (inputGest && inputGest.value.trim().length === 4) {
             verifierCodeGestion();
@@ -1010,7 +1009,6 @@
       document.getElementById("gestion-engins-list").style.display = "none";
       inputCode.focus();
 
-      // Synchronisation silencieuse en arrière-plan
       rafraichirConfigEnArrierePlan().catch(() => {});
     }
 
@@ -1768,9 +1766,23 @@
 
           if (isNaN(qteCarb) || qteCarb <= 0) { alert("Veuillez saisir une quantité de carburant valide."); return; }
           if (isNaN(indexCarb) || indexCarb <= 0) { alert("Veuillez saisir un numéro d'index valide."); return; }
-          if (configData.dernierIndexCuve > 0 && indexCarb < configData.dernierIndexCuve) {
-            if (!confirm("Attention : l'index saisi (" + indexCarb + ") est inférieur au dernier index enregistré (" + configData.dernierIndexCuve + "). Voulez-vous continuer quand même ?")) {
-              return;
+
+          if (configData.dernierIndexCuve > 0) {
+            const consoCompteur = indexCarb - configData.dernierIndexCuve;
+            const ecartLitres = Math.round((consoCompteur - qteCarb) * 100) / 100;
+            const indexAttendu = Math.round((configData.dernierIndexCuve + qteCarb) * 100) / 100;
+
+            if (Math.abs(ecartLitres) > 1) {
+              const msgAlerte =
+                "⚠️ Incohérence détectée sur l'index pompe :\n\n" +
+                "• Dernier index enregistré : " + configData.dernierIndexCuve + "\n" +
+                "• Quantité saisie : " + qteCarb + " L\n" +
+                "• Index attendu : " + indexAttendu + " (± 1 L)\n" +
+                "• Index que vous avez saisi : " + indexCarb + " (écart de " + (ecartLitres > 0 ? "+" : "") + ecartLitres + " L)\n\n" +
+                "Cliquez sur ANNULER pour corriger votre saisie, ou sur OK pour valider quand même (une alerte sera envoyée).";
+              if (!confirm(msgAlerte)) {
+                return;
+              }
             }
           }
 
