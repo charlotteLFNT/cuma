@@ -215,7 +215,7 @@
     .badge-disponible { background: #dcfce7; color: #15803d; }
     .badge-en-cours { background: #fee2e2; color: #b91c1c; }
 
-    /* Boutons engins dans le panneau Gestion */
+    /* Boutons engins & facturation dans le panneau Gestion */
     .btn-gestion-engin {
       width: 100%;
       background: #f0fdf4;
@@ -232,8 +232,24 @@
       text-align: left;
     }
     .btn-gestion-engin:active { background: #dcfce7; }
+    .btn-gestion-factu {
+      width: 100%;
+      background: #eff6ff;
+      border: 1.5px solid #93c5fd;
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 800;
+      color: #1e40af;
+      cursor: pointer;
+      text-align: left;
+    }
+    .btn-gestion-factu:active { background: #dbeafe; }
 
-    /* MINI-FORMULAIRE INTÉGRÉ */
+    /* MINI-FORMULAIRE INTÉGRÉ & VUE RELEVÉ FACTURATION */
     .form-card {
       display: none;
       background: white;
@@ -250,6 +266,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+    .form-banner.blue-banner {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
     }
     .form-banner-title { display: flex; align-items: center; gap: 12px; }
     .form-banner-title img { width: 40px; height: 40px; background: white; border-radius: 10px; padding: 4px; }
@@ -323,7 +342,78 @@
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25);
     }
+    .btn-submit.blue-btn {
+      background: #1d4ed8;
+      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25);
+    }
     .btn-submit:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
+
+    /* FICHES RELEVÉ FACTURATION */
+    .factu-adh-card {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 5px solid #1d4ed8;
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .factu-adh-title {
+      font-weight: 800;
+      font-size: 16px;
+      color: #1e3a8a;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 6px;
+    }
+    .factu-line {
+      font-size: 13px;
+      color: #334155;
+      line-height: 1.45;
+      padding: 6px 8px;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    .factu-subtotal {
+      margin-top: 4px;
+      padding-top: 6px;
+      border-top: 1px dashed #94a3b8;
+      font-size: 14px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      justify-content: space-between;
+    }
+    .export-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .btn-copy {
+      width: 100%;
+      background: #0f172a;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-mail {
+      width: 100%;
+      background: #15803d;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      display: block;
+    }
 
     /* CARNET D'ENTRETIEN INTÉGRÉ */
     .btn-carnet {
@@ -498,7 +588,7 @@
         <!-- PANNEAU ACCÈS GESTION -->
         <div class="parc-card" id="gestion-card">
           <div class="parc-card-header">
-            <h2>🔐 Espace Gestion Matériels</h2>
+            <h2>🔐 Espace Gestion CUMA</h2>
             <button class="btn-close" onclick="basculerAccesGestion()">✕</button>
           </div>
           <div class="field-group" style="margin-bottom: 10px;">
@@ -508,6 +598,52 @@
           </div>
           <div id="gestion-engins-list" style="display: none; flex-direction: column; gap: 10px;"></div>
         </div>
+      </div>
+    </div>
+
+    <!-- VUE RELEVÉ DES UTILISATIONS / FACTURATION (ACCÈS GESTION) -->
+    <div class="form-card" id="factu-view">
+      <div class="form-banner blue-banner">
+        <div class="form-banner-title">
+          <img src="https://img.icons8.com/color/192/tractor.png" alt="Logo CUMA">
+          <div>
+            <h2>Relevé Facturation</h2>
+            <p>Export matériel ou carburant</p>
+          </div>
+        </div>
+        <button class="btn-back" onclick="retourAccueil()">← Retour</button>
+      </div>
+
+      <div class="form-body">
+        <div class="field-group">
+          <label for="select-factu-categorie">Type de relevé</label>
+          <select id="select-factu-categorie">
+            <option value="Engin">🚜 Utilisation du matériel (Tracteurs / Mini-Pelle)</option>
+            <option value="Carburant">⛽ Carburant (GNR)</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label for="select-factu-adherent">Adhérent à relever</label>
+          <select id="select-factu-adherent"></select>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <div class="field-group" style="flex: 1;">
+            <label for="input-factu-debut">Du</label>
+            <input type="date" id="input-factu-debut">
+          </div>
+          <div class="field-group" style="flex: 1;">
+            <label for="input-factu-fin">Au</label>
+            <input type="date" id="input-factu-fin">
+          </div>
+        </div>
+
+        <button type="button" class="btn-submit blue-btn" onclick="genererReleveFacturation()">
+          Afficher le récapitulatif
+        </button>
+
+        <div id="factu-results" style="display: none; flex-direction: column; gap: 14px;"></div>
       </div>
     </div>
 
@@ -720,6 +856,7 @@
     let currentEngin = null;
     let isModeCarburant = false;
     let currentAdherentConnecte = "";
+    let texteExportFacturation = "";
 
     async function chargerInfoBandeau() {
       try {
@@ -826,7 +963,7 @@
       }
     }
 
-    // --- PANNEAU ACCÈS GESTION (CHARLOTTE 2412 / JEAN-PAUL 0102 / LAURENT 2608) ---
+    // --- PANNEAU ACCÈS GESTION ---
     async function basculerAccesGestion() {
       const card = document.getElementById("gestion-card");
       if (card.style.display === "block") {
@@ -838,7 +975,7 @@
       document.getElementById("input-code-gestion").value = "";
       document.getElementById("greeting-gestion").style.display = "none";
       document.getElementById("gestion-engins-list").style.display = "none";
-      document.getElementById("gestion-engins-list").innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;'>Chargement des matériels...</div>";
+      document.getElementById("gestion-engins-list").innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;'>Chargement...</div>";
 
       if (!configData) {
         try {
@@ -869,7 +1006,13 @@
         box.innerText = "✅ Bonjour " + nomAffiche;
         box.style.display = "block";
 
-        let html = "";
+        let html = `
+          <button type="button" class="btn-gestion-factu" onclick="ouvrirVueFacturation()">
+            <span>📊 Relevé des utilisations (Facturation)</span>
+            <span>→</span>
+          </button>
+        `;
+
         configData.materiels.forEach(m => {
           const iconeStatut = m.statut === "En cours" ? "🔴" : "🟢";
           html += `
@@ -880,7 +1023,7 @@
           `;
         });
 
-        listDiv.innerHTML = html || "<div style='font-size:13px;color:#64748b;'>Aucun matériel configuré.</div>";
+        listDiv.innerHTML = html;
         listDiv.style.display = "flex";
       } else {
         box.className = "greeting-box greeting-err";
@@ -896,6 +1039,238 @@
         document.getElementById("input-code").value = codeSaisi;
         verifierCodeAdherent();
       }
+    }
+
+    // --- VUE RELEVÉ FACTURATION (MATÉRIEL OU CARBURANT SÉPARÉMENT) ---
+    async function ouvrirVueFacturation() {
+      document.getElementById("home-view").style.display = "none";
+      document.getElementById("form-view").style.display = "none";
+      document.getElementById("factu-view").style.display = "block";
+      document.getElementById("factu-results").style.display = "none";
+
+      try {
+        const res = await fetch(URL_API_CUMA + "?t=" + new Date().getTime());
+        configData = await res.json();
+      } catch (e) {}
+
+      const selectAdh = document.getElementById("select-factu-adherent");
+      selectAdh.innerHTML = `<option value="TOUS">👥 Tous les adhérents</option>`;
+      if (configData && configData.listeAdherents) {
+        configData.listeAdherents.forEach(nom => {
+          const opt = document.createElement("option");
+          opt.value = nom;
+          opt.innerText = nom;
+          selectAdh.appendChild(opt);
+        });
+      }
+
+      const now = new Date();
+      const premierDuMois = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
+      const aujourdhui = now.toISOString().split("T")[0];
+      if (!document.getElementById("input-factu-debut").value) {
+        document.getElementById("input-factu-debut").value = premierDuMois;
+      }
+      if (!document.getElementById("input-factu-fin").value) {
+        document.getElementById("input-factu-fin").value = aujourdhui;
+      }
+    }
+
+    function formaterDateFr(iso) {
+      if (!iso) return "";
+      const p = iso.split("-");
+      return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso;
+    }
+
+    function genererReleveFacturation() {
+      const categorie = document.getElementById("select-factu-categorie").value; // "Engin" ou "Carburant"
+      const filtreAdh = document.getElementById("select-factu-adherent").value;
+      const dateDeb = document.getElementById("input-factu-debut").value;
+      const dateFin = document.getElementById("input-factu-fin").value;
+      const container = document.getElementById("factu-results");
+
+      if (!dateDeb || !dateFin) {
+        alert("Veuillez sélectionner une date de début et une date de fin.");
+        return;
+      }
+      if (dateDeb > dateFin) {
+        alert("La date de début ne peut pas être après la date de fin.");
+        return;
+      }
+
+      const parAdherent = {};
+      let html = "";
+      let texteBrut = "";
+
+      if (categorie === "Engin") {
+        const utils = (configData && configData.historiqueUtilisations) ? configData.historiqueUtilisations : [];
+        const utilsFiltres = utils.filter(u =>
+          u.dateIso >= dateDeb && u.dateIso <= dateFin &&
+          (filtreAdh === "TOUS" || u.adherent === filtreAdh)
+        );
+
+        if (utilsFiltres.length === 0) {
+          container.innerHTML = `<div class="status-pill info" style="text-align:center;">Aucune utilisation de matériel trouvée du <strong>${formaterDateFr(dateDeb)}</strong> au <strong>${formaterDateFr(dateFin)}</strong>.</div>`;
+          container.style.display = "flex";
+          return;
+        }
+
+        utilsFiltres.forEach(u => {
+          if (!parAdherent[u.adherent]) parAdherent[u.adherent] = [];
+          parAdherent[u.adherent].push(u);
+        });
+
+        const nomsTries = Object.keys(parAdherent).sort((a, b) => a.localeCompare(b));
+        texteBrut = `RELEVÉ UTILISATION MATÉRIEL CUMA — Du ${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)}\n`;
+        texteBrut += `===========================================================\n\n`;
+
+        let totalGeneralHT = 0;
+        let totalGeneralHeures = 0;
+
+        nomsTries.forEach(nom => {
+          const lignes = parAdherent[nom];
+          let sousTotalHT = 0;
+          let sousTotalHeures = 0;
+
+          html += `<div class="factu-adh-card"><div class="factu-adh-title">👤 ${nom}</div>`;
+          texteBrut += `ADHÉRENT : ${nom}\n`;
+
+          lignes.forEach(e => {
+            sousTotalHT += e.montantHT;
+            sousTotalHeures += e.duree;
+            const optTxt = e.option ? ` + ${e.option}` : "";
+            const compteurTxt = e.debut > 0 ? `(${e.debut} → ${e.fin} h)` : `(fin : ${e.fin} h)`;
+
+            html += `
+              <div class="factu-line">
+                <strong>🚜 ${e.materiel}${optTxt}</strong> — ${e.dateFr}<br>
+                Durée : <strong>${e.duree.toFixed(1).replace('.', ',')} h</strong> ${compteurTxt} × ${e.tarifHoraire.toFixed(2).replace('.', ',')} €/h = <strong>${e.montantHT.toFixed(2).replace('.', ',')} € H.T.</strong>
+                ${e.obs ? `<br><span style="color:#64748b;font-size:12px;">Note : ${e.obs}</span>` : ""}
+              </div>
+            `;
+            texteBrut += `  - ${e.dateFr} | ${e.materiel}${optTxt} : ${e.duree.toFixed(1).replace('.', ',')} h ${compteurTxt} à ${e.tarifHoraire.toFixed(2).replace('.', ',')} €/h = ${e.montantHT.toFixed(2).replace('.', ',')} € H.T.\n`;
+          });
+
+          totalGeneralHT += sousTotalHT;
+          totalGeneralHeures += sousTotalHeures;
+
+          html += `
+            <div class="factu-subtotal">
+              <span>Total ${nom} (${sousTotalHeures.toFixed(1).replace('.', ',')} h) :</span>
+              <span>${sousTotalHT.toFixed(2).replace('.', ',')} € H.T.</span>
+            </div>
+          </div>`;
+
+          texteBrut += `  => SOUS-TOTAL ${nom} : ${sousTotalHeures.toFixed(1).replace('.', ',')} h | ${sousTotalHT.toFixed(2).replace('.', ',')} € H.T.\n\n`;
+        });
+
+        texteBrut += `===========================================================\n`;
+        texteBrut += `TOTAL MATÉRIEL PÉRIODE : ${totalGeneralHeures.toFixed(1).replace('.', ',')} h | ${totalGeneralHT.toFixed(2).replace('.', ',')} € H.T.\n`;
+
+        html += `
+          <div class="cost-box" style="display:block;">
+            <div class="cost-box-row">
+              <span>Total heures relevées :</span>
+              <strong>${totalGeneralHeures.toFixed(1).replace('.', ',')} h</strong>
+            </div>
+            <div class="cost-box-total">
+              <span>Total Matériel H.T. :</span>
+              <span>${totalGeneralHT.toFixed(2).replace('.', ',')} €</span>
+            </div>
+          </div>
+        `;
+      } else {
+        // Mode Carburant uniquement
+        const carbs = (configData && configData.historiqueCarburant) ? configData.historiqueCarburant : [];
+        const carbsFiltres = carbs.filter(c =>
+          c.dateIso >= dateDeb && c.dateIso <= dateFin &&
+          (filtreAdh === "TOUS" || c.adherent === filtreAdh)
+        );
+
+        if (carbsFiltres.length === 0) {
+          container.innerHTML = `<div class="status-pill info" style="text-align:center;">Aucun retrait de carburant trouvé du <strong>${formaterDateFr(dateDeb)}</strong> au <strong>${formaterDateFr(dateFin)}</strong>.</div>`;
+          container.style.display = "flex";
+          return;
+        }
+
+        carbsFiltres.forEach(c => {
+          if (!parAdherent[c.adherent]) parAdherent[c.adherent] = [];
+          parAdherent[c.adherent].push(c);
+        });
+
+        const nomsTries = Object.keys(parAdherent).sort((a, b) => a.localeCompare(b));
+        texteBrut = `RELEVÉ CARBURANT (GNR) CUMA — Du ${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)}\n`;
+        texteBrut += `=======================================================\n\n`;
+
+        let totalGeneralLitres = 0;
+
+        nomsTries.forEach(nom => {
+          const lignes = parAdherent[nom];
+          let sousTotalLitres = 0;
+
+          html += `<div class="factu-adh-card"><div class="factu-adh-title">👤 ${nom}</div>`;
+          texteBrut += `ADHÉRENT : ${nom}\n`;
+
+          lignes.forEach(c => {
+            sousTotalLitres += c.litres;
+            html += `
+              <div class="factu-line">
+                <strong>⛽ Carburant (GNR)</strong> — ${c.dateFr}<br>
+                Quantité : <strong>${c.litres.toFixed(1).replace('.', ',')} L</strong> (Index : ${c.indexCuve})
+                ${c.obs ? `<br><span style="color:#64748b;font-size:12px;">Note : ${c.obs}</span>` : ""}
+              </div>
+            `;
+            texteBrut += `  - ${c.dateFr} | ${c.litres.toFixed(1).replace('.', ',')} L (Index ${c.indexCuve})${c.obs ? ` — ${c.obs}` : ""}\n`;
+          });
+
+          totalGeneralLitres += sousTotalLitres;
+
+          html += `
+            <div class="factu-subtotal">
+              <span>Total ${nom} :</span>
+              <span>${sousTotalLitres.toFixed(1).replace('.', ',')} L</span>
+            </div>
+          </div>`;
+
+          texteBrut += `  => SOUS-TOTAL ${nom} : ${sousTotalLitres.toFixed(1).replace('.', ',')} L\n\n`;
+        });
+
+        texteBrut += `=======================================================\n`;
+        texteBrut += `TOTAL CARBURANT PÉRIODE : ${totalGeneralLitres.toFixed(1).replace('.', ',')} L\n`;
+
+        html += `
+          <div class="cost-box" style="display:block;">
+            <div class="cost-box-total">
+              <span>Total Carburant période :</span>
+              <span>${totalGeneralLitres.toFixed(1).replace('.', ',')} L</span>
+            </div>
+          </div>
+        `;
+      }
+
+      texteExportFacturation = texteBrut;
+
+      const titreType = categorie === "Engin" ? "Matériel" : "Carburant";
+      const sujetMail = encodeURIComponent(`Relevé facturation ${titreType} CUMA (${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)})`);
+      const corpsMail = encodeURIComponent(texteBrut);
+
+      html += `
+        <div class="export-actions">
+          <button type="button" class="btn-copy" onclick="copierReleveFacturation()">📋 Copier le récapitulatif</button>
+          <a href="mailto:?subject=${sujetMail}&body=${corpsMail}" class="btn-mail">✉️ Envoyer par e-mail à la comptable</a>
+        </div>
+      `;
+
+      container.innerHTML = html;
+      container.style.display = "flex";
+    }
+
+    function copierReleveFacturation() {
+      if (!texteExportFacturation) return;
+      navigator.clipboard.writeText(texteExportFacturation).then(() => {
+        alert("✅ Récapitulatif copié ! Vous pouvez le coller directement dans un e-mail ou un message.");
+      }).catch(() => {
+        alert("Impossible de copier automatiquement.");
+      });
     }
 
     // --- CARNET D'ENTRETIEN INTÉGRÉ ---
@@ -956,6 +1331,7 @@
       currentEngin = null;
 
       document.getElementById("home-view").style.display = "none";
+      document.getElementById("factu-view").style.display = "none";
       document.getElementById("form-view").style.display = "block";
       document.getElementById("form-engin-title").innerText = "Suivi Carburant";
       document.getElementById("form-engin-subtitle").innerText = "CUMA — Gestion de la cuve GNR";
@@ -1022,6 +1398,7 @@
 
       isModeCarburant = false;
       document.getElementById("home-view").style.display = "none";
+      document.getElementById("factu-view").style.display = "none";
       document.getElementById("form-view").style.display = "block";
       document.getElementById("form-engin-title").innerText = "Suivi " + nomEngin;
       document.getElementById("form-engin-subtitle").innerText = "CUMA — Enregistrement d'utilisation";
@@ -1472,6 +1849,7 @@
 
     function retourAccueil() {
       document.getElementById("form-view").style.display = "none";
+      document.getElementById("factu-view").style.display = "none";
       document.getElementById("home-view").style.display = "block";
       document.getElementById("gestion-card").style.display = "none";
       if (window.history.replaceState) {
