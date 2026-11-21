@@ -419,10 +419,14 @@
       flex-direction: column;
       gap: 10px;
       margin-top: 6px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 14px;
     }
-    .btn-copy {
+    .btn-mail-appli {
       width: 100%;
-      background: #0f172a;
+      background: #15803d;
       color: white;
       border: none;
       border-radius: 12px;
@@ -430,18 +434,12 @@
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
+      box-shadow: 0 3px 10px rgba(21, 128, 61, 0.2);
     }
-    .btn-mail {
-      width: 100%;
-      background: #15803d;
-      color: white;
-      text-decoration: none;
-      text-align: center;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 15px;
-      font-weight: 700;
-      display: block;
+    .btn-mail-appli:disabled {
+      background: #94a3b8;
+      box-shadow: none;
+      cursor: not-allowed;
     }
 
     /* CARNET D'ENTRETIEN INTÉGRÉ */
@@ -890,13 +888,15 @@
     const URL_BANDEAU_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDtdxYbPsicXyb_nmtULSSztJyP92ByPNiSopCIcxmepD60NZMn63ruQfVyUQpCgiFPNDRajWqrMvI/pub?output=csv";
     const URL_STATUT_PARC_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpzFznU5JVeUmjl-7KE2dFempJaADAqVIvDOupZtPZZIWidZEW1Zz7DvVuCDD6OSiSsS3eX0PRpk2k/pub?output=csv";
     const URL_API_CUMA = "https://script.google.com/macros/s/AKfycbww4duGXidOOYCY2_7UcC4EvwOPY5sPKzysyOq5kDpbo_ksSIWkTuziRL9YGUN57oNh/exec";
-    const LOCAL_CACHE_KEY = "CUMA_CONFIG_CACHE_V1";
+    const LOCAL_CACHE_KEY = "CUMA_CONFIG_CACHE_V2";
 
     let configData = null;
     let chargementEnCours = null;
     let currentEngin = null;
     let isModeCarburant = false;
     let currentAdherentConnecte = "";
+    let codeGestionConnecte = "";
+    let sujetExportFacturation = "";
     let texteExportFacturation = "";
     let dernierEnregistrementRecap = null;
 
@@ -1044,6 +1044,7 @@
       card.style.display = "block";
       const inputCode = document.getElementById("input-code-gestion");
       inputCode.value = "";
+      codeGestionConnecte = "";
       document.getElementById("greeting-gestion").style.display = "none";
       document.getElementById("gestion-engins-list").style.display = "none";
       inputCode.focus();
@@ -1059,6 +1060,7 @@
       if (code.length < 4) {
         box.style.display = "none";
         listDiv.style.display = "none";
+        codeGestionConnecte = "";
         return;
       }
 
@@ -1076,6 +1078,7 @@
       const codesAutorises = configData.codesLectureEntretien || ["2412", "0102", "2608"];
 
       if (configData.adherents[code] && codesAutorises.includes(code)) {
+        codeGestionConnecte = code;
         const nomAffiche = (code === "0102") ? "Jean-Paul" : configData.adherents[code];
         box.className = "greeting-box greeting-ok";
         box.innerText = "✅ Bonjour " + nomAffiche;
@@ -1101,6 +1104,7 @@
         listDiv.innerHTML = html;
         listDiv.style.display = "flex";
       } else {
+        codeGestionConnecte = "";
         box.className = "greeting-box greeting-err";
         box.innerText = "❌ Accès réservé aux gestionnaires";
         box.style.display = "block";
@@ -1211,8 +1215,8 @@
         });
 
         const nomsTries = Object.keys(parAdherent).sort((a, b) => a.localeCompare(b));
-        texteBrut = `RELEVÉ UTILISATION MATÉRIEL CUMA — Du ${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)}\n`;
-        texteBrut += `===========================================================\n\n`;
+        texteBrut = `RELEVÉ UTILISATION MATÉRIEL CUMA LES 6 TERROIRS — Du ${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)}\n`;
+        texteBrut += `===========================================================================\n\n`;
 
         let totalGeneralHT = 0;
         let totalGeneralHeures = 0;
@@ -1254,7 +1258,7 @@
           texteBrut += `  => SOUS-TOTAL ${nom} : ${sousTotalHeures.toFixed(1).replace('.', ',')} h | ${sousTotalHT.toFixed(2).replace('.', ',')} € H.T.\n\n`;
         });
 
-        texteBrut += `===========================================================\n`;
+        texteBrut += `===========================================================================\n`;
         texteBrut += `TOTAL MATÉRIEL PÉRIODE : ${totalGeneralHeures.toFixed(1).replace('.', ',')} h | ${totalGeneralHT.toFixed(2).replace('.', ',')} € H.T.\n`;
 
         html += `
@@ -1288,8 +1292,8 @@
         });
 
         const nomsTries = Object.keys(parAdherent).sort((a, b) => a.localeCompare(b));
-        texteBrut = `RELEVÉ CARBURANT (GNR) CUMA — Du ${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)}\n`;
-        texteBrut += `=======================================================\n\n`;
+        texteBrut = `RELEVÉ CARBURANT (GNR) CUMA LES 6 TERROIRS — Du ${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)}\n`;
+        texteBrut += `=======================================================================\n\n`;
 
         let totalGeneralLitres = 0;
 
@@ -1324,7 +1328,7 @@
           texteBrut += `  => SOUS-TOTAL ${nom} : ${sousTotalLitres.toFixed(1).replace('.', ',')} L\n\n`;
         });
 
-        texteBrut += `=======================================================\n`;
+        texteBrut += `=======================================================================\n`;
         texteBrut += `TOTAL CARBURANT PÉRIODE : ${totalGeneralLitres.toFixed(1).replace('.', ',')} L\n`;
 
         html += `
@@ -1337,16 +1341,35 @@
         `;
       }
 
+      const titreType = categorie === "Engin" ? "Matériel" : "Carburant";
+      sujetExportFacturation = `CUMA les 6 Terroirs — Relevé facturation ${titreType} (${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)})`;
       texteExportFacturation = texteBrut;
 
-      const titreType = categorie === "Engin" ? "Matériel" : "Carburant";
-      const sujetMail = encodeURIComponent(`Relevé facturation ${titreType} CUMA (${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)})`);
-      const corpsMail = encodeURIComponent(texteBrut);
+      const emailParDefaut = (configData && configData.emailsParCode && codeGestionConnecte)
+        ? (configData.emailsParCode[codeGestionConnecte] || "")
+        : "";
+
+      let datalistOptions = "";
+      if (configData && configData.emailsAdherents) {
+        configData.emailsAdherents.forEach(item => {
+          datalistOptions += `<option value="${item.email}">${item.nom}</option>`;
+        });
+      }
 
       html += `
         <div class="export-actions">
-          <button type="button" class="btn-copy" onclick="copierReleveFacturation()">📋 Copier le récapitulatif</button>
-          <a href="mailto:?subject=${sujetMail}&body=${corpsMail}" class="btn-mail">✉️ Envoyer par e-mail</a>
+          <div class="field-group">
+            <label for="input-factu-destinataire">Destinataire(s) du relevé (modifiable)</label>
+            <input type="text" id="input-factu-destinataire" list="datalist-emails-adherents" value="${emailParDefaut}" placeholder="Saisir ou choisir une adresse e-mail...">
+            <datalist id="datalist-emails-adherents">
+              ${datalistOptions}
+            </datalist>
+            <span style="font-size:12px;color:#64748b;">Astuce : effacez le champ pour voir la liste des adhérents, ou séparez plusieurs adresses par une virgule.</span>
+          </div>
+          <button type="button" class="btn-mail-appli" id="btn-envoyer-factu-mail" onclick="envoyerReleveFacturationParAppli()">
+            ✉️ Envoyer par e-mail (via l'appli)
+          </button>
+          <div class="recap-mail-status" id="factu-mail-status" style="margin-bottom:0;"></div>
         </div>
       `;
 
@@ -1354,13 +1377,64 @@
       container.style.display = "flex";
     }
 
-    function copierReleveFacturation() {
-      if (!texteExportFacturation) return;
-      navigator.clipboard.writeText(texteExportFacturation).then(() => {
-        alert("✅ Récapitulatif copié ! Vous pouvez le coller directement dans un e-mail ou un message.");
-      }).catch(() => {
-        alert("Impossible de copier automatiquement.");
-      });
+    async function envoyerReleveFacturationParAppli() {
+      const destInput = document.getElementById("input-factu-destinataire");
+      const btn = document.getElementById("btn-envoyer-factu-mail");
+      const statusBox = document.getElementById("factu-mail-status");
+
+      const destinataire = destInput ? destInput.value.trim() : "";
+      if (!destinataire || destinataire.indexOf("@") === -1) {
+        alert("Veuillez saisir ou sélectionner une adresse e-mail valide.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "⏳ Envoi en cours depuis appli.cumales6terroirs@gmail.com...";
+      statusBox.style.display = "none";
+
+      try {
+        const res = await fetch(URL_API_CUMA, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "EnvoyerReleveFacturationMail",
+            code: codeGestionConnecte,
+            destinataire: destinataire,
+            sujet: sujetExportFacturation,
+            corps: texteExportFacturation
+          })
+        });
+        const result = await res.json();
+
+        if (result.status === "ok") {
+          const liste = (result.destinataires || [destinataire]).join(", ");
+          btn.innerText = "✅ Relevé envoyé !";
+          statusBox.style.display = "block";
+          statusBox.style.background = "#dcfce7";
+          statusBox.style.color = "#15803d";
+          statusBox.style.border = "1px solid #86efac";
+          statusBox.innerText = "E-mail envoyé à : " + liste;
+          setTimeout(() => {
+            btn.disabled = false;
+            btn.innerText = "✉️ Envoyer par e-mail (via l'appli)";
+          }, 3000);
+        } else {
+          btn.disabled = false;
+          btn.innerText = "✉️ Envoyer par e-mail (via l'appli)";
+          statusBox.style.display = "block";
+          statusBox.style.background = "#fee2e2";
+          statusBox.style.color = "#b91c1c";
+          statusBox.style.border = "1px solid #fca5a5";
+          statusBox.innerText = "❌ " + (result.message || "Erreur lors de l'envoi.");
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerText = "✉️ Envoyer par e-mail (via l'appli)";
+        statusBox.style.display = "block";
+        statusBox.style.background = "#fee2e2";
+        statusBox.style.color = "#b91c1c";
+        statusBox.style.border = "1px solid #fca5a5";
+        statusBox.innerText = "❌ Erreur de connexion lors de l'envoi.";
+      }
     }
 
     // --- CARNET D'ENTRETIEN INTÉGRÉ ---
