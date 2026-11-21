@@ -1954,7 +1954,7 @@
             recapTexteBrut += `\nObservations : ${observations}`;
           }
 
-          eligibleRecapMail = true;
+          eligibleRecapMail = (action === "Fin d'utilisation");
           adherentFacturePourMail = adherentFacture;
           nomMaterielPourMail = currentEngin.nom;
         }
