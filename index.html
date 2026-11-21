@@ -898,6 +898,7 @@
     let codeGestionConnecte = "";
     let sujetExportFacturation = "";
     let texteExportFacturation = "";
+    let htmlExportFacturation = "";
     let dernierEnregistrementRecap = null;
 
     // Restaure immédiatement les dernières données connues pour une ouverture instantanée
@@ -1195,6 +1196,14 @@
       const parAdherent = {};
       let html = "";
       let texteBrut = "";
+      let htmlEmail = `
+        <div style="font-family: Arial, sans-serif; color: #0f172a; max-width: 760px; margin: 0 auto;">
+          <div style="background: #15803d; color: #ffffff; padding: 14px 18px; border-radius: 8px 8px 0 0;">
+            <h2 style="margin: 0; font-size: 18px;">CUMA les 6 Terroirs — Relevé de facturation</h2>
+            <p style="margin: 4px 0 0; font-size: 13px; opacity: 0.95;">Période du <strong>${formaterDateFr(dateDeb)}</strong> au <strong>${formaterDateFr(dateFin)}</strong></p>
+          </div>
+          <div style="padding: 16px; border: 1px solid #cbd5e1; border-top: none; border-radius: 0 0 8px 8px; background: #ffffff;">
+      `;
 
       if (categorie === "Engin") {
         const utils = (configData && configData.historiqueUtilisations) ? configData.historiqueUtilisations : [];
@@ -1215,8 +1224,7 @@
         });
 
         const nomsTries = Object.keys(parAdherent).sort((a, b) => a.localeCompare(b));
-        texteBrut = `RELEVÉ UTILISATION MATÉRIEL CUMA LES 6 TERROIRS — Du ${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)}\n`;
-        texteBrut += `===========================================================================\n\n`;
+        texteBrut = `RELEVÉ UTILISATION MATÉRIEL CUMA LES 6 TERROIRS — Du ${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)}\n\n`;
 
         let totalGeneralHT = 0;
         let totalGeneralHeures = 0;
@@ -1229,43 +1237,100 @@
           html += `<div class="factu-adh-card"><div class="factu-adh-title">👤 ${nom}</div>`;
           texteBrut += `ADHÉRENT : ${nom}\n`;
 
+          htmlEmail += `
+            <h3 style="margin: 18px 0 8px; font-size: 15px; color: #1e3a8a; border-left: 4px solid #1d4ed8; padding-left: 8px;">Adhérent : ${nom}</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 14px;">
+              <thead>
+                <tr style="background: #f1f5f9; color: #334155; text-align: left;">
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">Date</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">Matériel / Option</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">Compteurs</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; text-align: right;">Durée</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; text-align: right;">Tarif H.T.</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; text-align: right;">Total H.T.</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+
           lignes.forEach(e => {
             sousTotalHT += e.montantHT;
             sousTotalHeures += e.duree;
             const optTxt = e.option ? ` + ${e.option}` : "";
-            const compteurTxt = e.debut > 0 ? `(${e.debut} → ${e.fin} h)` : `(fin : ${e.fin} h)`;
+            const compteurTxt = e.debut > 0 ? `${e.debut} → ${e.fin} h` : `Fin : ${e.fin} h`;
+            const dureeStr = e.duree.toFixed(1).replace('.', ',') + " h";
+            const tarifStr = e.tarifHoraire.toFixed(2).replace('.', ',') + " €/h";
+            const montantStr = e.montantHT.toFixed(2).replace('.', ',') + " €";
 
             html += `
               <div class="factu-line">
                 <strong>🚜 ${e.materiel}${optTxt}</strong> — ${e.dateFr}<br>
-                Durée : <strong>${e.duree.toFixed(1).replace('.', ',')} h</strong> ${compteurTxt} × ${e.tarifHoraire.toFixed(2).replace('.', ',')} €/h = <strong>${e.montantHT.toFixed(2).replace('.', ',')} € H.T.</strong>
+                Durée : <strong>${dureeStr}</strong> (${compteurTxt}) × ${tarifStr} = <strong>${montantStr} H.T.</strong>
                 ${e.obs ? `<br><span style="color:#64748b;font-size:12px;">Note : ${e.obs}</span>` : ""}
               </div>
             `;
-            texteBrut += `  - ${e.dateFr} | ${e.materiel}${optTxt} : ${e.duree.toFixed(1).replace('.', ',')} h ${compteurTxt} à ${e.tarifHoraire.toFixed(2).replace('.', ',')} €/h = ${e.montantHT.toFixed(2).replace('.', ',')} € H.T.\n`;
+
+            htmlEmail += `
+              <tr>
+                <td style="padding: 7px 8px; border: 1px solid #cbd5e1; white-space: nowrap;">${e.dateFr}</td>
+                <td style="padding: 7px 8px; border: 1px solid #cbd5e1;"><strong>${e.materiel}</strong>${optTxt}${e.obs ? `<br><span style="color:#64748b;font-size:11px;">Note : ${e.obs}</span>` : ""}</td>
+                <td style="padding: 7px 8px; border: 1px solid #cbd5e1; white-space: nowrap;">${compteurTxt}</td>
+                <td style="padding: 7px 8px; border: 1px solid #cbd5e1; text-align: right; white-space: nowrap;">${dureeStr}</td>
+                <td style="padding: 7px 8px; border: 1px solid #cbd5e1; text-align: right; white-space: nowrap;">${tarifStr}</td>
+                <td style="padding: 7px 8px; border: 1px solid #cbd5e1; text-align: right; font-weight: bold; white-space: nowrap;">${montantStr}</td>
+              </tr>
+            `;
+
+            texteBrut += `  - ${e.dateFr} | ${e.materiel}${optTxt} : ${dureeStr} (${compteurTxt}) × ${tarifStr} = ${montantStr} H.T.\n`;
           });
 
           totalGeneralHT += sousTotalHT;
           totalGeneralHeures += sousTotalHeures;
 
+          const stHeuresStr = sousTotalHeures.toFixed(1).replace('.', ',') + " h";
+          const stHtStr = sousTotalHT.toFixed(2).replace('.', ',') + " € H.T.";
+
           html += `
             <div class="factu-subtotal">
-              <span>Total ${nom} (${sousTotalHeures.toFixed(1).replace('.', ',')} h) :</span>
-              <span>${sousTotalHT.toFixed(2).replace('.', ',')} € H.T.</span>
+              <span>Total ${nom} (${stHeuresStr}) :</span>
+              <span>${stHtStr}</span>
             </div>
           </div>`;
 
-          texteBrut += `  => SOUS-TOTAL ${nom} : ${sousTotalHeures.toFixed(1).replace('.', ',')} h | ${sousTotalHT.toFixed(2).replace('.', ',')} € H.T.\n\n`;
+          htmlEmail += `
+              </tbody>
+              <tfoot>
+                <tr style="background: #eff6ff; font-weight: bold; color: #1e3a8a;">
+                  <td colspan="3" style="padding: 8px; border: 1px solid #cbd5e1; text-align: right;">TOTAL ${nom} :</td>
+                  <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: right; white-space: nowrap;">${stHeuresStr}</td>
+                  <td style="padding: 8px; border: 1px solid #cbd5e1;"></td>
+                  <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: right; white-space: nowrap;">${stHtStr}</td>
+                </tr>
+              </tfoot>
+            </table>
+          `;
+
+          texteBrut += `  => TOTAL ${nom} : ${stHeuresStr} | ${stHtStr}\n\n`;
         });
 
-        texteBrut += `===========================================================================\n`;
-        texteBrut += `TOTAL MATÉRIEL PÉRIODE : ${totalGeneralHeures.toFixed(1).replace('.', ',')} h | ${totalGeneralHT.toFixed(2).replace('.', ',')} € H.T.\n`;
+        const totGenHeuresStr = totalGeneralHeures.toFixed(1).replace('.', ',') + " h";
+        const totGenHtStr = totalGeneralHT.toFixed(2).replace('.', ',') + " € H.T.";
+
+        if (nomsTries.length > 1) {
+          htmlEmail += `
+            <div style="margin-top: 16px; padding: 10px 14px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; font-size: 14px; font-weight: bold; color: #166534; text-align: right;">
+              TOTAL GÉNÉRAL MATÉRIEL PÉRIODE : ${totGenHeuresStr} — ${totGenHtStr}
+            </div>
+          `;
+        }
+
+        texteBrut += `TOTAL MATÉRIEL PÉRIODE : ${totGenHeuresStr} | ${totGenHtStr}\n`;
 
         html += `
           <div class="cost-box" style="display:block;">
             <div class="cost-box-row">
               <span>Total heures relevées :</span>
-              <strong>${totalGeneralHeures.toFixed(1).replace('.', ',')} h</strong>
+              <strong>${totGenHeuresStr}</strong>
             </div>
             <div class="cost-box-total">
               <span>Total Matériel H.T. :</span>
@@ -1292,8 +1357,7 @@
         });
 
         const nomsTries = Object.keys(parAdherent).sort((a, b) => a.localeCompare(b));
-        texteBrut = `RELEVÉ CARBURANT (GNR) CUMA LES 6 TERROIRS — Du ${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)}\n`;
-        texteBrut += `=======================================================================\n\n`;
+        texteBrut = `RELEVÉ CARBURANT (GNR) CUMA LES 6 TERROIRS — Du ${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)}\n\n`;
 
         let totalGeneralLitres = 0;
 
@@ -1304,46 +1368,102 @@
           html += `<div class="factu-adh-card"><div class="factu-adh-title">👤 ${nom}</div>`;
           texteBrut += `ADHÉRENT : ${nom}\n`;
 
+          htmlEmail += `
+            <h3 style="margin: 18px 0 8px; font-size: 15px; color: #1e3a8a; border-left: 4px solid #1d4ed8; padding-left: 8px;">Adhérent : ${nom}</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 14px;">
+              <thead>
+                <tr style="background: #f1f5f9; color: #334155; text-align: left;">
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">Date</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">Produit</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; text-align: right;">Index pompe</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">Observations</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; text-align: right;">Quantité (L)</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+
           lignes.forEach(c => {
             sousTotalLitres += c.litres;
+            const litresStr = c.litres.toFixed(1).replace('.', ',') + " L";
+
             html += `
               <div class="factu-line">
                 <strong>⛽ Carburant (GNR)</strong> — ${c.dateFr}<br>
-                Quantité : <strong>${c.litres.toFixed(1).replace('.', ',')} L</strong> (Index : ${c.indexCuve})
+                Quantité : <strong>${litresStr}</strong> (Index : ${c.indexCuve})
                 ${c.obs ? `<br><span style="color:#64748b;font-size:12px;">Note : ${c.obs}</span>` : ""}
               </div>
             `;
-            texteBrut += `  - ${c.dateFr} | ${c.litres.toFixed(1).replace('.', ',')} L (Index ${c.indexCuve})${c.obs ? ` — ${c.obs}` : ""}\n`;
+
+            htmlEmail += `
+              <tr>
+                <td style="padding: 7px 8px; border: 1px solid #cbd5e1; white-space: nowrap;">${c.dateFr}</td>
+                <td style="padding: 7px 8px; border: 1px solid #cbd5e1;">Carburant (GNR)</td>
+                <td style="padding: 7px 8px; border: 1px solid #cbd5e1; text-align: right;">${c.indexCuve}</td>
+                <td style="padding: 7px 8px; border: 1px solid #cbd5e1; color: #64748b;">${c.obs || "—"}</td>
+                <td style="padding: 7px 8px; border: 1px solid #cbd5e1; text-align: right; font-weight: bold; white-space: nowrap;">${litresStr}</td>
+              </tr>
+            `;
+
+            texteBrut += `  - ${c.dateFr} | ${litresStr} (Index ${c.indexCuve})${c.obs ? ` — ${c.obs}` : ""}\n`;
           });
 
           totalGeneralLitres += sousTotalLitres;
+          const stLitresStr = sousTotalLitres.toFixed(1).replace('.', ',') + " L";
 
           html += `
             <div class="factu-subtotal">
               <span>Total ${nom} :</span>
-              <span>${sousTotalLitres.toFixed(1).replace('.', ',')} L</span>
+              <span>${stLitresStr}</span>
             </div>
           </div>`;
 
-          texteBrut += `  => SOUS-TOTAL ${nom} : ${sousTotalLitres.toFixed(1).replace('.', ',')} L\n\n`;
+          htmlEmail += `
+              </tbody>
+              <tfoot>
+                <tr style="background: #eff6ff; font-weight: bold; color: #1e3a8a;">
+                  <td colspan="4" style="padding: 8px; border: 1px solid #cbd5e1; text-align: right;">TOTAL ${nom} :</td>
+                  <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: right; white-space: nowrap;">${stLitresStr}</td>
+                </tr>
+              </tfoot>
+            </table>
+          `;
+
+          texteBrut += `  => TOTAL ${nom} : ${stLitresStr}\n\n`;
         });
 
-        texteBrut += `=======================================================================\n`;
-        texteBrut += `TOTAL CARBURANT PÉRIODE : ${totalGeneralLitres.toFixed(1).replace('.', ',')} L\n`;
+        const totGenLitresStr = totalGeneralLitres.toFixed(1).replace('.', ',') + " L";
+
+        if (nomsTries.length > 1) {
+          htmlEmail += `
+            <div style="margin-top: 16px; padding: 10px 14px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; font-size: 14px; font-weight: bold; color: #166534; text-align: right;">
+              TOTAL GÉNÉRAL CARBURANT PÉRIODE : ${totGenLitresStr}
+            </div>
+          `;
+        }
+
+        texteBrut += `TOTAL CARBURANT PÉRIODE : ${totGenLitresStr}\n`;
 
         html += `
           <div class="cost-box" style="display:block;">
             <div class="cost-box-total">
               <span>Total Carburant période :</span>
-              <span>${totalGeneralLitres.toFixed(1).replace('.', ',')} L</span>
+              <span>${totGenLitresStr}</span>
             </div>
           </div>
         `;
       }
 
+      htmlEmail += `
+            <p style="margin: 18px 0 0; font-size: 12px; color: #64748b;">Relevé généré automatiquement depuis le portail CUMA les 6 Terroirs.</p>
+          </div>
+        </div>
+      `;
+
       const titreType = categorie === "Engin" ? "Matériel" : "Carburant";
       sujetExportFacturation = `CUMA les 6 Terroirs — Relevé facturation ${titreType} (${formaterDateFr(dateDeb)} au ${formaterDateFr(dateFin)})`;
       texteExportFacturation = texteBrut;
+      htmlExportFacturation = htmlEmail;
 
       const emailParDefaut = (configData && configData.emailsParCode && codeGestionConnecte)
         ? (configData.emailsParCode[codeGestionConnecte] || "")
@@ -1400,7 +1520,8 @@
             code: codeGestionConnecte,
             destinataire: destinataire,
             sujet: sujetExportFacturation,
-            corps: texteExportFacturation
+            corps: texteExportFacturation,
+            htmlCorps: htmlExportFacturation
           })
         });
         const result = await res.json();
