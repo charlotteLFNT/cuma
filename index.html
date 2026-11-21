@@ -1469,22 +1469,26 @@
         ? (configData.emailsParCode[codeGestionConnecte] || "")
         : "";
 
-      let datalistOptions = "";
+      let selectOptionsHtml = `<option value="">-- Choisir un destinataire dans la liste --</option>`;
       if (configData && configData.emailsAdherents) {
         configData.emailsAdherents.forEach(item => {
-          datalistOptions += `<option value="${item.email}">${item.nom}</option>`;
+          const isSelected = (emailParDefaut && item.email.toLowerCase() === emailParDefaut.toLowerCase()) ? "selected" : "";
+          selectOptionsHtml += `<option value="${item.email}" ${isSelected}>${item.nom} (${item.email})</option>`;
         });
       }
 
       html += `
         <div class="export-actions">
           <div class="field-group">
-            <label for="input-factu-destinataire">Destinataire(s) du relevé (modifiable)</label>
-            <input type="text" id="input-factu-destinataire" list="datalist-emails-adherents" value="${emailParDefaut}" placeholder="Saisir ou choisir une adresse e-mail...">
-            <datalist id="datalist-emails-adherents">
-              ${datalistOptions}
-            </datalist>
-            <span style="font-size:12px;color:#64748b;">Astuce : effacez le champ pour voir la liste des adhérents, ou séparez plusieurs adresses par une virgule.</span>
+            <label for="select-factu-destinataire-liste">Choisir un destinataire enregistré</label>
+            <select id="select-factu-destinataire-liste" onchange="if(this.value){ document.getElementById('input-factu-destinataire').value = this.value; }">
+              ${selectOptionsHtml}
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="input-factu-destinataire">Adresse(s) e-mail d'envoi (modifiable)</label>
+            <input type="text" id="input-factu-destinataire" value="${emailParDefaut}" placeholder="Saisir une ou plusieurs adresses séparées par une virgule...">
+            <span style="font-size:12px;color:#64748b;">Vous pouvez modifier l'adresse ci-dessus ou en ajouter plusieurs séparées par une virgule.</span>
           </div>
           <button type="button" class="btn-mail-appli" id="btn-envoyer-factu-mail" onclick="envoyerReleveFacturationParAppli()">
             ✉️ Envoyer par e-mail (via l'appli)
