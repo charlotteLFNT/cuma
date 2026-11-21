@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>CUMA Suivis</title>
+  <title>CUMA les 6 Terroirs — Portail Suivis</title>
 
   <!-- Configuration de l'icône de l'application (Tracteur) -->
   <link rel="manifest" href="manifest.json">
@@ -349,6 +349,34 @@
     }
     .btn-submit:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
 
+    .btn-recap-mail {
+      width: 100%;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1.5px solid #93c5fd;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .btn-recap-mail:active { background: #dbeafe; }
+    .btn-recap-mail:disabled {
+      background: #f1f5f9;
+      color: #64748b;
+      border-color: #cbd5e1;
+      cursor: not-allowed;
+    }
+    .recap-mail-status {
+      display: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
     /* FICHES RELEVÉ FACTURATION */
     .factu-adh-card {
       background: #f8fafc;
@@ -521,7 +549,7 @@
 
   <div class="container">
     <header>
-      <h1>CUMA — Portail Suivis</h1>
+      <h1>CUMA les 6 Terroirs</h1>
       <p class="sub">Scannez le QR code ou accédez aux suivis</p>
     </header>
 
@@ -842,9 +870,19 @@
         <h3>Enregistrement effectué !</h3>
         <p style="font-size: 14px; color: #64748b; margin: 0;">Les données ont bien été inscrites dans le tableau de suivi.</p>
         <div class="success-recap" id="success-recap-text"></div>
+
+        <button type="button" class="btn-recap-mail" id="btn-recap-mail" onclick="envoyerRecapParEmail()" style="display: none;">
+          ✉️ Recevoir le récapitulatif par mail
+        </button>
+        <div class="recap-mail-status" id="recap-mail-status"></div>
+
         <button class="btn-submit" onclick="retourAccueil()">Retour à l'accueil</button>
       </div>
     </div>
+
+    <footer style="margin-top: 24px; padding-bottom: 12px; text-align: center; font-size: 12px; color: #94a3b8;">
+      Application conçue par Charlie
+    </footer>
 
   </div>
 
@@ -860,6 +898,7 @@
     let isModeCarburant = false;
     let currentAdherentConnecte = "";
     let texteExportFacturation = "";
+    let dernierEnregistrementRecap = null;
 
     // Restaure immédiatement les dernières données connues pour une ouverture instantanée
     try {
@@ -1727,6 +1766,10 @@
       const btn = document.getElementById("btn-submit-form");
       let payload = {};
       let recapHtml = "";
+      let recapTexteBrut = "";
+      let eligibleRecapMail = false;
+      let adherentFacturePourMail = "";
+      let nomMaterielPourMail = "";
 
       if (isModeCarburant) {
         const typeOp = document.getElementById("select-type-carburant").value;
@@ -1803,6 +1846,17 @@
             <strong>Index relevé :</strong> ${indexCarb}<br>
             ${noteCarb ? `<strong>Note :</strong> ${noteCarb}` : ""}
           `;
+
+          recapTexteBrut =
+            `Opération : Retrait de carburant (GNR)\n` +
+            `Adhérent à facturer : ${adherentCarb}\n` +
+            `Quantité prise : ${qteCarb} L\n` +
+            `Index relevé : ${indexCarb}` +
+            (noteCarb ? `\nNote : ${noteCarb}` : "");
+
+          eligibleRecapMail = true;
+          adherentFacturePourMail = adherentCarb;
+          nomMaterielPourMail = "Carburant";
         }
       } else {
         const action = document.getElementById("select-action").value;
@@ -1872,6 +1926,13 @@
             <strong>Compteur saisi :</strong> ${compteur.toFixed(1).replace('.', ',')} h
           `;
 
+          recapTexteBrut =
+            `Matériel : ${currentEngin.nom}\n` +
+            `Action : ${action}\n` +
+            `Adhérent à facturer : ${adherentFacture}\n` +
+            (optionChoisie ? `Option attelée : ${optionChoisie}\n` : "") +
+            `Compteur saisi : ${compteur.toFixed(1).replace('.', ',')} h`;
+
           if (action === "Fin d'utilisation" && currentEngin.compteurDebut > 0) {
             const duree = compteur - currentEngin.compteurDebut;
             const optObj = configData.options.find(o => o.nom === optionChoisie);
@@ -1881,7 +1942,21 @@
             recapHtml += `<br><hr style="border:none;border-top:1px solid #cbd5e1;margin:8px 0;">
               <strong>Durée utilisée :</strong> ${duree.toFixed(1).replace('.', ',')} h<br>
               <strong style="color:#15803d;font-size:16px;">Coût estimé : ${coutTotal.toFixed(2).replace('.', ',')} € H.T.</strong>`;
+
+            recapTexteBrut +=
+              `\nCompteur départ : ${currentEngin.compteurDebut.toFixed(1).replace('.', ',')} h\n` +
+              `Durée utilisée : ${duree.toFixed(1).replace('.', ',')} h\n` +
+              `Tarif horaire appliqué : ${tarifTotal.toFixed(2).replace('.', ',')} €/h\n` +
+              `Coût estimé H.T. : ${coutTotal.toFixed(2).replace('.', ',')} €`;
           }
+
+          if (observations) {
+            recapTexteBrut += `\nObservations : ${observations}`;
+          }
+
+          eligibleRecapMail = true;
+          adherentFacturePourMail = adherentFacture;
+          nomMaterielPourMail = currentEngin.nom;
         }
       }
 
@@ -1898,6 +1973,26 @@
         if (result.status === "ok") {
           try { localStorage.removeItem(LOCAL_CACHE_KEY); } catch (e) {}
           document.getElementById("success-recap-text").innerHTML = recapHtml;
+
+          const btnMail = document.getElementById("btn-recap-mail");
+          const mailStatus = document.getElementById("recap-mail-status");
+          mailStatus.style.display = "none";
+
+          if (eligibleRecapMail) {
+            dernierEnregistrementRecap = {
+              codeDeclarant: code,
+              adherentFacture: adherentFacturePourMail,
+              materiel: nomMaterielPourMail,
+              texteRecap: recapTexteBrut
+            };
+            btnMail.style.display = "block";
+            btnMail.disabled = false;
+            btnMail.innerText = "✉️ Recevoir le récapitulatif par mail";
+          } else {
+            dernierEnregistrementRecap = null;
+            btnMail.style.display = "none";
+          }
+
           document.getElementById("form-content").style.display = "none";
           document.getElementById("form-success").style.display = "block";
           rafraichirConfigEnArrierePlan().catch(() => {});
@@ -1909,6 +2004,57 @@
       } finally {
         btn.disabled = false;
         btn.innerText = "Valider l'enregistrement";
+      }
+    }
+
+    async function envoyerRecapParEmail() {
+      if (!dernierEnregistrementRecap) return;
+
+      const btnMail = document.getElementById("btn-recap-mail");
+      const mailStatus = document.getElementById("recap-mail-status");
+
+      btnMail.disabled = true;
+      btnMail.innerText = "⏳ Envoi de l'e-mail en cours...";
+      mailStatus.style.display = "none";
+
+      try {
+        const res = await fetch(URL_API_CUMA, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "EnvoyerRecapMail",
+            codeDeclarant: dernierEnregistrementRecap.codeDeclarant,
+            adherentFacture: dernierEnregistrementRecap.adherentFacture,
+            materiel: dernierEnregistrementRecap.materiel,
+            texteRecap: dernierEnregistrementRecap.texteRecap
+          })
+        });
+        const result = await res.json();
+
+        if (result.status === "ok") {
+          const listeMails = (result.destinataires || []).join(" et ");
+          btnMail.innerText = "✅ Récapitulatif envoyé !";
+          mailStatus.style.display = "block";
+          mailStatus.style.background = "#dcfce7";
+          mailStatus.style.color = "#15803d";
+          mailStatus.style.border = "1px solid #86efac";
+          mailStatus.innerText = "E-mail envoyé à : " + listeMails;
+        } else {
+          btnMail.disabled = false;
+          btnMail.innerText = "✉️ Recevoir le récapitulatif par mail";
+          mailStatus.style.display = "block";
+          mailStatus.style.background = "#fee2e2";
+          mailStatus.style.color = "#b91c1c";
+          mailStatus.style.border = "1px solid #fca5a5";
+          mailStatus.innerText = "❌ " + (result.message || "Impossible d'envoyer l'e-mail.");
+        }
+      } catch (err) {
+        btnMail.disabled = false;
+        btnMail.innerText = "✉️ Recevoir le récapitulatif par mail";
+        mailStatus.style.display = "block";
+        mailStatus.style.background = "#fee2e2";
+        mailStatus.style.color = "#b91c1c";
+        mailStatus.style.border = "1px solid #fca5a5";
+        mailStatus.innerText = "❌ Erreur de connexion lors de l'envoi.";
       }
     }
 
