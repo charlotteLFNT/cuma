@@ -1469,26 +1469,23 @@
         ? (configData.emailsParCode[codeGestionConnecte] || "")
         : "";
 
-      let selectOptionsHtml = `<option value="">-- Choisir un destinataire dans la liste --</option>`;
-      if (configData && configData.emailsAdherents) {
+      let selectOptionsHtml = "";
+      if (configData && configData.emailsAdherents && configData.emailsAdherents.length > 0) {
         configData.emailsAdherents.forEach(item => {
           const isSelected = (emailParDefaut && item.email.toLowerCase() === emailParDefaut.toLowerCase()) ? "selected" : "";
-          selectOptionsHtml += `<option value="${item.email}" ${isSelected}>${item.nom} (${item.email})</option>`;
+          selectOptionsHtml += `<option value="${item.email}" ${isSelected}>${item.nom}</option>`;
         });
+      } else {
+        selectOptionsHtml = `<option value="">Aucun destinataire enregistré</option>`;
       }
 
       html += `
         <div class="export-actions">
           <div class="field-group">
-            <label for="select-factu-destinataire-liste">Choisir un destinataire enregistré</label>
-            <select id="select-factu-destinataire-liste" onchange="if(this.value){ document.getElementById('input-factu-destinataire').value = this.value; }">
+            <label for="select-factu-destinataire">Destinataire du relevé</label>
+            <select id="select-factu-destinataire">
               ${selectOptionsHtml}
             </select>
-          </div>
-          <div class="field-group">
-            <label for="input-factu-destinataire">Adresse(s) e-mail d'envoi (modifiable)</label>
-            <input type="text" id="input-factu-destinataire" value="${emailParDefaut}" placeholder="Saisir une ou plusieurs adresses séparées par une virgule...">
-            <span style="font-size:12px;color:#64748b;">Vous pouvez modifier l'adresse ci-dessus ou en ajouter plusieurs séparées par une virgule.</span>
           </div>
           <button type="button" class="btn-mail-appli" id="btn-envoyer-factu-mail" onclick="envoyerReleveFacturationParAppli()">
             ✉️ Envoyer par e-mail (via l'appli)
@@ -1502,18 +1499,22 @@
     }
 
     async function envoyerReleveFacturationParAppli() {
-      const destInput = document.getElementById("input-factu-destinataire");
+      const destSelect = document.getElementById("select-factu-destinataire");
       const btn = document.getElementById("btn-envoyer-factu-mail");
       const statusBox = document.getElementById("factu-mail-status");
 
-      const destinataire = destInput ? destInput.value.trim() : "";
+      const destinataire = destSelect ? destSelect.value.trim() : "";
+      const nomDestinataire = (destSelect && destSelect.selectedIndex >= 0)
+        ? destSelect.options[destSelect.selectedIndex].text
+        : destinataire;
+
       if (!destinataire || destinataire.indexOf("@") === -1) {
-        alert("Veuillez saisir ou sélectionner une adresse e-mail valide.");
+        alert("Aucune adresse e-mail valide n'est associée à ce destinataire.");
         return;
       }
 
       btn.disabled = true;
-      btn.innerText = "⏳ Envoi en cours depuis appli.cumales6terroirs@gmail.com...";
+      btn.innerText = "⏳ Envoi en cours...";
       statusBox.style.display = "none";
 
       try {
@@ -1531,13 +1532,12 @@
         const result = await res.json();
 
         if (result.status === "ok") {
-          const liste = (result.destinataires || [destinataire]).join(", ");
           btn.innerText = "✅ Relevé envoyé !";
           statusBox.style.display = "block";
           statusBox.style.background = "#dcfce7";
           statusBox.style.color = "#15803d";
           statusBox.style.border = "1px solid #86efac";
-          statusBox.innerText = "E-mail envoyé à : " + liste;
+          statusBox.innerText = "Relevé envoyé à " + nomDestinataire + ".";
           setTimeout(() => {
             btn.disabled = false;
             btn.innerText = "✉️ Envoyer par e-mail (via l'appli)";
