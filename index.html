@@ -169,7 +169,7 @@
     }
     .btn-icon { font-size: 24px; line-height: 1; }
 
-    /* PANNEAUX DÉROULANTS ACCUEIL (PARC & ACCÈS GESTION) */
+    /* PANNEAU DÉROULANT ACCUEIL (PARC) */
     .parc-card {
       display: none;
       background: white;
@@ -215,7 +215,7 @@
     .badge-disponible { background: #dcfce7; color: #15803d; }
     .badge-en-cours { background: #fee2e2; color: #b91c1c; }
 
-    /* Boutons engins & facturation dans le panneau Gestion */
+    /* Boutons engins & facturation dans la page Espace Gestion */
     .btn-gestion-engin {
       width: 100%;
       background: #f0fdf4;
@@ -249,7 +249,7 @@
     }
     .btn-gestion-factu:active { background: #dbeafe; }
 
-    /* MINI-FORMULAIRE INTÉGRÉ & VUE RELEVÉ FACTURATION */
+    /* VUES DÉDIÉES (FORMULAIRE, RELEVÉ FACTURATION, ESPACE GESTION) */
     .form-card {
       display: none;
       background: white;
@@ -269,6 +269,9 @@
     }
     .form-banner.blue-banner {
       background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
+    }
+    .form-banner.purple-banner {
+      background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
     }
     .form-banner-title { display: flex; align-items: center; gap: 12px; }
     .form-banner-title img { width: 40px; height: 40px; background: white; border-radius: 10px; padding: 4px; }
@@ -606,25 +609,34 @@
           <span>Suivi Mini-Pelle</span>
         </button>
 
-        <!-- BOUTON ACCÈS GESTION (réservé aux responsables) -->
+        <!-- BOUTON ACCÈS GESTION (ouvre la page dédiée Espace Gestion) -->
         <button class="btn-action btn-gestion" onclick="basculerAccesGestion()">
           <span class="btn-icon">🔐</span>
           <span>Accès Gestion</span>
         </button>
+      </div>
+    </div>
 
-        <!-- PANNEAU ACCÈS GESTION (ouverture instantanée) -->
-        <div class="parc-card" id="gestion-card">
-          <div class="parc-card-header">
-            <h2>🔐 Espace Gestion CUMA</h2>
-            <button class="btn-close" onclick="basculerAccesGestion()">✕</button>
+    <!-- VUE DÉDIÉE ESPACE GESTION -->
+    <div class="form-card" id="gestion-view">
+      <div class="form-banner purple-banner">
+        <div class="form-banner-title">
+          <img src="https://img.icons8.com/color/192/tractor.png" alt="Logo CUMA">
+          <div>
+            <h2>Espace Gestion</h2>
+            <p>CUMA — Administration et relevés</p>
           </div>
-          <div class="field-group" id="gestion-code-group" style="margin-bottom: 10px;">
-            <label for="input-code-gestion" style="font-size: 13px;">Code gestionnaire (4 chiffres)</label>
-            <input type="password" inputmode="numeric" pattern="[0-9]*" id="input-code-gestion" class="code-input" maxlength="4" placeholder="••••" oninput="verifierCodeGestion()">
-            <div class="greeting-box" id="greeting-gestion"></div>
-          </div>
-          <div id="gestion-engins-list" style="display: none; flex-direction: column; gap: 10px;"></div>
         </div>
+        <button class="btn-back" onclick="retourAccueil()">← Retour</button>
+      </div>
+
+      <div class="form-body">
+        <div class="field-group" id="gestion-code-group">
+          <label for="input-code-gestion">Code gestionnaire (4 chiffres)</label>
+          <input type="password" inputmode="numeric" pattern="[0-9]*" id="input-code-gestion" class="code-input" maxlength="4" placeholder="••••" oninput="verifierCodeGestion()">
+          <div class="greeting-box" id="greeting-gestion"></div>
+        </div>
+        <div id="gestion-engins-list" style="display: none; flex-direction: column; gap: 10px;"></div>
       </div>
     </div>
 
@@ -1034,15 +1046,13 @@
       }
     }
 
-    // --- PANNEAU ACCÈS GESTION (ouverture immédiate en 0 seconde) ---
+    // --- PAGE DÉDIÉE ESPACE GESTION ---
     function basculerAccesGestion() {
-      const card = document.getElementById("gestion-card");
-      if (card.style.display === "block") {
-        card.style.display = "none";
-        return;
-      }
+      document.getElementById("home-view").style.display = "none";
+      document.getElementById("form-view").style.display = "none";
+      document.getElementById("factu-view").style.display = "none";
+      document.getElementById("gestion-view").style.display = "block";
 
-      card.style.display = "block";
       const inputCode = document.getElementById("input-code-gestion");
       inputCode.value = "";
       codeGestionConnecte = "";
@@ -1094,9 +1104,12 @@
 
         configData.materiels.forEach(m => {
           const iconeStatut = m.statut === "En cours" ? "🔴" : "🟢";
+          const iconeEngin = m.nom.toLowerCase().includes("mini-pelle")
+            ? `<img src="icone%20mini-pelle.png" alt="Mini-Pelle" style="width:22px;height:22px;object-fit:contain;">`
+            : `🚜`;
           html += `
             <button type="button" class="btn-gestion-engin" onclick="ouvrirEnginDepuisGestion('${m.nom.replace(/'/g, "\\'")}', '${code}')">
-              <span style="display:inline-flex;align-items:center;gap:8px;">${m.nom.toLowerCase().includes("mini-pelle") ? `<img src="icone%20mini-pelle.png" alt="Mini-Pelle" style="width:22px;height:22px;object-fit:contain;">` : `🚜`}${m.nom}</span>
+              <span style="display:inline-flex;align-items:center;gap:8px;">${iconeEngin}${m.nom}</span>
               <span style="font-size:12px;font-weight:600;">${iconeStatut} ${m.statut} →</span>
             </button>
           `;
@@ -1147,6 +1160,7 @@
 
     async function ouvrirVueFacturation() {
       document.getElementById("home-view").style.display = "none";
+      document.getElementById("gestion-view").style.display = "none";
       document.getElementById("form-view").style.display = "none";
       document.getElementById("factu-view").style.display = "block";
       document.getElementById("factu-results").style.display = "none";
@@ -1620,6 +1634,7 @@
       currentEngin = null;
 
       document.getElementById("home-view").style.display = "none";
+      document.getElementById("gestion-view").style.display = "none";
       document.getElementById("factu-view").style.display = "none";
       document.getElementById("form-view").style.display = "block";
       document.getElementById("form-engin-title").innerText = "Suivi Carburant";
@@ -1686,6 +1701,7 @@
 
       isModeCarburant = false;
       document.getElementById("home-view").style.display = "none";
+      document.getElementById("gestion-view").style.display = "none";
       document.getElementById("factu-view").style.display = "none";
       document.getElementById("form-view").style.display = "block";
       document.getElementById("form-engin-title").innerText = "Suivi " + nomEngin;
@@ -2260,8 +2276,8 @@
     function retourAccueil() {
       document.getElementById("form-view").style.display = "none";
       document.getElementById("factu-view").style.display = "none";
+      document.getElementById("gestion-view").style.display = "none";
       document.getElementById("home-view").style.display = "block";
-      document.getElementById("gestion-card").style.display = "none";
       if (window.history.replaceState) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
