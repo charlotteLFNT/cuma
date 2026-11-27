@@ -1502,15 +1502,13 @@
 
       let html = "";
       configData.materiels.forEach(m => {
-        const nb = m.entretiens ? m.entretiens.length : 0;
         const iconeEngin = m.nom.toLowerCase().includes("mini-pelle")
           ? `<img src="icone%20mini-pelle.png" alt="Mini-Pelle" style="width:22px;height:22px;object-fit:contain;">`
           : `🚜`;
-        const texteNb = nb === 0 ? "Aucun entretien" : `${nb} intervention${nb > 1 ? "s" : ""}`;
         html += `
           <button type="button" class="btn-gestion-engin" onclick="afficherCarnetPourMateriel('${m.nom.replace(/'/g, "\\'")}')">
             <span style="display:inline-flex;align-items:center;gap:8px;">${iconeEngin}${m.nom}</span>
-            <span style="font-size:12px;font-weight:600;color:#0f766e;">📖 ${texteNb} →</span>
+            <span style="font-size:14px;font-weight:700;color:#64748b;">→</span>
           </button>
         `;
       });
