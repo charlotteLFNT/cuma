@@ -1076,7 +1076,8 @@
     }
 
     function verifierCodeGestion() {
-      const code = document.getElementById("input-code-gestion").value.trim();
+      const inputEl = document.getElementById("input-code-gestion");
+      const code = inputEl.value.trim();
       const box = document.getElementById("greeting-gestion");
       const listDiv = document.getElementById("gestion-engins-list");
 
@@ -1086,6 +1087,8 @@
         codeGestionConnecte = "";
         return;
       }
+
+      inputEl.blur();
 
       if (!configData) {
         box.className = "greeting-box greeting-wait";
@@ -1814,7 +1817,8 @@
     }
 
     function verifierCodeAdherent() {
-      const code = document.getElementById("input-code").value.trim();
+      const inputEl = document.getElementById("input-code");
+      const code = inputEl.value.trim();
       const box = document.getElementById("greeting-box");
       const unlocked = document.getElementById("form-fields-unlocked");
       const optEntretien = document.getElementById("opt-entretien");
@@ -1830,6 +1834,8 @@
         currentAdherentConnecte = "";
         return;
       }
+
+      inputEl.blur();
 
       if (configData && configData.adherents[code]) {
         currentAdherentConnecte = configData.adherents[code];
