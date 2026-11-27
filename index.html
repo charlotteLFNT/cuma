@@ -183,11 +183,6 @@
       display: flex;
       flex-direction: column;
     }
-    .user-welcome span.label {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
     .user-welcome strong {
       font-size: 14px;
       color: var(--text-main);
@@ -790,7 +785,6 @@
           <div class="user-session-info">
             <div class="user-avatar" id="user-avatar-initials">C</div>
             <div class="user-welcome">
-              <span class="label">Adhérent connecté</span>
               <strong id="user-session-name">—</strong>
             </div>
           </div>
@@ -1274,7 +1268,7 @@
       currentAdherentConnecte = configData.adherents[code];
       const nomAffiche = (code === "0102") ? "Jean-Paul" : currentAdherentConnecte;
 
-      document.getElementById("user-session-name").innerText = nomAffiche;
+      document.getElementById("user-session-name").innerText = "Bonjour " + nomAffiche;
       document.getElementById("user-avatar-initials").innerText = nomAffiche.charAt(0).toUpperCase();
 
       const codesGestion = configData.codesLectureEntretien || ["2412", "0102", "2608"];
