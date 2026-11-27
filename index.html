@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>CUMA les 6 Terroirs — Portail Suivis</title>
 
-  <!-- Configuration de l'icône de l'application (Tracteur) -->
+  <!-- Configuration de l'icône de l'application -->
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" sizes="192x192" href="https://img.icons8.com/color/192/tractor.png">
-  <link rel="apple-touch-icon" sizes="192x192" href="https://img.icons8.com/color/192/tractor.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="Logo-cuma.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="Logo-cuma.png">
   <meta name="theme-color" content="#15803d">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -29,9 +29,15 @@
       min-height: 100vh;
     }
     .container { width: 100%; max-width: 440px; }
-    header { text-align: center; margin-bottom: 14px; margin-top: 8px; }
-    h1 { margin: 0; font-size: 24px; color: #15803d; }
-    p.sub { margin: 4px 0 0; color: #64748b; font-size: 13px; }
+    header { text-align: center; margin-bottom: 14px; margin-top: 4px; }
+    header img.main-banner {
+      width: 100%;
+      height: auto;
+      border-radius: 14px;
+      display: block;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+    p.sub { margin: 8px 0 0; color: #64748b; font-size: 13px; }
 
     /* BANDEAU D'INFORMATION DÉFILANT */
     .ticker-wrapper {
@@ -259,13 +265,19 @@
       border: 1px solid #e2e8f0;
       margin-bottom: 24px;
     }
+    .subview-banner-img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
     .form-banner {
       background: linear-gradient(135deg, #15803d 0%, #166534 100%);
       color: white;
-      padding: 18px 20px;
+      padding: 14px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
     }
     .form-banner.blue-banner {
       background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
@@ -273,12 +285,11 @@
     .form-banner.purple-banner {
       background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
     }
-    .form-banner-title { display: flex; align-items: center; gap: 12px; }
-    .form-banner-title img { width: 40px; height: 40px; background: white; border-radius: 10px; padding: 4px; }
-    .form-banner h2 { margin: 0; font-size: 19px; font-weight: 700; }
+    .form-banner-title { display: flex; align-items: center; gap: 10px; }
+    .form-banner h2 { margin: 0; font-size: 18px; font-weight: 700; }
     .form-banner p { margin: 2px 0 0; font-size: 12px; opacity: 0.9; }
     .btn-back {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.22);
       border: none;
       color: white;
       padding: 8px 12px;
@@ -286,6 +297,7 @@
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
+      flex-shrink: 0;
     }
     .form-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
     .status-pill { padding: 12px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; line-height: 1.5; }
@@ -549,11 +561,6 @@
 <body>
 
   <div class="container">
-    <header>
-      <h1>CUMA les 6 Terroirs</h1>
-      <p class="sub">Scannez le QR code ou accédez aux suivis</p>
-    </header>
-
     <!-- BANDEAU INFO DÉFILANT -->
     <div class="ticker-wrapper" id="ticker-wrapper" style="display: none;">
       <span class="ticker-icon">📢</span>
@@ -564,6 +571,11 @@
 
     <!-- VUE ACCUEIL -->
     <div id="home-view">
+      <header>
+        <img src="banniere-cuma.jpg" alt="CUMA les 6 Terroirs" class="main-banner">
+        <p class="sub">Scannez le QR code ou accédez aux suivis</p>
+      </header>
+
       <button id="install-banner" onclick="installerApp()">
         📲 Installer l'application sur le téléphone
       </button>
@@ -619,9 +631,9 @@
 
     <!-- VUE DÉDIÉE ESPACE GESTION -->
     <div class="form-card" id="gestion-view">
+      <img src="banniere-cuma.jpg" alt="CUMA les 6 Terroirs" class="subview-banner-img">
       <div class="form-banner purple-banner">
         <div class="form-banner-title">
-          <img src="https://img.icons8.com/color/192/tractor.png" alt="Logo CUMA">
           <div>
             <h2>Espace Gestion</h2>
             <p>CUMA — Administration et relevés</p>
@@ -642,9 +654,9 @@
 
     <!-- VUE RELEVÉ DES UTILISATIONS / FACTURATION (ACCÈS GESTION) -->
     <div class="form-card" id="factu-view">
+      <img src="banniere-cuma.jpg" alt="CUMA les 6 Terroirs" class="subview-banner-img">
       <div class="form-banner blue-banner">
         <div class="form-banner-title">
-          <img src="https://img.icons8.com/color/192/tractor.png" alt="Logo CUMA">
           <div>
             <h2>Relevé Facturation</h2>
             <p>Export matériel ou carburant</p>
@@ -688,9 +700,9 @@
 
     <!-- VUE MINI-FORMULAIRE INTÉGRÉ (ENGINS + CARBURANT) -->
     <div class="form-card" id="form-view">
+      <img src="banniere-cuma.jpg" alt="CUMA les 6 Terroirs" class="subview-banner-img">
       <div class="form-banner">
         <div class="form-banner-title">
-          <img src="https://img.icons8.com/color/192/tractor.png" alt="Logo CUMA">
           <div>
             <h2 id="form-engin-title">Suivi</h2>
             <p id="form-engin-subtitle">CUMA — Enregistrement</p>
