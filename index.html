@@ -9,50 +9,63 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="Logo-cuma.png">
   <link rel="apple-touch-icon" sizes="192x192" href="Logo-cuma.png">
-  <meta name="theme-color" content="#15803d">
+  <meta name="theme-color" content="#1b4d3e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- Police moderne -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Librairie de scan QR code -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <style>
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    :root {
+      --primary: #1b4d3e;
+      --primary-hover: #143a2f;
+      --primary-light: #e8f3ef;
+      --primary-border: #b7d7cc;
+      --bg-page: #f3f6f5;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-soft: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
     body {
       margin: 0;
       padding: 16px;
-      background-color: #f1f5f9;
-      color: #0f172a;
+      background-color: var(--bg-page);
+      color: var(--text-main);
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
     }
+
     .container { width: 100%; max-width: 440px; }
-    header { text-align: center; margin-bottom: 14px; margin-top: 4px; }
-    header img.main-banner {
-      width: 100%;
-      height: auto;
-      border-radius: 14px;
-      display: block;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-    }
-    p.sub { margin: 8px 0 0; color: #64748b; font-size: 13px; }
 
     /* BANDEAU D'INFORMATION DÉFILANT */
     .ticker-wrapper {
       width: 100%;
       background-color: #fef3c7;
       border: 1px solid #fde68a;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 10px 12px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
       overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 6px rgba(146, 64, 14, 0.06);
     }
-    .ticker-icon { font-size: 18px; margin-right: 8px; flex-shrink: 0; }
+    .ticker-icon { font-size: 16px; margin-right: 8px; flex-shrink: 0; }
     .ticker-content { overflow: hidden; white-space: nowrap; position: relative; flex-grow: 1; }
     .ticker-text {
       display: inline-block;
@@ -60,7 +73,7 @@
       padding-left: 100%;
       color: #92400e;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
       animation: defilement 20s linear infinite;
     }
     .ticker-text:hover { animation-play-state: paused; }
@@ -69,52 +82,162 @@
       100% { transform: translate(-100%, 0); }
     }
 
-    /* Bouton d'installation sur le téléphone */
+    /* EN-TÊTE BANNIÈRE ACCUEIL */
+    header { margin-bottom: 14px; margin-top: 2px; }
+    header img.main-banner {
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+      display: block;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    }
+
+    /* BOUTON D'INSTALLATION DISCRET */
     #install-banner {
       display: none;
       width: 100%;
-      background: #047857;
-      color: white;
-      border: 2px solid #059669;
-      border-radius: 14px;
-      padding: 16px;
-      font-size: 16px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1.5px solid var(--primary-border);
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 14px;
       font-weight: 700;
-      text-align: center;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
       cursor: pointer;
+      transition: background 0.15s;
     }
-    #install-banner:active { transform: scale(0.98); background: #065f46; }
+    #install-banner:active { background: #d5eae3; }
 
-    /* Bouton Scanner QR Code */
+    /* CARTE DE CONNEXION INITIALE */
+    .login-card {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 22px 20px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: center;
+    }
+    .login-icon-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+    .login-card h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .login-card p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* BARRE UTILISATEUR CONNECTÉ */
+    .user-session-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      padding: 11px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+    .user-session-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .user-welcome {
+      display: flex;
+      flex-direction: column;
+    }
+    .user-welcome span.label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .user-welcome strong {
+      font-size: 14px;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+    .btn-logout {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      border-radius: 9px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-logout:active { background: #e2e8f0; }
+
+    /* BOUTON PRINCIPAL SCANNER QR CODE */
     .btn-scanner {
       width: 100%;
-      background: #15803d;
+      background: var(--primary);
       color: white;
       border: none;
       border-radius: 14px;
-      padding: 18px;
-      font-size: 18px;
+      padding: 16px 18px;
+      font-size: 16px;
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      box-shadow: 0 4px 14px rgba(21, 128, 61, 0.25);
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(27, 77, 62, 0.25);
       cursor: pointer;
       margin-bottom: 16px;
+      transition: transform 0.1s, background 0.15s;
     }
-    .btn-scanner:active { transform: scale(0.98); background: #166534; }
+    .btn-scanner:active { transform: scale(0.985); background: var(--primary-hover); }
 
     #reader-wrapper {
       display: none;
       width: 100%;
       background: white;
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 14px;
       margin-bottom: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      border: 1px solid var(--border-soft);
       text-align: center;
     }
     #reader { width: 100%; border-radius: 10px; overflow: hidden; }
@@ -124,56 +247,112 @@
       color: white;
       border: none;
       padding: 10px 18px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-weight: 600;
+      font-size: 14px;
       cursor: pointer;
     }
 
-    .divider { text-align: center; position: relative; margin: 20px 0; }
-    .divider::before {
-      content: "";
-      position: absolute;
-      left: 0; top: 50%;
-      width: 100%; height: 1px;
-      background: #cbd5e1;
-    }
-    .divider span {
-      position: relative;
-      background: #f1f5f9;
-      padding: 0 12px;
-      color: #64748b;
-      font-size: 13px;
-      font-weight: 600;
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
       text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin: 4px 0 10px 2px;
     }
 
-    .menu-group { display: flex; flex-direction: column; gap: 12px; }
+    /* CARTES DU MENU DASHBOARD */
+    .menu-group { display: flex; flex-direction: column; gap: 10px; }
 
     .btn-action {
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 16px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-soft);
+      border-radius: 15px;
+      padding: 14px 16px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      justify-content: space-between;
+      gap: 12px;
       text-decoration: none;
-      color: #1e293b;
-      font-weight: 600;
-      font-size: 16px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+      color: var(--text-main);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
       cursor: pointer;
       width: 100%;
       text-align: left;
+      transition: transform 0.1s, border-color 0.15s;
     }
-    .btn-action:active { background: #f8fafc; }
+    .btn-action:active { transform: scale(0.99); background: #f8fafc; }
+
+    .action-left {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
+    }
+    .icon-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .icon-badge.green { background: #e8f3ef; color: #1b4d3e; }
+    .icon-badge.amber { background: #fef3c7; color: #b45309; }
+    .icon-badge.emerald { background: #dcfce7; color: #15803d; }
+    .icon-badge.indigo { background: #eef2ff; color: #4338ca; }
+
+    .action-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .action-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-main);
+    }
+    .action-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .action-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .chevron {
+      color: #94a3b8;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    /* PASTILLE ÉTAT DU PARC EN DIRECT */
+    .live-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .live-pill.ok { background: #dcfce7; color: #15803d; }
+    .live-pill.busy { background: #fee2e2; color: #b91c1c; }
+    .live-pill.loading { background: #f1f5f9; color: #64748b; }
+
+    /* CARTE GESTION (UNIFORMISÉE ET DISCRÈTE) */
+    .gestion-divider {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-soft);
+    }
     .btn-gestion {
       background: #f8fafc;
-      border: 1.5px dashed #94a3b8;
-      color: #334155;
-      margin-top: 6px;
+      border: 1px solid #cbd5e1;
     }
-    .btn-icon { font-size: 24px; line-height: 1; }
 
     /* PANNEAU DÉROULANT ACCUEIL (PARC) */
     .parc-card {
@@ -181,9 +360,8 @@
       background: white;
       border-radius: 16px;
       padding: 16px;
-      margin-top: 2px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+      border: 1px solid var(--border-soft);
     }
     .parc-card-header {
       display: flex;
@@ -193,25 +371,25 @@
       padding-bottom: 8px;
       border-bottom: 1px solid #f1f5f9;
     }
-    .parc-card-header h2 { margin: 0; font-size: 17px; color: #0f172a; }
-    .btn-close { background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; padding: 4px 8px; }
-    .parc-list { display: flex; flex-direction: column; gap: 10px; }
+    .parc-card-header h2 { margin: 0; font-size: 15px; font-weight: 800; color: var(--text-main); }
+    .btn-close { background: #f1f5f9; border: none; border-radius: 8px; font-size: 14px; color: #64748b; cursor: pointer; padding: 4px 8px; font-weight: 700; }
+    .parc-list { display: flex; flex-direction: column; gap: 8px; }
     .parc-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 10px 12px;
       background: #f8fafc;
-      border-radius: 10px;
+      border-radius: 11px;
       border-left: 4px solid #94a3b8;
     }
     .parc-item.disponible { border-left-color: #22c55e; }
     .parc-item.en-cours { border-left-color: #ef4444; }
     .parc-info { display: flex; flex-direction: column; gap: 2px; }
-    .parc-nom { font-weight: 700; font-size: 15px; color: #1e293b; }
+    .parc-nom { font-weight: 700; font-size: 14px; color: #1e293b; }
     .parc-user { font-size: 12px; color: #b91c1c; font-weight: 600; }
     .badge-statut {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       padding: 4px 8px;
       border-radius: 6px;
@@ -224,30 +402,30 @@
     /* Boutons engins & facturation dans la page Espace Gestion */
     .btn-gestion-engin {
       width: 100%;
-      background: #f0fdf4;
-      border: 1.5px solid #86efac;
-      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid var(--border-soft);
+      border-radius: 13px;
       padding: 13px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
-      color: #166534;
+      color: var(--text-main);
       cursor: pointer;
       text-align: left;
     }
-    .btn-gestion-engin:active { background: #dcfce7; }
+    .btn-gestion-engin:active { background: #f1f5f9; }
     .btn-gestion-factu {
       width: 100%;
       background: #eff6ff;
-      border: 1.5px solid #93c5fd;
-      border-radius: 12px;
+      border: 1.5px solid #bfdbfe;
+      border-radius: 13px;
       padding: 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
       color: #1e40af;
       cursor: pointer;
@@ -261,8 +439,8 @@
       background: white;
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
-      border: 1px solid #e2e8f0;
+      box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
+      border: 1px solid var(--border-soft);
       margin-bottom: 24px;
     }
     .subview-banner-img {
@@ -270,62 +448,72 @@
       height: auto;
       display: block;
     }
-    .form-banner {
-      background: linear-gradient(135deg, #15803d 0%, #166534 100%);
-      color: white;
+    .subview-header {
+      background: #ffffff;
       padding: 14px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      border-bottom: 1px solid var(--border-soft);
     }
-    .form-banner.blue-banner {
-      background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
+    .subview-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .form-banner.purple-banner {
-      background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
+    .subview-accent {
+      width: 4px;
+      height: 32px;
+      border-radius: 4px;
+      background: var(--primary);
+      flex-shrink: 0;
     }
-    .form-banner-title { display: flex; align-items: center; gap: 10px; }
-    .form-banner h2 { margin: 0; font-size: 18px; font-weight: 700; }
-    .form-banner p { margin: 2px 0 0; font-size: 12px; opacity: 0.9; }
+    .subview-accent.blue { background: #1d4ed8; }
+    .subview-accent.indigo { background: #4338ca; }
+    .subview-header h2 { margin: 0; font-size: 17px; font-weight: 800; color: var(--text-main); }
+    .subview-header p { margin: 2px 0 0; font-size: 12px; color: var(--text-muted); }
     .btn-back {
-      background: rgba(255,255,255,0.22);
-      border: none;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 8px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      padding: 7px 12px;
+      border-radius: 9px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       flex-shrink: 0;
     }
-    .form-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-    .status-pill { padding: 12px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; line-height: 1.5; }
+    .btn-back:active { background: #e2e8f0; }
+
+    .form-body { padding: 18px; display: flex; flex-direction: column; gap: 15px; }
+    .status-pill { padding: 12px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; line-height: 1.5; }
     .status-pill.dispo { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
     .status-pill.encours { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
     .status-pill.info { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     .field-group { display: flex; flex-direction: column; gap: 6px; }
-    .field-group label { font-size: 14px; font-weight: 700; color: #334155; }
+    .field-group label { font-size: 13px; font-weight: 700; color: #334155; }
     .field-group input, .field-group select, .field-group textarea {
       width: 100%;
-      padding: 13px 14px;
+      padding: 12px 14px;
       border: 1.5px solid #cbd5e1;
       border-radius: 12px;
-      font-size: 16px;
+      font-size: 15px;
       color: #0f172a;
       background: #f8fafc;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.2s;
     }
     .field-group input:focus, .field-group select:focus, .field-group textarea:focus {
       outline: none;
-      border-color: #15803d;
+      border-color: var(--primary);
       background: white;
     }
-    .code-input { font-size: 22px !important; font-weight: 700; letter-spacing: 6px; text-align: center; }
-    .greeting-box { display: none; padding: 10px 14px; border-radius: 10px; font-size: 15px; font-weight: 700; text-align: center; }
+    .code-input { font-size: 24px !important; font-weight: 800; letter-spacing: 8px; text-align: center; }
+    .greeting-box { display: none; padding: 10px 14px; border-radius: 10px; font-size: 14px; font-weight: 700; text-align: center; }
     .greeting-ok { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
     .greeting-err { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
     .greeting-wait { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
     .cost-box {
       display: none;
       background: #eff6ff;
@@ -334,7 +522,7 @@
       padding: 14px;
       color: #1e3a8a;
     }
-    .cost-box-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 14px; }
+    .cost-box-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px; }
     .cost-box-total {
       display: flex;
       justify-content: space-between;
@@ -342,25 +530,26 @@
       margin-top: 8px;
       padding-top: 8px;
       border-top: 1px solid #bfdbfe;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 800;
       color: #1d4ed8;
     }
     .btn-submit {
       width: 100%;
-      background: #15803d;
+      background: var(--primary);
       color: white;
       border: none;
-      border-radius: 14px;
-      padding: 16px;
-      font-size: 17px;
+      border-radius: 13px;
+      padding: 15px;
+      font-size: 16px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25);
+      box-shadow: 0 4px 12px rgba(27, 77, 62, 0.22);
     }
+    .btn-submit:active { background: var(--primary-hover); }
     .btn-submit.blue-btn {
       background: #1d4ed8;
-      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25);
+      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.22);
     }
     .btn-submit:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
 
@@ -369,9 +558,9 @@
       background: #eff6ff;
       color: #1d4ed8;
       border: 1.5px solid #93c5fd;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 15px;
+      border-radius: 13px;
+      padding: 13px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
       margin-bottom: 10px;
@@ -405,7 +594,7 @@
     }
     .factu-adh-title {
       font-weight: 800;
-      font-size: 16px;
+      font-size: 15px;
       color: #1e3a8a;
       border-bottom: 1px solid #e2e8f0;
       padding-bottom: 6px;
@@ -441,15 +630,15 @@
     }
     .btn-mail-appli {
       width: 100%;
-      background: #15803d;
+      background: var(--primary);
       color: white;
       border: none;
       border-radius: 12px;
       padding: 14px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 3px 10px rgba(21, 128, 61, 0.2);
+      box-shadow: 0 3px 10px rgba(27, 77, 62, 0.2);
     }
     .btn-mail-appli:disabled {
       background: #94a3b8;
@@ -460,19 +649,19 @@
     /* CARNET D'ENTRETIEN INTÉGRÉ */
     .btn-carnet {
       width: 100%;
-      background: #f0fdf4;
-      color: #15803d;
-      border: 1.5px solid #86efac;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1.5px solid var(--primary-border);
       border-radius: 12px;
       padding: 12px 14px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .btn-carnet:active { background: #dcfce7; }
+    .btn-carnet:active { background: #d5eae3; }
     .carnet-panel {
       display: none;
       flex-direction: column;
@@ -500,7 +689,7 @@
       border-bottom: 1px solid #f1f5f9;
       padding-bottom: 6px;
     }
-    .carnet-date { font-weight: 800; font-size: 14px; color: #15803d; }
+    .carnet-date { font-weight: 800; font-size: 14px; color: var(--primary); }
     .carnet-heures {
       background: #dcfce7;
       color: #166534;
@@ -533,7 +722,7 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      background: #15803d;
+      background: var(--primary);
       color: white;
       text-decoration: none;
       font-weight: 700;
@@ -543,8 +732,8 @@
     }
 
     .success-screen { display: none; padding: 28px 20px; text-align: center; }
-    .success-icon { font-size: 48px; margin-bottom: 10px; }
-    .success-screen h3 { margin: 0 0 8px; color: #15803d; font-size: 20px; }
+    .success-icon { font-size: 46px; margin-bottom: 10px; }
+    .success-screen h3 { margin: 0 0 8px; color: var(--primary); font-size: 20px; font-weight: 800; }
     .success-recap {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -573,90 +762,165 @@
     <div id="home-view">
       <header>
         <img src="banniere-cuma.jpg" alt="CUMA les 6 Terroirs" class="main-banner">
-        <p class="sub">Scannez le QR code ou accédez aux suivis</p>
       </header>
 
       <button id="install-banner" onclick="installerApp()">
-        📲 Installer l'application sur le téléphone
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Installer l'application sur le téléphone</span>
       </button>
 
-      <button class="btn-scanner" id="start-scan-btn" onclick="ouvrirCamera()">
-        <span>📷</span> Scanner un QR Code
-      </button>
-
-      <div id="reader-wrapper">
-        <div id="reader"></div>
-        <button class="btn-stop" onclick="fermerCamera()">Annuler</button>
+      <!-- 1. ÉCRAN DE CONNEXION INITIAL -->
+      <div class="login-card" id="home-login-box">
+        <div class="login-icon-badge">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div>
+          <h2>Accès Adhérents</h2>
+          <p>Saisissez votre code personnel à 4 chiffres pour accéder au portail de la CUMA</p>
+        </div>
+        <div class="field-group" style="margin-top: 2px;">
+          <input type="password" inputmode="numeric" pattern="[0-9]*" id="input-code-accueil" class="code-input" maxlength="4" placeholder="••••" oninput="verifierCodeAccueil()">
+          <div class="greeting-box" id="greeting-accueil"></div>
+        </div>
       </div>
 
-      <div class="divider">
-        <span>Menu direct</span>
-      </div>
-
-      <div class="menu-group">
-        <button class="btn-action" onclick="basculerAffichageParc()">
-          <span class="btn-icon">📋</span>
-          <span>Disponibilité du matériel</span>
-        </button>
-
-        <div class="parc-card" id="parc-card">
-          <div class="parc-card-header">
-            <h2>🚜 État du parc en direct</h2>
-            <button class="btn-close" onclick="basculerAffichageParc()">✕</button>
-          </div>
-          <div class="parc-list" id="parc-list">
-            <div style="font-size: 13px; color: #64748b; text-align: center; padding: 10px;">
-              Chargement de l'état du matériel...
+      <!-- 2. TABLEAU DE BORD PERSONNALISÉ (DÉBLOQUÉ APRÈS CONNEXION) -->
+      <div id="home-dashboard" style="display: none;">
+        <div class="user-session-bar">
+          <div class="user-session-info">
+            <div class="user-avatar" id="user-avatar-initials">C</div>
+            <div class="user-welcome">
+              <span class="label">Adhérent connecté</span>
+              <strong id="user-session-name">—</strong>
             </div>
           </div>
+          <button type="button" class="btn-logout" onclick="deconnecterUtilisateur()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span>Changer</span>
+          </button>
         </div>
 
-        <button class="btn-action" onclick="ouvrirFormulaireCarburant()">
-          <span class="btn-icon">⛽</span>
-          <span>Formulaire Suivi Carburant</span>
+        <button class="btn-scanner" id="start-scan-btn" onclick="ouvrirCamera()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
+          <span>Scanner un QR Code</span>
         </button>
 
-        <button class="btn-action" onclick="ouvrirFormulaireEngin('Mini-Pelle')">
-          <img src="icone%20mini-pelle.png" alt="Mini-Pelle" style="width: 26px; height: 26px; object-fit: contain; flex-shrink: 0;">
-          <span>Suivi Mini-Pelle</span>
-        </button>
+        <div id="reader-wrapper">
+          <div id="reader"></div>
+          <button class="btn-stop" onclick="fermerCamera()">Annuler</button>
+        </div>
 
-        <!-- BOUTON ACCÈS GESTION (ouvre la page dédiée Espace Gestion) -->
-        <button class="btn-action btn-gestion" onclick="basculerAccesGestion()">
-          <span class="btn-icon">🔐</span>
-          <span>Accès Gestion</span>
-        </button>
+        <div class="section-label">Accès direct</div>
+
+        <div class="menu-group">
+          <!-- Disponibilité du matériel + pastille live -->
+          <button class="btn-action" onclick="basculerAffichageParc()">
+            <div class="action-left">
+              <div class="icon-badge green">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+              </div>
+              <div class="action-text">
+                <span class="action-title">Disponibilité du matériel</span>
+                <span class="action-sub">Voir l'état du parc en temps réel</span>
+              </div>
+            </div>
+            <div class="action-right">
+              <span class="live-pill loading" id="parc-live-badge">En direct</span>
+              <span class="chevron">›</span>
+            </div>
+          </button>
+
+          <div class="parc-card" id="parc-card">
+            <div class="parc-card-header">
+              <h2>🚜 État du parc en direct</h2>
+              <button class="btn-close" onclick="basculerAffichageParc()">✕</button>
+            </div>
+            <div class="parc-list" id="parc-list">
+              <div style="font-size: 13px; color: #64748b; text-align: center; padding: 10px;">
+                Chargement de l'état du matériel...
+              </div>
+            </div>
+          </div>
+
+          <!-- Suivi Carburant -->
+          <button class="btn-action" onclick="ouvrirFormulaireCarburant()">
+            <div class="action-left">
+              <div class="icon-badge amber">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="15" y2="22"/><line x1="4" y1="9" x2="14" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>
+              </div>
+              <div class="action-text">
+                <span class="action-title">Suivi Carburant</span>
+                <span class="action-sub">Déclarer un retrait à la cuve GNR</span>
+              </div>
+            </div>
+            <div class="action-right">
+              <span class="chevron">›</span>
+            </div>
+          </button>
+
+          <!-- Suivi Mini-Pelle -->
+          <button class="btn-action" onclick="ouvrirFormulaireEngin('Mini-Pelle')">
+            <div class="action-left">
+              <div class="icon-badge emerald">
+                <img src="icone%20mini-pelle.png" alt="Mini-Pelle" style="width: 26px; height: 26px; object-fit: contain;">
+              </div>
+              <div class="action-text">
+                <span class="action-title">Suivi Mini-Pelle</span>
+                <span class="action-sub">Début ou fin d'utilisation horaire</span>
+              </div>
+            </div>
+            <div class="action-right">
+              <span class="chevron">›</span>
+            </div>
+          </button>
+
+          <!-- ESPACE GESTION (AFFICHÉ UNIQUEMENT SI LE CODE EST GESTIONNAIRE) -->
+          <div id="gestion-access-section" class="gestion-divider" style="display: none;">
+            <div class="section-label">Administration</div>
+            <button class="btn-action btn-gestion" onclick="ouvrirEspaceGestion()">
+              <div class="action-left">
+                <div class="icon-badge indigo">
+                  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div class="action-text">
+                  <span class="action-title">Espace Gestion</span>
+                  <span class="action-sub">Relevés de facturation et entretiens</span>
+                </div>
+              </div>
+              <div class="action-right">
+                <span class="chevron">›</span>
+              </div>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- VUE DÉDIÉE ESPACE GESTION -->
     <div class="form-card" id="gestion-view">
       <img src="banniere-cuma.jpg" alt="CUMA les 6 Terroirs" class="subview-banner-img">
-      <div class="form-banner purple-banner">
-        <div class="form-banner-title">
+      <div class="subview-header">
+        <div class="subview-header-left">
+          <div class="subview-accent indigo"></div>
           <div>
             <h2>Espace Gestion</h2>
-            <p>CUMA — Administration et relevés</p>
+            <p>Administration et relevés CUMA</p>
           </div>
         </div>
         <button class="btn-back" onclick="retourAccueil()">← Retour</button>
       </div>
 
       <div class="form-body">
-        <div class="field-group" id="gestion-code-group">
-          <label for="input-code-gestion">Code gestionnaire (4 chiffres)</label>
-          <input type="password" inputmode="numeric" pattern="[0-9]*" id="input-code-gestion" class="code-input" maxlength="4" placeholder="••••" oninput="verifierCodeGestion()">
-          <div class="greeting-box" id="greeting-gestion"></div>
-        </div>
-        <div id="gestion-engins-list" style="display: none; flex-direction: column; gap: 10px;"></div>
+        <div id="gestion-engins-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
       </div>
     </div>
 
     <!-- VUE RELEVÉ DES UTILISATIONS / FACTURATION (ACCÈS GESTION) -->
     <div class="form-card" id="factu-view">
       <img src="banniere-cuma.jpg" alt="CUMA les 6 Terroirs" class="subview-banner-img">
-      <div class="form-banner blue-banner">
-        <div class="form-banner-title">
+      <div class="subview-header">
+        <div class="subview-header-left">
+          <div class="subview-accent blue"></div>
           <div>
             <h2>Relevé Facturation</h2>
             <p>Export matériel ou carburant</p>
@@ -701,8 +965,9 @@
     <!-- VUE MINI-FORMULAIRE INTÉGRÉ (ENGINS + CARBURANT) -->
     <div class="form-card" id="form-view">
       <img src="banniere-cuma.jpg" alt="CUMA les 6 Terroirs" class="subview-banner-img">
-      <div class="form-banner">
-        <div class="form-banner-title">
+      <div class="subview-header">
+        <div class="subview-header-left">
+          <div class="subview-accent"></div>
           <div>
             <h2 id="form-engin-title">Suivi</h2>
             <p id="form-engin-subtitle">CUMA — Enregistrement</p>
@@ -718,8 +983,8 @@
       <div class="form-body" id="form-content" style="display: none;">
         <div class="status-pill dispo" id="engin-status-pill"></div>
 
-        <!-- 1. Code adhérent (masqué par des points) -->
-        <div class="field-group">
+        <!-- Code adhérent (affiché uniquement si accès direct par QR code sans connexion préalable) -->
+        <div class="field-group" id="form-code-group">
           <label for="input-code">Votre code d'accès adhérent (4 chiffres)</label>
           <input type="password" inputmode="numeric" pattern="[0-9]*" id="input-code" class="code-input" maxlength="4" placeholder="••••" oninput="verifierCodeAdherent()">
           <div class="greeting-box" id="greeting-box"></div>
@@ -902,7 +1167,7 @@
       </div>
     </div>
 
-    <footer style="margin-top: 28px; padding-bottom: 10px; text-align: center; font-size: 9px; color: #cbd5e1;">
+    <footer style="margin-top: 24px; padding-bottom: 10px; text-align: center; font-size: 10px; color: #94a3b8;">
       Application conçue par Charlie
     </footer>
 
@@ -918,8 +1183,8 @@
     let chargementEnCours = null;
     let currentEngin = null;
     let isModeCarburant = false;
+    let currentCodeConnecte = "";
     let currentAdherentConnecte = "";
-    let codeGestionConnecte = "";
     let sujetExportFacturation = "";
     let texteExportFacturation = "";
     let htmlExportFacturation = "";
@@ -938,12 +1203,13 @@
         .then(data => {
           configData = data;
           try { localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(data)); } catch (e) {}
-          const inputGest = document.getElementById("input-code-gestion");
-          if (inputGest && inputGest.value.trim().length === 4) {
-            verifierCodeGestion();
+          mettreAJourBadgeParcAccueil();
+          const inputAccueil = document.getElementById("input-code-accueil");
+          if (inputAccueil && inputAccueil.value.trim().length === 4 && !currentCodeConnecte) {
+            verifierCodeAccueil();
           }
           const inputAdh = document.getElementById("input-code");
-          if (inputAdh && inputAdh.value.trim().length === 4) {
+          if (inputAdh && inputAdh.value.trim().length === 4 && !currentCodeConnecte) {
             verifierCodeAdherent();
           }
           return data;
@@ -952,6 +1218,82 @@
           chargementEnCours = null;
         });
       return chargementEnCours;
+    }
+
+    function mettreAJourBadgeParcAccueil() {
+      const badge = document.getElementById("parc-live-badge");
+      if (!badge || !configData || !configData.materiels) return;
+      const total = configData.materiels.length;
+      const enCours = configData.materiels.filter(m => m.statut && m.statut.toLowerCase().includes("cours")).length;
+      const dispos = total - enCours;
+      if (enCours > 0) {
+        badge.className = "live-pill busy";
+        badge.innerText = `${dispos}/${total} dispo`;
+      } else {
+        badge.className = "live-pill ok";
+        badge.innerText = `${total}/${total} dispo`;
+      }
+    }
+
+    // --- CONNEXION / DÉCONNEXION À L'ACCUEIL ---
+    function verifierCodeAccueil() {
+      const inputEl = document.getElementById("input-code-accueil");
+      const code = inputEl.value.trim();
+      const box = document.getElementById("greeting-accueil");
+
+      if (code.length < 4) {
+        box.style.display = "none";
+        return;
+      }
+
+      inputEl.blur();
+
+      if (!configData) {
+        box.className = "greeting-box greeting-wait";
+        box.innerText = "⏳ Vérification du code en cours...";
+        box.style.display = "block";
+        rafraichirConfigEnArrierePlan().catch(() => {
+          box.className = "greeting-box greeting-err";
+          box.innerText = "❌ Erreur de connexion. Réessayez.";
+        });
+        return;
+      }
+
+      if (configData.adherents[code]) {
+        ouvrirSessionUtilisateur(code);
+      } else {
+        box.className = "greeting-box greeting-err";
+        box.innerText = "❌ Code adhérent inconnu";
+        box.style.display = "block";
+      }
+    }
+
+    function ouvrirSessionUtilisateur(code) {
+      if (!configData || !configData.adherents[code]) return;
+      currentCodeConnecte = code;
+      currentAdherentConnecte = configData.adherents[code];
+      const nomAffiche = (code === "0102") ? "Jean-Paul" : currentAdherentConnecte;
+
+      document.getElementById("user-session-name").innerText = nomAffiche;
+      document.getElementById("user-avatar-initials").innerText = nomAffiche.charAt(0).toUpperCase();
+
+      const codesGestion = configData.codesLectureEntretien || ["2412", "0102", "2608"];
+      const estGestionnaire = codesGestion.includes(code);
+      document.getElementById("gestion-access-section").style.display = estGestionnaire ? "block" : "none";
+
+      document.getElementById("home-login-box").style.display = "none";
+      document.getElementById("home-dashboard").style.display = "block";
+      mettreAJourBadgeParcAccueil();
+    }
+
+    function deconnecterUtilisateur() {
+      currentCodeConnecte = "";
+      currentAdherentConnecte = "";
+      document.getElementById("input-code-accueil").value = "";
+      document.getElementById("greeting-accueil").style.display = "none";
+      document.getElementById("parc-card").style.display = "none";
+      document.getElementById("home-dashboard").style.display = "none";
+      document.getElementById("home-login-box").style.display = "flex";
     }
 
     async function chargerInfoBandeau() {
@@ -1058,95 +1400,44 @@
       }
     }
 
-    // --- PAGE DÉDIÉE ESPACE GESTION ---
-    function basculerAccesGestion() {
+    // --- PAGE DÉDIÉE ESPACE GESTION (OUVERTE DIRECTEMENT SI GESTIONNAIRE CONNECTÉ) ---
+    function ouvrirEspaceGestion() {
+      const codesAutorises = (configData && configData.codesLectureEntretien) ? configData.codesLectureEntretien : ["2412", "0102", "2608"];
+      if (!currentCodeConnecte || !codesAutorises.includes(currentCodeConnecte)) {
+        alert("Accès réservé aux gestionnaires.");
+        return;
+      }
+
       document.getElementById("home-view").style.display = "none";
       document.getElementById("form-view").style.display = "none";
       document.getElementById("factu-view").style.display = "none";
       document.getElementById("gestion-view").style.display = "block";
 
-      const inputCode = document.getElementById("input-code-gestion");
-      inputCode.value = "";
-      codeGestionConnecte = "";
-      document.getElementById("greeting-gestion").style.display = "none";
-      document.getElementById("gestion-engins-list").style.display = "none";
-      inputCode.focus();
-
-      rafraichirConfigEnArrierePlan().catch(() => {});
-    }
-
-    function verifierCodeGestion() {
-      const inputEl = document.getElementById("input-code-gestion");
-      const code = inputEl.value.trim();
-      const box = document.getElementById("greeting-gestion");
       const listDiv = document.getElementById("gestion-engins-list");
+      let html = `
+        <button type="button" class="btn-gestion-factu" onclick="ouvrirVueFacturation()">
+          <span>📊 Relevé des utilisations (Facturation)</span>
+          <span>→</span>
+        </button>
+      `;
 
-      if (code.length < 4) {
-        box.style.display = "none";
-        listDiv.style.display = "none";
-        codeGestionConnecte = "";
-        return;
-      }
-
-      inputEl.blur();
-
-      if (!configData) {
-        box.className = "greeting-box greeting-wait";
-        box.innerText = "⏳ Vérification du code en cours...";
-        box.style.display = "block";
-        rafraichirConfigEnArrierePlan().catch(() => {
-          box.className = "greeting-box greeting-err";
-          box.innerText = "❌ Erreur de connexion. Réessayez.";
-        });
-        return;
-      }
-
-      const codesAutorises = configData.codesLectureEntretien || ["2412", "0102", "2608"];
-
-      if (configData.adherents[code] && codesAutorises.includes(code)) {
-        codeGestionConnecte = code;
-        const nomAffiche = (code === "0102") ? "Jean-Paul" : configData.adherents[code];
-        box.className = "greeting-box greeting-ok";
-        box.innerText = "✅ Bonjour " + nomAffiche;
-        box.style.display = "block";
-
-        let html = `
-          <button type="button" class="btn-gestion-factu" onclick="ouvrirVueFacturation()">
-            <span>📊 Relevé des utilisations (Facturation)</span>
-            <span>→</span>
-          </button>
-        `;
-
+      if (configData && configData.materiels) {
         configData.materiels.forEach(m => {
           const iconeStatut = m.statut === "En cours" ? "🔴" : "🟢";
           const iconeEngin = m.nom.toLowerCase().includes("mini-pelle")
             ? `<img src="icone%20mini-pelle.png" alt="Mini-Pelle" style="width:22px;height:22px;object-fit:contain;">`
             : `🚜`;
           html += `
-            <button type="button" class="btn-gestion-engin" onclick="ouvrirEnginDepuisGestion('${m.nom.replace(/'/g, "\\'")}', '${code}')">
+            <button type="button" class="btn-gestion-engin" onclick="ouvrirFormulaireEngin('${m.nom.replace(/'/g, "\\'")}')">
               <span style="display:inline-flex;align-items:center;gap:8px;">${iconeEngin}${m.nom}</span>
               <span style="font-size:12px;font-weight:600;">${iconeStatut} ${m.statut} →</span>
             </button>
           `;
         });
-
-        listDiv.innerHTML = html;
-        listDiv.style.display = "flex";
-      } else {
-        codeGestionConnecte = "";
-        box.className = "greeting-box greeting-err";
-        box.innerText = "❌ Accès réservé aux gestionnaires";
-        box.style.display = "block";
-        listDiv.style.display = "none";
       }
-    }
 
-    async function ouvrirEnginDepuisGestion(nomEngin, codeSaisi) {
-      await ouvrirFormulaireEngin(nomEngin);
-      if (codeSaisi) {
-        document.getElementById("input-code").value = codeSaisi;
-        verifierCodeAdherent();
-      }
+      listDiv.innerHTML = html;
+      rafraichirConfigEnArrierePlan().catch(() => {});
     }
 
     // --- VUE RELEVÉ FACTURATION (MATÉRIEL OU CARBURANT SÉPARÉMENT) ---
@@ -1227,7 +1518,7 @@
       let texteBrut = "";
       let htmlEmail = `
         <div style="font-family: Arial, sans-serif; color: #0f172a; max-width: 760px; margin: 0 auto;">
-          <div style="background: #15803d; color: #ffffff; padding: 14px 18px; border-radius: 8px 8px 0 0;">
+          <div style="background: #1b4d3e; color: #ffffff; padding: 14px 18px; border-radius: 8px 8px 0 0;">
             <h2 style="margin: 0; font-size: 18px;">CUMA les 6 Terroirs — Relevé de facturation</h2>
             <p style="margin: 4px 0 0; font-size: 13px; opacity: 0.95;">Période du <strong>${formaterDateFr(dateDeb)}</strong> au <strong>${formaterDateFr(dateFin)}</strong></p>
           </div>
@@ -1494,8 +1785,8 @@
       texteExportFacturation = texteBrut;
       htmlExportFacturation = htmlEmail;
 
-      const emailParDefaut = (configData && configData.emailsParCode && codeGestionConnecte)
-        ? (configData.emailsParCode[codeGestionConnecte] || "")
+      const emailParDefaut = (configData && configData.emailsParCode && currentCodeConnecte)
+        ? (configData.emailsParCode[currentCodeConnecte] || "")
         : "";
 
       let selectOptionsHtml = "";
@@ -1551,7 +1842,7 @@
           method: "POST",
           body: JSON.stringify({
             action: "EnvoyerReleveFacturationMail",
-            code: codeGestionConnecte,
+            code: currentCodeConnecte,
             destinataire: destinataire,
             sujet: sujetExportFacturation,
             corps: texteExportFacturation,
@@ -1643,6 +1934,53 @@
       }
     }
 
+    // --- APPLIQUE LES DROITS DU CODE SUR LE FORMULAIRE OUVERT ---
+    function appliquerDroitsCodeSurFormulaire(code) {
+      const optEntretien = document.getElementById("opt-entretien");
+      const groupTypeCarb = document.getElementById("group-type-carburant");
+      const carnetBox = document.getElementById("carnet-access-box");
+      const unlocked = document.getElementById("form-fields-unlocked");
+
+      unlocked.style.display = "flex";
+
+      if (isModeCarburant) {
+        const codesAutorises = configData.codesLivraisonCarburant || ["2412", "0102"];
+        if (codesAutorises.includes(code)) {
+          groupTypeCarb.style.display = "flex";
+        } else {
+          groupTypeCarb.style.display = "none";
+          document.getElementById("select-type-carburant").value = "Retrait";
+          adapterChampsCarburant();
+        }
+        if (configData.listeAdherents.includes(currentAdherentConnecte)) {
+          document.getElementById("select-carb-adherent").value = currentAdherentConnecte;
+        }
+      } else {
+        const codesCarnet = configData.codesLectureEntretien || ["2412", "0102", "2608"];
+        if (codesCarnet.includes(code)) {
+          carnetBox.style.display = "flex";
+        } else {
+          carnetBox.style.display = "none";
+          document.getElementById("carnet-panel").style.display = "none";
+        }
+
+        const adminCode = configData.codeAdmin || "2412";
+        if (code === adminCode) {
+          optEntretien.style.display = "block";
+        } else {
+          optEntretien.style.display = "none";
+          if (document.getElementById("select-action").value === "Entretien") {
+            document.getElementById("select-action").value = currentEngin.statut === "En cours" ? "Fin d'utilisation" : "Début d'utilisation";
+            adapterChampsAction();
+          }
+        }
+
+        if (document.getElementById("select-action").value === "Début d'utilisation" && configData.listeAdherents.includes(currentAdherentConnecte)) {
+          document.getElementById("select-adherent").value = currentAdherentConnecte;
+        }
+      }
+    }
+
     // --- OUVERTURE FORMULAIRE CARBURANT ---
     async function ouvrirFormulaireCarburant() {
       isModeCarburant = true;
@@ -1658,7 +1996,7 @@
       document.getElementById("form-content").style.display = "none";
       document.getElementById("form-success").style.display = "none";
 
-      document.getElementById("input-code").value = "";
+      document.getElementById("input-code").value = currentCodeConnecte || "";
       document.getElementById("greeting-box").style.display = "none";
       document.getElementById("form-fields-unlocked").style.display = "none";
       document.getElementById("mode-engin").style.display = "none";
@@ -1699,6 +2037,13 @@
 
         adapterChampsCarburant();
 
+        if (currentCodeConnecte && configData.adherents[currentCodeConnecte]) {
+          document.getElementById("form-code-group").style.display = "none";
+          appliquerDroitsCodeSurFormulaire(currentCodeConnecte);
+        } else {
+          document.getElementById("form-code-group").style.display = "flex";
+        }
+
         document.getElementById("form-loading").style.display = "none";
         document.getElementById("form-content").style.display = "flex";
       } catch (err) {
@@ -1727,7 +2072,7 @@
 
       const aujourdhui = new Date().toISOString().split("T")[0];
 
-      document.getElementById("input-code").value = "";
+      document.getElementById("input-code").value = currentCodeConnecte || "";
       document.getElementById("greeting-box").style.display = "none";
       document.getElementById("form-fields-unlocked").style.display = "none";
       document.getElementById("mode-carburant").style.display = "none";
@@ -1808,6 +2153,13 @@
 
         adapterChampsAction();
 
+        if (currentCodeConnecte && configData.adherents[currentCodeConnecte]) {
+          document.getElementById("form-code-group").style.display = "none";
+          appliquerDroitsCodeSurFormulaire(currentCodeConnecte);
+        } else {
+          document.getElementById("form-code-group").style.display = "flex";
+        }
+
         document.getElementById("form-loading").style.display = "none";
         document.getElementById("form-content").style.display = "flex";
       } catch (err) {
@@ -1816,80 +2168,34 @@
       }
     }
 
+    // --- VÉRIFICATION DU CODE DANS LE FORMULAIRE (SI ACCÈS DIRECT PAR QR CODE) ---
     function verifierCodeAdherent() {
       const inputEl = document.getElementById("input-code");
       const code = inputEl.value.trim();
       const box = document.getElementById("greeting-box");
       const unlocked = document.getElementById("form-fields-unlocked");
-      const optEntretien = document.getElementById("opt-entretien");
-      const groupTypeCarb = document.getElementById("group-type-carburant");
-      const carnetBox = document.getElementById("carnet-access-box");
 
       if (code.length < 4) {
         box.style.display = "none";
         unlocked.style.display = "none";
-        optEntretien.style.display = "none";
-        groupTypeCarb.style.display = "none";
-        carnetBox.style.display = "none";
-        currentAdherentConnecte = "";
         return;
       }
 
       inputEl.blur();
 
       if (configData && configData.adherents[code]) {
+        currentCodeConnecte = code;
         currentAdherentConnecte = configData.adherents[code];
         const nomAffiche = (code === "0102") ? "Jean-Paul" : currentAdherentConnecte;
         box.className = "greeting-box greeting-ok";
         box.innerText = "✅ Bonjour " + nomAffiche;
         box.style.display = "block";
-        unlocked.style.display = "flex";
-
-        if (isModeCarburant) {
-          const codesAutorises = configData.codesLivraisonCarburant || ["2412", "0102"];
-          if (codesAutorises.includes(code)) {
-            groupTypeCarb.style.display = "flex";
-          } else {
-            groupTypeCarb.style.display = "none";
-            document.getElementById("select-type-carburant").value = "Retrait";
-            adapterChampsCarburant();
-          }
-          if (configData.listeAdherents.includes(currentAdherentConnecte)) {
-            document.getElementById("select-carb-adherent").value = currentAdherentConnecte;
-          }
-        } else {
-          const codesCarnet = configData.codesLectureEntretien || ["2412", "0102", "2608"];
-          if (codesCarnet.includes(code)) {
-            carnetBox.style.display = "flex";
-          } else {
-            carnetBox.style.display = "none";
-            document.getElementById("carnet-panel").style.display = "none";
-          }
-
-          const adminCode = configData.codeAdmin || "2412";
-          if (code === adminCode) {
-            optEntretien.style.display = "block";
-          } else {
-            optEntretien.style.display = "none";
-            if (document.getElementById("select-action").value === "Entretien") {
-              document.getElementById("select-action").value = currentEngin.statut === "En cours" ? "Fin d'utilisation" : "Début d'utilisation";
-              adapterChampsAction();
-            }
-          }
-
-          if (document.getElementById("select-action").value === "Début d'utilisation" && configData.listeAdherents.includes(currentAdherentConnecte)) {
-            document.getElementById("select-adherent").value = currentAdherentConnecte;
-          }
-        }
+        appliquerDroitsCodeSurFormulaire(code);
       } else {
-        currentAdherentConnecte = "";
         box.className = "greeting-box greeting-err";
         box.innerText = "❌ Code adhérent inconnu";
         box.style.display = "block";
         unlocked.style.display = "none";
-        optEntretien.style.display = "none";
-        groupTypeCarb.style.display = "none";
-        carnetBox.style.display = "none";
       }
     }
 
@@ -1990,8 +2296,8 @@
     }
 
     async function envoyerFormulaire() {
-      const code = document.getElementById("input-code").value.trim();
-      if (!currentAdherentConnecte) {
+      const code = currentCodeConnecte || document.getElementById("input-code").value.trim();
+      if (!currentAdherentConnecte || !code) {
         alert("Veuillez saisir un code adhérent valide.");
         return;
       }
@@ -2174,7 +2480,7 @@
 
             recapHtml += `<br><hr style="border:none;border-top:1px solid #cbd5e1;margin:8px 0;">
               <strong>Durée utilisée :</strong> ${duree.toFixed(1).replace('.', ',')} h<br>
-              <strong style="color:#15803d;font-size:16px;">Coût estimé : ${coutTotal.toFixed(2).replace('.', ',')} € H.T.</strong>`;
+              <strong style="color:#1b4d3e;font-size:16px;">Coût estimé : ${coutTotal.toFixed(2).replace('.', ',')} € H.T.</strong>`;
 
             recapTexteBrut +=
               `\nCompteur départ : ${currentEngin.compteurDebut.toFixed(1).replace('.', ',')} h\n` +
@@ -2296,6 +2602,14 @@
       document.getElementById("factu-view").style.display = "none";
       document.getElementById("gestion-view").style.display = "none";
       document.getElementById("home-view").style.display = "block";
+
+      if (currentCodeConnecte && configData && configData.adherents[currentCodeConnecte]) {
+        ouvrirSessionUtilisateur(currentCodeConnecte);
+      } else {
+        document.getElementById("home-login-box").style.display = "flex";
+        document.getElementById("home-dashboard").style.display = "none";
+      }
+
       if (window.history.replaceState) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
@@ -2307,6 +2621,7 @@
     // Préchargement silencieux dès l'ouverture de l'application
     window.addEventListener("DOMContentLoaded", () => {
       chargerInfoBandeau();
+      if (configData) mettreAJourBadgeParcAccueil();
       rafraichirConfigEnArrierePlan().catch(() => {});
 
       const params = new URLSearchParams(window.location.search);
@@ -2322,7 +2637,7 @@
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      installBanner.style.display = 'block';
+      installBanner.style.display = 'flex';
     });
 
     function installerApp() {
