@@ -298,6 +298,8 @@
     .icon-badge.amber { background: #fef3c7; color: #b45309; }
     .icon-badge.emerald { background: #dcfce7; color: #15803d; }
     .icon-badge.indigo { background: #eef2ff; color: #4338ca; }
+    .icon-badge.blue { background: #eff6ff; color: #1d4ed8; }
+    .icon-badge.teal { background: #ccfbf1; color: #0f766e; }
 
     .action-text {
       display: flex;
@@ -338,7 +340,7 @@
     .live-pill.busy { background: #fee2e2; color: #b91c1c; }
     .live-pill.loading { background: #f1f5f9; color: #64748b; }
 
-    /* CARTE GESTION (UNIFORMISÉE ET DISCRÈTE) */
+    /* SECTION ADMINISTRATION */
     .gestion-divider {
       margin-top: 14px;
       padding-top: 14px;
@@ -394,7 +396,7 @@
     .badge-disponible { background: #dcfce7; color: #15803d; }
     .badge-en-cours { background: #fee2e2; color: #b91c1c; }
 
-    /* Boutons engins & facturation dans la page Espace Gestion */
+    /* Boutons engins dans la vue Accès matériel sans QR code */
     .btn-gestion-engin {
       width: 100%;
       background: #f8fafc;
@@ -411,24 +413,8 @@
       text-align: left;
     }
     .btn-gestion-engin:active { background: #f1f5f9; }
-    .btn-gestion-factu {
-      width: 100%;
-      background: #eff6ff;
-      border: 1.5px solid #bfdbfe;
-      border-radius: 13px;
-      padding: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 14px;
-      font-weight: 800;
-      color: #1e40af;
-      cursor: pointer;
-      text-align: left;
-    }
-    .btn-gestion-factu:active { background: #dbeafe; }
 
-    /* VUES DÉDIÉES (FORMULAIRE, RELEVÉ FACTURATION, ESPACE GESTION) */
+    /* VUES DÉDIÉES (FORMULAIRE, RELEVÉ FACTURATION, ACCÈS MATÉRIEL, CARNET ENTRETIEN) */
     .form-card {
       display: none;
       background: white;
@@ -466,6 +452,7 @@
     }
     .subview-accent.blue { background: #1d4ed8; }
     .subview-accent.indigo { background: #4338ca; }
+    .subview-accent.teal { background: #0f766e; }
     .subview-header h2 { margin: 0; font-size: 17px; font-weight: 800; color: var(--text-main); }
     .subview-header p { margin: 2px 0 0; font-size: 12px; color: var(--text-muted); }
     .btn-back {
@@ -641,38 +628,19 @@
       cursor: not-allowed;
     }
 
-    /* CARNET D'ENTRETIEN INTÉGRÉ */
-    .btn-carnet {
-      width: 100%;
-      background: var(--primary-light);
-      color: var(--primary);
-      border: 1.5px solid var(--primary-border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
+    /* CARNET D'ENTRETIEN (VUE DÉDIÉE ADMINISTRATION) */
+    .carnet-list-container {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .btn-carnet:active { background: #d5eae3; }
-    .carnet-panel {
-      display: none;
       flex-direction: column;
       gap: 12px;
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 14px;
-      padding: 14px;
     }
     .carnet-card {
-      background: white;
+      background: #f8fafc;
       border-radius: 12px;
       padding: 14px;
       border: 1px solid #e2e8f0;
-      border-left: 5px solid #22c55e;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      border-left: 5px solid #0f766e;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -681,13 +649,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid #e2e8f0;
       padding-bottom: 6px;
     }
-    .carnet-date { font-weight: 800; font-size: 14px; color: var(--primary); }
+    .carnet-date { font-weight: 800; font-size: 14px; color: #0f766e; }
     .carnet-heures {
-      background: #dcfce7;
-      color: #166534;
+      background: #ccfbf1;
+      color: #115e59;
       font-size: 12px;
       font-weight: 800;
       padding: 3px 8px;
@@ -709,7 +677,7 @@
       align-items: center;
       margin-top: 2px;
       padding-top: 6px;
-      border-top: 1px dashed #e2e8f0;
+      border-top: 1px dashed #cbd5e1;
       font-size: 12px;
       color: #64748b;
     }
@@ -717,7 +685,7 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      background: var(--primary);
+      background: #0f766e;
       color: white;
       text-decoration: none;
       font-weight: 700;
@@ -868,37 +836,72 @@
             </div>
           </button>
 
-          <!-- ESPACE GESTION (AFFICHÉ UNIQUEMENT SI LE CODE EST GESTIONNAIRE) -->
+          <!-- SECTION ADMINISTRATION (SELON DROITS UTILISATEUR) -->
           <div id="gestion-access-section" class="gestion-divider" style="display: none;">
             <div class="section-label">Administration</div>
-            <button class="btn-action btn-gestion" onclick="ouvrirEspaceGestion()">
-              <div class="action-left">
-                <div class="icon-badge indigo">
-                  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <div class="menu-group">
+              <!-- 1. Relevé de facturation (Charlotte & Jean-Paul uniquement) -->
+              <button id="btn-admin-factu" class="btn-action btn-gestion" onclick="ouvrirVueFacturation()" style="display: none;">
+                <div class="action-left">
+                  <div class="icon-badge blue">
+                    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                  </div>
+                  <div class="action-text">
+                    <span class="action-title">Relevé de facturation</span>
+                    <span class="action-sub">Export matériel ou carburant par période</span>
+                  </div>
                 </div>
-                <div class="action-text">
-                  <span class="action-title">Espace Gestion</span>
-                  <span class="action-sub">Relevés de facturation et entretiens</span>
+                <div class="action-right">
+                  <span class="chevron">›</span>
                 </div>
-              </div>
-              <div class="action-right">
-                <span class="chevron">›</span>
-              </div>
-            </button>
+              </button>
+
+              <!-- 2. Accès au matériel sans QR code (Charlotte & Jean-Paul uniquement) -->
+              <button id="btn-admin-materiel" class="btn-action btn-gestion" onclick="ouvrirAccesMaterielAdmin()" style="display: none;">
+                <div class="action-left">
+                  <div class="icon-badge indigo">
+                    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  </div>
+                  <div class="action-text">
+                    <span class="action-title">Accès matériel (sans QR code)</span>
+                    <span class="action-sub">Saisir une utilisation ou un entretien</span>
+                  </div>
+                </div>
+                <div class="action-right">
+                  <span class="chevron">›</span>
+                </div>
+              </button>
+
+              <!-- 3. Carnet d'entretien (Charlotte, Jean-Paul et Laurent) -->
+              <button id="btn-admin-carnet" class="btn-action btn-gestion" onclick="ouvrirVueCarnetEntretien()" style="display: none;">
+                <div class="action-left">
+                  <div class="icon-badge teal">
+                    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                  </div>
+                  <div class="action-text">
+                    <span class="action-title">Carnet d'entretien</span>
+                    <span class="action-sub">Historique des révisions et interventions</span>
+                  </div>
+                </div>
+                <div class="action-right">
+                  <span class="chevron">›</span>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- VUE DÉDIÉE ESPACE GESTION -->
+    <!-- VUE DÉDIÉE ACCÈS MATÉRIEL SANS QR CODE (CHARLOTTE & JEAN-PAUL) -->
     <div class="form-card" id="gestion-view">
       <img src="banniere-cuma.jpg" alt="CUMA les 6 Terroirs" class="subview-banner-img">
       <div class="subview-header">
         <div class="subview-header-left">
           <div class="subview-accent indigo"></div>
           <div>
-            <h2>Espace Gestion</h2>
-            <p>Administration et relevés CUMA</p>
+            <h2>Accès matériel</h2>
+            <p>Saisie directe sans scanner le QR code</p>
           </div>
         </div>
         <button class="btn-back" onclick="retourAccueil()">← Retour</button>
@@ -909,7 +912,31 @@
       </div>
     </div>
 
-    <!-- VUE RELEVÉ DES UTILISATIONS / FACTURATION (ACCÈS GESTION) -->
+    <!-- VUE DÉDIÉE CARNET D'ENTRETIEN (CHARLOTTE, JEAN-PAUL & LAURENT) -->
+    <div class="form-card" id="carnet-view">
+      <img src="banniere-cuma.jpg" alt="CUMA les 6 Terroirs" class="subview-banner-img">
+      <div class="subview-header">
+        <div class="subview-header-left">
+          <div class="subview-accent teal"></div>
+          <div>
+            <h2>Carnet d'entretien</h2>
+            <p>Historique des révisions par matériel</p>
+          </div>
+        </div>
+        <button class="btn-back" onclick="retourAccueil()">← Retour</button>
+      </div>
+
+      <div class="form-body">
+        <div class="field-group">
+          <label for="select-carnet-engin">Choisir le matériel</label>
+          <select id="select-carnet-engin" onchange="afficherCarnetEnginSelectionne()"></select>
+        </div>
+
+        <div id="carnet-view-list" class="carnet-list-container"></div>
+      </div>
+    </div>
+
+    <!-- VUE RELEVÉ DES UTILISATIONS / FACTURATION (CHARLOTTE & JEAN-PAUL) -->
     <div class="form-card" id="factu-view">
       <img src="banniere-cuma.jpg" alt="CUMA les 6 Terroirs" class="subview-banner-img">
       <div class="subview-header">
@@ -989,16 +1016,6 @@
           
           <!-- ================= BLOC ENGINS ================= -->
           <div id="mode-engin" style="display: none; flex-direction: column; gap: 16px;">
-            
-            <!-- BOUTON + PANNEAU CARNET D'ENTRETIEN -->
-            <div id="carnet-access-box" style="display: none; flex-direction: column; gap: 10px;">
-              <button type="button" class="btn-carnet" onclick="basculerCarnetEntretien()">
-                <span>📖 Consulter le carnet d'entretien (<span id="carnet-count">0</span>)</span>
-                <span id="carnet-arrow">▼</span>
-              </button>
-              <div class="carnet-panel" id="carnet-panel"></div>
-            </div>
-
             <div class="field-group">
               <label for="select-action">Que souhaitez-vous faire ?</label>
               <select id="select-action" onchange="adapterChampsAction()">
@@ -1173,6 +1190,12 @@
     const URL_API_CUMA = "https://script.google.com/macros/s/AKfycbww4duGXidOOYCY2_7UcC4EvwOPY5sPKzysyOq5kDpbo_ksSIWkTuziRL9YGUN57oNh/exec";
     const LOCAL_CACHE_KEY = "CUMA_CONFIG_CACHE_V2";
 
+    // Droits d'accès à la section Administration :
+    // - Charlotte ("2412") et Jean-Paul ("0102") : Relevé facturation, Accès matériel sans QR code, Carnet d'entretien
+    // - Laurent ("2608") : Carnet d'entretien uniquement
+    const CODES_ADMIN_COMPLET = ["2412", "0102"];
+    const CODES_ADMIN_CARNET = ["2412", "0102", "2608"];
+
     let configData = null;
     let chargementEnCours = null;
     let currentEngin = null;
@@ -1271,9 +1294,13 @@
       document.getElementById("user-session-name").innerText = "Bonjour " + nomAffiche;
       document.getElementById("user-avatar-initials").innerText = nomAffiche.charAt(0).toUpperCase();
 
-      const codesGestion = configData.codesLectureEntretien || ["2412", "0102", "2608"];
-      const estGestionnaire = codesGestion.includes(code);
-      document.getElementById("gestion-access-section").style.display = estGestionnaire ? "block" : "none";
+      const estAdminComplet = CODES_ADMIN_COMPLET.includes(code);
+      const estAdminCarnet = CODES_ADMIN_CARNET.includes(code);
+
+      document.getElementById("gestion-access-section").style.display = estAdminCarnet ? "block" : "none";
+      document.getElementById("btn-admin-factu").style.display = estAdminComplet ? "flex" : "none";
+      document.getElementById("btn-admin-materiel").style.display = estAdminComplet ? "flex" : "none";
+      document.getElementById("btn-admin-carnet").style.display = estAdminCarnet ? "flex" : "none";
 
       document.getElementById("home-login-box").style.display = "none";
       document.getElementById("home-dashboard").style.display = "block";
@@ -1394,26 +1421,21 @@
       }
     }
 
-    // --- PAGE DÉDIÉE ESPACE GESTION (OUVERTE DIRECTEMENT SI GESTIONNAIRE CONNECTÉ) ---
-    function ouvrirEspaceGestion() {
-      const codesAutorises = (configData && configData.codesLectureEntretien) ? configData.codesLectureEntretien : ["2412", "0102", "2608"];
-      if (!currentCodeConnecte || !codesAutorises.includes(currentCodeConnecte)) {
-        alert("Accès réservé aux gestionnaires.");
+    // --- VUE 1 ADMINISTRATION : ACCÈS MATÉRIEL SANS QR CODE (CHARLOTTE & JEAN-PAUL) ---
+    function ouvrirAccesMaterielAdmin() {
+      if (!currentCodeConnecte || !CODES_ADMIN_COMPLET.includes(currentCodeConnecte)) {
+        alert("Accès réservé aux administrateurs.");
         return;
       }
 
       document.getElementById("home-view").style.display = "none";
       document.getElementById("form-view").style.display = "none";
       document.getElementById("factu-view").style.display = "none";
+      document.getElementById("carnet-view").style.display = "none";
       document.getElementById("gestion-view").style.display = "block";
 
       const listDiv = document.getElementById("gestion-engins-list");
-      let html = `
-        <button type="button" class="btn-gestion-factu" onclick="ouvrirVueFacturation()">
-          <span>📊 Relevé des utilisations (Facturation)</span>
-          <span>→</span>
-        </button>
-      `;
+      let html = "";
 
       if (configData && configData.materiels) {
         configData.materiels.forEach(m => {
@@ -1434,7 +1456,99 @@
       rafraichirConfigEnArrierePlan().catch(() => {});
     }
 
-    // --- VUE RELEVÉ FACTURATION (MATÉRIEL OU CARBURANT SÉPARÉMENT) ---
+    // --- VUE 2 ADMINISTRATION : CARNET D'ENTRETIEN (CHARLOTTE, JEAN-PAUL & LAURENT) ---
+    async function ouvrirVueCarnetEntretien() {
+      if (!currentCodeConnecte || !CODES_ADMIN_CARNET.includes(currentCodeConnecte)) {
+        alert("Accès réservé.");
+        return;
+      }
+
+      document.getElementById("home-view").style.display = "none";
+      document.getElementById("gestion-view").style.display = "none";
+      document.getElementById("factu-view").style.display = "none";
+      document.getElementById("form-view").style.display = "none";
+      document.getElementById("carnet-view").style.display = "block";
+
+      remplirSelectCarnetEngins();
+      afficherCarnetEnginSelectionne();
+
+      try {
+        const precedent = document.getElementById("select-carnet-engin").value;
+        await rafraichirConfigEnArrierePlan();
+        remplirSelectCarnetEngins(precedent);
+        afficherCarnetEnginSelectionne();
+      } catch (e) {}
+    }
+
+    function remplirSelectCarnetEngins(selectionPrecedente) {
+      const selectEl = document.getElementById("select-carnet-engin");
+      selectEl.innerHTML = "";
+      if (!configData || !configData.materiels || configData.materiels.length === 0) {
+        selectEl.innerHTML = `<option value="">Aucun matériel configuré</option>`;
+        return;
+      }
+
+      configData.materiels.forEach(m => {
+        const nb = m.entretiens ? m.entretiens.length : 0;
+        const opt = document.createElement("option");
+        opt.value = m.nom;
+        opt.innerText = `${m.nom} (${nb} intervention${nb > 1 ? "s" : ""})`;
+        selectEl.appendChild(opt);
+      });
+
+      if (selectionPrecedente && configData.materiels.some(m => m.nom === selectionPrecedente)) {
+        selectEl.value = selectionPrecedente;
+      }
+    }
+
+    function afficherCarnetEnginSelectionne() {
+      const nomEngin = document.getElementById("select-carnet-engin").value;
+      const listContainer = document.getElementById("carnet-view-list");
+
+      if (!configData || !configData.materiels || !nomEngin) {
+        listContainer.innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;padding:12px;'>Chargement du carnet d'entretien...</div>";
+        return;
+      }
+
+      const engin = configData.materiels.find(m => m.nom === nomEngin);
+      const entretiens = (engin && engin.entretiens) ? engin.entretiens : [];
+
+      if (entretiens.length === 0) {
+        listContainer.innerHTML = "<div class='status-pill info' style='text-align:center;'>Aucun entretien enregistré pour ce matériel.</div>";
+        return;
+      }
+
+      let html = "";
+      entretiens.forEach(item => {
+        const numFac = item.numFacture || (item.lienFacture ? "Voir facture" : "");
+        const boutonFacture = item.lienFacture
+          ? `<a href="${item.lienFacture}" target="_blank" class="btn-facture">📄 ${numFac}</a>`
+          : (numFac ? `<span>Facture : <strong>${numFac}</strong></span>` : "");
+
+        html += `
+          <div class="carnet-card">
+            <div class="carnet-card-top">
+              <span class="carnet-date">📅 ${item.date || "Date inconnue"}</span>
+              ${item.heures !== "" ? `<span class="carnet-heures">${item.heures} h</span>` : ""}
+            </div>
+            ${item.type ? `<div class="carnet-type">${item.type}</div>` : ""}
+            ${item.details ? `<div class="carnet-details">${item.details}</div>` : ""}
+            ${item.prochain ? `<div class="carnet-tag prochain">🔜 <strong>Prochain entretien prévu :</strong> ${item.prochain}</div>` : ""}
+            ${item.aPrevoir ? `<div class="carnet-tag prevoir">⚠️ <strong>Travaux à prévoir :</strong> ${item.aPrevoir}</div>` : ""}
+            ${(item.cout || boutonFacture) ? `
+              <div class="carnet-footer">
+                <span>${item.cout ? `Fournisseur : <strong>${item.cout}</strong>` : ""}</span>
+                ${boutonFacture}
+              </div>
+            ` : ""}
+          </div>
+        `;
+      });
+
+      listContainer.innerHTML = html;
+    }
+
+    // --- VUE 3 ADMINISTRATION : RELEVÉ FACTURATION (CHARLOTTE & JEAN-PAUL) ---
     function remplirListeAdherentsFactu() {
       const selectAdh = document.getElementById("select-factu-adherent");
       selectAdh.innerHTML = `<option value="TOUS">👥 Tous les adhérents</option>`;
@@ -1459,8 +1573,14 @@
     }
 
     async function ouvrirVueFacturation() {
+      if (!currentCodeConnecte || !CODES_ADMIN_COMPLET.includes(currentCodeConnecte)) {
+        alert("Accès réservé aux administrateurs.");
+        return;
+      }
+
       document.getElementById("home-view").style.display = "none";
       document.getElementById("gestion-view").style.display = "none";
+      document.getElementById("carnet-view").style.display = "none";
       document.getElementById("form-view").style.display = "none";
       document.getElementById("factu-view").style.display = "block";
       document.getElementById("factu-results").style.display = "none";
@@ -1876,63 +1996,10 @@
       }
     }
 
-    // --- CARNET D'ENTRETIEN INTÉGRÉ ---
-    function construireCarnetEntretien(entretiens) {
-      const panel = document.getElementById("carnet-panel");
-      document.getElementById("carnet-count").innerText = entretiens ? entretiens.length : 0;
-
-      if (!entretiens || entretiens.length === 0) {
-        panel.innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;padding:8px;'>Aucun entretien enregistré pour ce matériel.</div>";
-        return;
-      }
-
-      let html = "";
-      entretiens.forEach(item => {
-        const numFac = item.numFacture || (item.lienFacture ? "Voir facture" : "");
-        const boutonFacture = item.lienFacture
-          ? `<a href="${item.lienFacture}" target="_blank" class="btn-facture">📄 ${numFac}</a>`
-          : (numFac ? `<span>Facture : <strong>${numFac}</strong></span>` : "");
-
-        html += `
-          <div class="carnet-card">
-            <div class="carnet-card-top">
-              <span class="carnet-date">📅 ${item.date || "Date inconnue"}</span>
-              ${item.heures !== "" ? `<span class="carnet-heures">${item.heures} h</span>` : ""}
-            </div>
-            ${item.type ? `<div class="carnet-type">${item.type}</div>` : ""}
-            ${item.details ? `<div class="carnet-details">${item.details}</div>` : ""}
-            ${item.prochain ? `<div class="carnet-tag prochain">🔜 <strong>Prochain entretien prévu :</strong> ${item.prochain}</div>` : ""}
-            ${item.aPrevoir ? `<div class="carnet-tag prevoir">⚠️ <strong>Travaux à prévoir :</strong> ${item.aPrevoir}</div>` : ""}
-            ${(item.cout || boutonFacture) ? `
-              <div class="carnet-footer">
-                <span>${item.cout ? `Fournisseur : <strong>${item.cout}</strong>` : ""}</span>
-                ${boutonFacture}
-              </div>
-            ` : ""}
-          </div>
-        `;
-      });
-
-      panel.innerHTML = html;
-    }
-
-    function basculerCarnetEntretien() {
-      const panel = document.getElementById("carnet-panel");
-      const arrow = document.getElementById("carnet-arrow");
-      if (panel.style.display === "flex") {
-        panel.style.display = "none";
-        arrow.innerText = "▼";
-      } else {
-        panel.style.display = "flex";
-        arrow.innerText = "▲";
-      }
-    }
-
     // --- APPLIQUE LES DROITS DU CODE SUR LE FORMULAIRE OUVERT ---
     function appliquerDroitsCodeSurFormulaire(code) {
       const optEntretien = document.getElementById("opt-entretien");
       const groupTypeCarb = document.getElementById("group-type-carburant");
-      const carnetBox = document.getElementById("carnet-access-box");
       const unlocked = document.getElementById("form-fields-unlocked");
 
       unlocked.style.display = "flex";
@@ -1950,14 +2017,6 @@
           document.getElementById("select-carb-adherent").value = currentAdherentConnecte;
         }
       } else {
-        const codesCarnet = configData.codesLectureEntretien || ["2412", "0102", "2608"];
-        if (codesCarnet.includes(code)) {
-          carnetBox.style.display = "flex";
-        } else {
-          carnetBox.style.display = "none";
-          document.getElementById("carnet-panel").style.display = "none";
-        }
-
         const adminCode = configData.codeAdmin || "2412";
         if (code === adminCode) {
           optEntretien.style.display = "block";
@@ -1982,6 +2041,7 @@
 
       document.getElementById("home-view").style.display = "none";
       document.getElementById("gestion-view").style.display = "none";
+      document.getElementById("carnet-view").style.display = "none";
       document.getElementById("factu-view").style.display = "none";
       document.getElementById("form-view").style.display = "block";
       document.getElementById("form-engin-title").innerText = "Suivi Carburant";
@@ -2056,6 +2116,7 @@
       isModeCarburant = false;
       document.getElementById("home-view").style.display = "none";
       document.getElementById("gestion-view").style.display = "none";
+      document.getElementById("carnet-view").style.display = "none";
       document.getElementById("factu-view").style.display = "none";
       document.getElementById("form-view").style.display = "block";
       document.getElementById("form-engin-title").innerText = "Suivi " + nomEngin;
@@ -2071,9 +2132,6 @@
       document.getElementById("form-fields-unlocked").style.display = "none";
       document.getElementById("mode-carburant").style.display = "none";
       document.getElementById("mode-engin").style.display = "flex";
-      document.getElementById("carnet-access-box").style.display = "none";
-      document.getElementById("carnet-panel").style.display = "none";
-      document.getElementById("carnet-arrow").innerText = "▼";
       document.getElementById("input-date-intervention").value = aujourdhui;
       document.getElementById("input-compteur").value = "";
       document.getElementById("input-obs").value = "";
@@ -2094,8 +2152,6 @@
           retourAccueil();
           return;
         }
-
-        construireCarnetEntretien(currentEngin.entretiens || []);
 
         const pill = document.getElementById("engin-status-pill");
         const selectAction = document.getElementById("select-action");
@@ -2595,6 +2651,7 @@
       document.getElementById("form-view").style.display = "none";
       document.getElementById("factu-view").style.display = "none";
       document.getElementById("gestion-view").style.display = "none";
+      document.getElementById("carnet-view").style.display = "none";
       document.getElementById("home-view").style.display = "block";
 
       if (currentCodeConnecte && configData && configData.adherents[currentCodeConnecte]) {
