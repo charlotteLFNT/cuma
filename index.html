@@ -396,7 +396,7 @@
     .badge-disponible { background: #dcfce7; color: #15803d; }
     .badge-en-cours { background: #fee2e2; color: #b91c1c; }
 
-    /* Boutons engins dans la vue Accès matériel sans QR code */
+    /* Boutons engins dans les vues Accès matériel et Carnet d'entretien */
     .btn-gestion-engin {
       width: 100%;
       background: #f8fafc;
@@ -919,20 +919,19 @@
         <div class="subview-header-left">
           <div class="subview-accent teal"></div>
           <div>
-            <h2>Carnet d'entretien</h2>
-            <p>Historique des révisions par matériel</p>
+            <h2 id="carnet-view-title">Carnet d'entretien</h2>
+            <p id="carnet-view-subtitle">Choisissez un matériel</p>
           </div>
         </div>
-        <button class="btn-back" onclick="retourAccueil()">← Retour</button>
+        <button class="btn-back" id="btn-back-carnet" onclick="retourAccueil()">← Retour</button>
       </div>
 
       <div class="form-body">
-        <div class="field-group">
-          <label for="select-carnet-engin">Choisir le matériel</label>
-          <select id="select-carnet-engin" onchange="afficherCarnetEnginSelectionne()"></select>
-        </div>
+        <!-- ÉTAPE 1 : LISTE DES MATÉRIELS À CHOISIR -->
+        <div id="carnet-engins-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
 
-        <div id="carnet-view-list" class="carnet-list-container"></div>
+        <!-- ÉTAPE 2 : HISTORIQUE DES ENTRETIENS DU MATÉRIEL SÉLECTIONNÉ -->
+        <div id="carnet-view-list" class="carnet-list-container" style="display: none;"></div>
       </div>
     </div>
 
@@ -1202,6 +1201,7 @@
     let isModeCarburant = false;
     let currentCodeConnecte = "";
     let currentAdherentConnecte = "";
+    let currentCarnetEnginSelectionne = "";
     let sujetExportFacturation = "";
     let texteExportFacturation = "";
     let htmlExportFacturation = "";
@@ -1469,41 +1469,68 @@
       document.getElementById("form-view").style.display = "none";
       document.getElementById("carnet-view").style.display = "block";
 
-      remplirSelectCarnetEngins();
-      afficherCarnetEnginSelectionne();
+      afficherListeMaterielsCarnet();
 
       try {
-        const precedent = document.getElementById("select-carnet-engin").value;
         await rafraichirConfigEnArrierePlan();
-        remplirSelectCarnetEngins(precedent);
-        afficherCarnetEnginSelectionne();
+        if (currentCarnetEnginSelectionne) {
+          afficherCarnetPourMateriel(currentCarnetEnginSelectionne);
+        } else {
+          afficherListeMaterielsCarnet();
+        }
       } catch (e) {}
     }
 
-    function remplirSelectCarnetEngins(selectionPrecedente) {
-      const selectEl = document.getElementById("select-carnet-engin");
-      selectEl.innerHTML = "";
+    function afficherListeMaterielsCarnet() {
+      currentCarnetEnginSelectionne = "";
+      document.getElementById("carnet-view-title").innerText = "Carnet d'entretien";
+      document.getElementById("carnet-view-subtitle").innerText = "Choisissez un matériel";
+
+      const btnBack = document.getElementById("btn-back-carnet");
+      btnBack.innerText = "← Retour";
+      btnBack.onclick = retourAccueil;
+
+      const listEnginsDiv = document.getElementById("carnet-engins-list");
+      const listDetailsDiv = document.getElementById("carnet-view-list");
+      listDetailsDiv.style.display = "none";
+      listEnginsDiv.style.display = "flex";
+
       if (!configData || !configData.materiels || configData.materiels.length === 0) {
-        selectEl.innerHTML = `<option value="">Aucun matériel configuré</option>`;
+        listEnginsDiv.innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;padding:12px;'>Chargement du matériel...</div>";
         return;
       }
 
+      let html = "";
       configData.materiels.forEach(m => {
         const nb = m.entretiens ? m.entretiens.length : 0;
-        const opt = document.createElement("option");
-        opt.value = m.nom;
-        opt.innerText = `${m.nom} (${nb} intervention${nb > 1 ? "s" : ""})`;
-        selectEl.appendChild(opt);
+        const iconeEngin = m.nom.toLowerCase().includes("mini-pelle")
+          ? `<img src="icone%20mini-pelle.png" alt="Mini-Pelle" style="width:22px;height:22px;object-fit:contain;">`
+          : `🚜`;
+        const texteNb = nb === 0 ? "Aucun entretien" : `${nb} intervention${nb > 1 ? "s" : ""}`;
+        html += `
+          <button type="button" class="btn-gestion-engin" onclick="afficherCarnetPourMateriel('${m.nom.replace(/'/g, "\\'")}')">
+            <span style="display:inline-flex;align-items:center;gap:8px;">${iconeEngin}${m.nom}</span>
+            <span style="font-size:12px;font-weight:600;color:#0f766e;">📖 ${texteNb} →</span>
+          </button>
+        `;
       });
 
-      if (selectionPrecedente && configData.materiels.some(m => m.nom === selectionPrecedente)) {
-        selectEl.value = selectionPrecedente;
-      }
+      listEnginsDiv.innerHTML = html;
     }
 
-    function afficherCarnetEnginSelectionne() {
-      const nomEngin = document.getElementById("select-carnet-engin").value;
+    function afficherCarnetPourMateriel(nomEngin) {
+      currentCarnetEnginSelectionne = nomEngin;
+      document.getElementById("carnet-view-title").innerText = nomEngin;
+      document.getElementById("carnet-view-subtitle").innerText = "Historique du carnet d'entretien";
+
+      const btnBack = document.getElementById("btn-back-carnet");
+      btnBack.innerText = "← Matériels";
+      btnBack.onclick = afficherListeMaterielsCarnet;
+
+      const listEnginsDiv = document.getElementById("carnet-engins-list");
       const listContainer = document.getElementById("carnet-view-list");
+      listEnginsDiv.style.display = "none";
+      listContainer.style.display = "flex";
 
       if (!configData || !configData.materiels || !nomEngin) {
         listContainer.innerHTML = "<div style='font-size:13px;color:#64748b;text-align:center;padding:12px;'>Chargement du carnet d'entretien...</div>";
@@ -2648,6 +2675,7 @@
     }
 
     function retourAccueil() {
+      currentCarnetEnginSelectionne = "";
       document.getElementById("form-view").style.display = "none";
       document.getElementById("factu-view").style.display = "none";
       document.getElementById("gestion-view").style.display = "none";
